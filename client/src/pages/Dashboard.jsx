@@ -227,7 +227,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div className="min-h-0 [grid-area:pnl]">
-                  <PnlByPositionCard />
+                  <PnlByPositionCard holdings={holdings} />
                 </div>
                 <div className="min-h-0 overflow-hidden [grid-area:market]">
                   <HoldingsExplorer holdings={holdings} />

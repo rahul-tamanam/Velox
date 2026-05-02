@@ -1,18 +1,7 @@
 import { ChartBarIcon } from '@heroicons/react/24/outline';
-import { Bar, BarChart, Cell, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, Cell, ReferenceLine, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 import { InnerShellBody, InnerShellHeader, InnerShellRoot } from '../ui/InnerShellCard.jsx';
 import { ShellCardTitleRow } from '../ui/ShellCardHeading.jsx';
-
-const DATA = [
-  { name: 'AAPL', value: 4200 },
-  { name: 'MSFT', value: 2800 },
-  { name: 'GLD', value: 900 },
-  { name: 'QQQ', value: -1100 },
-  { name: 'VNQ', value: -2300 },
-];
-
-const POSITIVE = '#22c55e';
-const NEGATIVE = '#ef4444';
 
 function formatCompactSigned(v) {
   const abs = Math.abs(Number(v) || 0);
@@ -21,33 +10,11 @@ function formatCompactSigned(v) {
   return `${sign}$${abs.toFixed(0)}`;
 }
 
-function formatUsdSigned(v) {
-  const n = Number(v) || 0;
-  const abs = Math.abs(n);
-  const s = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(abs);
-  return `${n < 0 ? '-' : ''}$${s}`;
-}
-
-function PnlTooltip({ active, payload, label }) {
-  if (!active || !payload?.length) return null;
-  const value = Number(payload[0].value) || 0;
-  const tone = value >= 0 ? POSITIVE : NEGATIVE;
-  return (
-    <div
-      style={{
-        background: '#1E1C1A',
-        border: '1px solid #2E2A27',
-        borderRadius: 8,
-        padding: '8px 12px',
-      }}
-    >
-      <p style={{ fontSize: '0.8rem', color: '#F0F0F0', fontWeight: 600 }}>{label}</p>
-      <p style={{ marginTop: 4, fontSize: '0.8rem', color: tone, fontWeight: 600 }}>{formatUsdSigned(value)}</p>
-    </div>
-  );
-}
-
-export default function PnlByPositionCard() {
+export default function PnlByPositionCard({ holdings = [] }) {
+  const DATA = holdings.map((h) => ({
+    name: h.ticker,
+    value: ((h.current_price ?? h.avg_buy_price) - h.avg_buy_price) * h.quantity,
+  }));
   const winners = DATA.filter((d) => d.value > 0).reduce((s, d) => s + d.value, 0);
   const losersAbs = Math.abs(DATA.filter((d) => d.value < 0).reduce((s, d) => s + d.value, 0));
   const net = winners - losersAbs;
@@ -81,8 +48,7 @@ export default function PnlByPositionCard() {
               height={28}
               tick={{ fontSize: 12, fill: '#888' }}
             />
-            <YAxis hide domain={[-2500, 4500]} />
-            <Tooltip content={<PnlTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+            <YAxis hide domain={['auto', 'auto']} />
             <Bar
               dataKey="value"
               barSize={44}
