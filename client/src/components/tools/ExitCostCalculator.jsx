@@ -3,6 +3,38 @@ import InfoTooltip from '../ui/InfoTooltip.jsx';
 import api from '../../utils/api';
 import { fmtUsd } from '../../utils/formatters';
 
+/**
+ * Returns the suggested US capital-gains tax bracket based on:
+ *  - holdingPeriod: 'short' (< 1 yr) or 'long' (≥ 1 yr)
+ *  - gain (long-term): gross capital gain in dollars
+ *
+ * Short-term gains are taxed as ordinary income — we estimate bracket
+ * from gross proceeds as a rough proxy for income level.
+ * Long-term rates: 0% / 15% / 20%
+ */
+function suggestTaxBracket(buyDate, buyPrice, sellPrice, quantity) {
+  if (!buyDate || !sellPrice || !buyPrice || !quantity) return null;
+
+  const holdMs = Date.now() - new Date(buyDate).getTime();
+  const isShortTerm = holdMs < 365.25 * 24 * 3600 * 1000;
+  const gain = (Number(sellPrice) - Number(buyPrice)) * Number(quantity);
+
+  if (isShortTerm) {
+    // Use gross proceeds as income proxy (more realistic than gain alone)
+    const grossProceeds = Number(sellPrice) * Number(quantity);
+    if (grossProceeds < 11600) return { rate: 10, label: 'Short-term · 10% bracket (est.)' };
+    if (grossProceeds < 47150) return { rate: 12, label: 'Short-term · 12% bracket (est.)' };
+    if (grossProceeds < 100525) return { rate: 22, label: 'Short-term · 22% bracket (est.)' };
+    if (grossProceeds < 191950) return { rate: 24, label: 'Short-term · 24% bracket (est.)' };
+    return { rate: 32, label: 'Short-term · 32%+ bracket (est.)' };
+  } else {
+    // Long-term capital gains
+    if (gain < 44625) return { rate: 0, label: 'Long-term · 0% (gain below threshold)' };
+    if (gain < 492300) return { rate: 15, label: 'Long-term · 15%' };
+    return { rate: 20, label: 'Long-term · 20%' };
+  }
+}
+
 export default function ExitCostCalculator({ holdings }) {
   const [form, setForm] = useState({
     ticker: '',
@@ -13,6 +45,7 @@ export default function ExitCostCalculator({ holdings }) {
     taxBracketPct: 15,
     brokerageFeePct: 0.1,
   });
+  const [taxOverride, setTaxOverride] = useState(false);
   const [out, setOut] = useState(null);
 
   useEffect(() => {
@@ -27,6 +60,14 @@ export default function ExitCostCalculator({ holdings }) {
       sellPrice: h.current_price || h.avg_buy_price,
     }));
   }, [holdings]);
+
+  useEffect(() => {
+    if (taxOverride) return; // user is manually editing, don't overwrite
+    const suggestion = suggestTaxBracket(form.buyDate, form.buyPrice, form.sellPrice, form.quantity);
+    if (suggestion) {
+      setForm((f) => ({ ...f, taxBracketPct: suggestion.rate }));
+    }
+  }, [form.buyDate, form.buyPrice, form.sellPrice, form.quantity, taxOverride]);
 
   async function calc() {
     const { data } = await api.post('/tools/exitcost', form);
@@ -44,7 +85,6 @@ export default function ExitCostCalculator({ holdings }) {
           ['buyPrice', 'Buy price'],
           ['sellPrice', 'Sell price'],
           ['buyDate', 'Buy date (YYYY-MM-DD)'],
-          ['taxBracketPct', 'Tax bracket %'],
           ['brokerageFeePct', 'Brokerage fee %'],
         ].map(([key, label]) => (
           <label key={key} className="block text-xs text-[var(--text-secondary)]">
@@ -64,6 +104,36 @@ export default function ExitCostCalculator({ holdings }) {
             />
           </label>
         ))}
+      </div>
+      {/* Auto tax bracket field */}
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/60 p-4">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-[var(--text-secondary)]">Tax bracket %</p>
+          <button
+            type="button"
+            onClick={() => setTaxOverride((v) => !v)}
+            className="text-[10px] text-[var(--accent-gold)] underline underline-offset-2"
+          >
+            {taxOverride ? 'Use auto' : 'Override'}
+          </button>
+        </div>
+
+        {taxOverride ? (
+          <input
+            type="number"
+            className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
+            value={form.taxBracketPct}
+            onChange={(e) => setForm({ ...form, taxBracketPct: Number(e.target.value) })}
+          />
+        ) : (
+          <div className="mt-2 flex items-center gap-3">
+            <span className="font-mono text-2xl text-[var(--text-primary)]">{form.taxBracketPct}%</span>
+            <span className="text-xs text-[var(--text-secondary)]">
+              {suggestTaxBracket(form.buyDate, form.buyPrice, form.sellPrice, form.quantity)?.label ??
+                'Enter buy date & prices to auto-detect'}
+            </span>
+          </div>
+        )}
       </div>
       <button
         type="button"
