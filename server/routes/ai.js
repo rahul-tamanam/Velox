@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 function fmtUsd(n) {
-  if (n == null || Number.isNaN(Number(n))) return '—';
+  if (n == null || Number.isNaN(Number(n))) return 'N/A';
   return `$${Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
 }
 
@@ -56,7 +56,8 @@ router.post('/chart-analysis', async (req, res) => {
 - Bullish candles: ${bullCount}, Bearish candles: ${bearCount}
 
 Write 2-3 sentences explaining what is happening in plain English for a retail investor. 
-Be specific about price action, momentum, and any notable pattern. No jargon.`;
+Be specific about price action, momentum, and any notable pattern. No jargon.
+Do not use em dashes or en dashes. Use a hyphen (-) instead.`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
@@ -80,7 +81,7 @@ Be specific about price action, momentum, and any notable pattern. No jargon.`;
       });
     }
 
-    const analysis = data?.choices?.[0]?.message?.content?.trim();
+    const analysis = data?.choices?.[0]?.message?.content?.trim()?.replace(/[\u2014\u2013]/g, '-');
     if (!analysis) {
       return res.status(502).json({ error: 'Empty Groq response' });
     }

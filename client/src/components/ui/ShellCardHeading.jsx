@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 
-/** Icon tile — matches Market tracker / dashboard card headings */
+/** Icon tile - matches Market tracker / dashboard card headings */
 export function ShellCardIconWrap({ className, children, ...props }) {
   return (
     <span

@@ -28,7 +28,7 @@ export const QUESTIONS = [
     prompt: 'When do you need this money?',
     options: [
       { label: '< 3 years', score: -2 },
-      { label: '3 – 10 years', score: 0 },
+      { label: '3 - 10 years', score: 0 },
       { label: '10+ years', score: 2 },
     ],
   },
@@ -46,7 +46,7 @@ export const QUESTIONS = [
     prompt: 'Starting corpus?',
     options: [
       { label: '< $10k', score: -1 },
-      { label: '$10k – $50k', score: 0 },
+      { label: '$10k - $50k', score: 0 },
       { label: '$50k+', score: 1 },
     ],
   },

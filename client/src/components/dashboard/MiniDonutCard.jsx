@@ -4,7 +4,7 @@ import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 import { InnerShellBody, InnerShellHeader, InnerShellRoot } from '../ui/InnerShellCard.jsx';
 import { ShellCardTitleRow } from '../ui/ShellCardHeading.jsx';
 
-/** Matches dashboard donut sizing — keep in sync across health + allocation splits */
+/** Matches dashboard donut sizing - keep in sync across health + allocation splits */
 export const DONUT_INNER_RADIUS = '58%';
 export const DONUT_OUTER_RADIUS = '88%';
 export const DONUT_PADDING_ANGLE = 2;

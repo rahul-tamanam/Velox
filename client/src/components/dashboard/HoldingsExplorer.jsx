@@ -171,7 +171,7 @@ export default function HoldingsExplorer({ holdings }) {
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-baseline gap-3">
               <span className="text-xl font-semibold tabular-nums tracking-tight text-[var(--text-primary)] sm:text-2xl">
-                {lastPrice != null ? fmtUsd(lastPrice) : '—'}
+                {lastPrice != null ? fmtUsd(lastPrice) : 'N/A'}
               </span>
               {periodReturnPct != null && (
                 <span
@@ -224,13 +224,13 @@ export default function HoldingsExplorer({ holdings }) {
             <div className="flex h-8 flex-1 items-center justify-center gap-1.5 border-r border-[var(--border)] px-2 text-[11px]">
               <span className="font-normal text-[var(--text-secondary)]">Highest</span>
               <span className="font-mono font-semibold text-[var(--text-primary)]">
-                {chartRows.length ? highLow.hi.toFixed(3) : '—'}
+                {chartRows.length ? highLow.hi.toFixed(3) : 'N/A'}
               </span>
             </div>
             <div className="flex h-8 flex-1 items-center justify-center gap-1.5 px-2 text-[11px]">
               <span className="font-normal text-[var(--text-secondary)]">Lowest</span>
               <span className="font-mono font-semibold text-[var(--text-primary)]">
-                {chartRows.length ? highLow.lo.toFixed(3) : '—'}
+                {chartRows.length ? highLow.lo.toFixed(3) : 'N/A'}
               </span>
             </div>
           </div>

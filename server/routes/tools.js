@@ -80,7 +80,7 @@ router.post('/whatif', (req, res) => {
       maxDrawdownEstimate: Math.min(0.45, 0.15 - shock * 0.3),
     });
 
-    let rebalance = 'Stay the course — moves are modest.';
+    let rebalance = 'Stay the course - moves are modest.';
     if (shock <= -0.15) {
       rebalance =
         'Consider trimming concentrated winners and adding quality bonds or diversified funds to stabilize.';

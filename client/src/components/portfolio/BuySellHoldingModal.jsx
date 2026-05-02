@@ -243,7 +243,7 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                     <option value="">Select holding</option>
                     {holdings.map((h) => (
                       <option key={h.id} value={h.id}>
-                        {h.ticker} — {typeLabel(h.type)} · qty {h.quantity}
+                        {h.ticker} - {typeLabel(h.type)} · qty {h.quantity}
                       </option>
                     ))}
                   </select>

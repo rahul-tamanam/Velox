@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 
 /**
- * Full-bleed card shell (single border / radius) — header + body fill the tile.
+ * Full-bleed card shell (single border / radius) - header + body fill the tile.
  * Matches KPI `card-surface` footprint in the grid.
  */
 export function InnerShellRoot({ className, children, ...props }) {
@@ -18,7 +18,7 @@ export function InnerShellRoot({ className, children, ...props }) {
   );
 }
 
-/** Top band edge-to-edge with optional glass highlight (same surface as card — no tone seam). */
+/** Top band edge-to-edge with optional glass highlight (same surface as card - no tone seam). */
 export function InnerShellHeader({ className, children, glassEffect = true, ...props }) {
   return (
     <div

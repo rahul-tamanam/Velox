@@ -123,7 +123,7 @@ export default function NewsSentimentFeed({ tickers }) {
           </div>
         ))}
         {!filtered.length && (
-          <p className="text-sm text-[var(--text-secondary)]">No headlines yet — check back soon.</p>
+          <p className="text-sm text-[var(--text-secondary)]">No headlines yet - check back soon.</p>
         )}
       </div>
     </div>

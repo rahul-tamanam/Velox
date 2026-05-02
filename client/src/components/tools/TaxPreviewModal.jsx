@@ -16,7 +16,7 @@ export default function TaxPreviewModal({ open, onClose, holding, currentPrice, 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/75 p-4">
       <div className="card-surface max-w-md border border-[var(--border)] p-6">
-        <p className="font-display text-xl">Tax preview — {holding.ticker}</p>
+        <p className="font-display text-xl">Tax preview - {holding.ticker}</p>
         <div className="mt-4 space-y-2 text-sm text-[var(--text-secondary)]">
           <p>
             Holding period:{' '}
@@ -27,7 +27,7 @@ export default function TaxPreviewModal({ open, onClose, holding, currentPrice, 
             <span className="font-mono text-[var(--text-primary)]">{fmtUsd(gain)}</span>
           </p>
           <p className="text-xs">
-            This modal is educational — Velox does not provide tax advice. Confirm details with a CPA.
+            This modal is educational - Velox does not provide tax advice. Confirm details with a CPA.
           </p>
         </div>
         <div className="mt-6 flex justify-end gap-2">

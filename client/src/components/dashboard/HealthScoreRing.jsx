@@ -42,7 +42,7 @@ function scoreColor(n) {
   return '#EF4444';
 }
 
-/** Remaining slice — neutral gray (health score isn’t allocation-colored). */
+/** Remaining slice - neutral gray (health score isn't allocation-colored). */
 const HEALTH_REMAINING_FILL = 'rgba(255,255,255,0.12)';
 
 function buildHealthPieData(score) {

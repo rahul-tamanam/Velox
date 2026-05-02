@@ -101,7 +101,7 @@ export default function BacktestChart() {
         </p>
         <p className="mt-2 max-w-3xl text-sm text-[var(--text-secondary)]">
           Backtested Jan 2020
-          {backtestRangeLabel ? ` – ${backtestRangeLabel}` : ''} · Real FRED macro data · 11-ETF momentum universe with
+          {backtestRangeLabel ? ` - ${backtestRangeLabel}` : ''} · Real FRED macro data · 11-ETF momentum universe with
           defensive rotation.
         </p>
         <div className="mt-6">
@@ -160,7 +160,7 @@ export default function BacktestChart() {
               </label>
             </div>
             <p className="text-xs text-[var(--text-secondary)]">
-              Date range: Jan 2020 – {backtestRangeLabel || '…'} (current month runs through today, not future month-end)
+              Date range: Jan 2020 - {backtestRangeLabel || '...'} (current month runs through today, not future month-end)
             </p>
           </div>
         </div>
@@ -169,7 +169,7 @@ export default function BacktestChart() {
       <div className="card-surface p-5">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <p className="max-w-xl text-xs leading-relaxed text-[var(--text-secondary)]">
-            Velox uses the brighter line and fill; SPY uses the secondary layer. Regime bands are off by default — turn them on
+            Velox uses the brighter line and fill; SPY uses the secondary layer. Regime bands are off by default - turn them on
             for subtle monochrome macro context behind the curves.
           </p>
           <button
@@ -211,10 +211,10 @@ export default function BacktestChart() {
 
       <div className="grid gap-4 md:grid-cols-4">
         {[
-          ['Total return', stats ? `${(stats.totalReturn * 100).toFixed(2)}%` : '—'],
-          ['vs SPY alpha', stats ? `${(stats.vsSpyAlpha * 100).toFixed(2)}%` : '—'],
-          ['Max drawdown', stats ? `${(stats.maxDrawdown * 100).toFixed(2)}%` : '—'],
-          ['Sharpe (approx)', stats ? stats.sharpeRatio.toFixed(2) : '—'],
+          ['Total return', stats ? `${(stats.totalReturn * 100).toFixed(2)}%` : 'N/A'],
+          ['vs SPY alpha', stats ? `${(stats.vsSpyAlpha * 100).toFixed(2)}%` : 'N/A'],
+          ['Max drawdown', stats ? `${(stats.maxDrawdown * 100).toFixed(2)}%` : 'N/A'],
+          ['Sharpe (approx)', stats ? stats.sharpeRatio.toFixed(2) : 'N/A'],
         ].map(([k, v]) => (
           <div key={k} className="card-surface p-4">
             <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">{k}</p>
@@ -291,12 +291,12 @@ export default function BacktestChart() {
       <div className="card-surface border border-[var(--border)] bg-[var(--bg-elevated)]/40 p-6 text-sm leading-relaxed text-[var(--text-secondary)]">
         <p>
           During aggressive Fed hiking cycles, Velox reads rising real rates alongside GDP momentum and can switch
-          into <span className="text-[var(--text-primary)]">Risk-Off</span> mode — leaning on gold, duration, bills,
+          into <span className="text-[var(--text-primary)]">Risk-Off</span> mode - leaning on gold, duration, bills,
           and listed real assets instead of chasing equity momentum.
         </p>
         <p className="mt-3">
           When growth stabilizes and policy stops tightening, the model rotates back toward{' '}
-          <span className="text-[var(--text-primary)]">Risk-On</span> momentum sleeves — aiming to participate in
+          <span className="text-[var(--text-primary)]">Risk-On</span> momentum sleeves - aiming to participate in
           recovery rallies while keeping rules-based exits.
         </p>
       </div>

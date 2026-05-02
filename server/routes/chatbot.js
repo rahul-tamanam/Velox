@@ -158,7 +158,7 @@ function portfolioSummaryForUser(userId) {
   return rows
     .map(
       (r) =>
-        `${r.ticker} (${r.type}) — ${r.quantity} shares @ avg $${Number(r.avg_buy_price).toFixed(2)}`
+        `${r.ticker} (${r.type}) - ${r.quantity} shares @ avg $${Number(r.avg_buy_price).toFixed(2)}`
     )
     .join('; ');
 }
@@ -168,7 +168,7 @@ router.post('/message', async (req, res) => {
     const key = process.env.GROQ_API_KEY;
     if (!key || key === 'your_groq_api_key_here') {
       return res.json({
-        reply: 'Chatbot unavailable — add GROQ_API_KEY to .env',
+        reply: 'Chatbot unavailable - add GROQ_API_KEY to .env',
       });
     }
 
@@ -207,7 +207,7 @@ router.post('/message', async (req, res) => {
       if (symbols.length) {
         try {
           const snaps = await fetchQuoteSnapshots(symbols);
-          quoteAppend = `\n\nQUOTE_SNAPSHOT (Velox uses Yahoo Finance via the app — typically delayed ~15 minutes; not for placing trades):\n${JSON.stringify(snaps)}`;
+          quoteAppend = `\n\nQUOTE_SNAPSHOT (Velox uses Yahoo Finance via the app - typically delayed ~15 minutes; not for placing trades):\n${JSON.stringify(snaps)}`;
         } catch {
           quoteAppend =
             '\n\nQuote lookup failed; suggest the user check Yahoo Finance or Google Finance for a live quote.';
@@ -218,10 +218,11 @@ router.post('/message', async (req, res) => {
     const system = `You are Velox Assistant, a friendly financial guide for beginner investors. The user's portfolio: ${portfolio}. Current macro regime: ${regimeStr}. Explain simply. Avoid jargon. When asked about the Velox algorithm, explain how it switches between Risk-On, Moderate, and Risk-Off modes based on real GDP and Fed rate data.
 
 Use Markdown in every reply: short paragraphs, **bold** for tickers and key numbers (e.g. **NVDA**, **RISK_ON**), numbered or bulleted lists when listing holdings or steps.${newsAppend}${quoteAppend}
+Never use em dashes or en dashes. Use a hyphen (-) instead.
 
-When QUOTE_SNAPSHOT is present: answer with a clear **Current price** (or **Prices**) section first. For each entry with ok:true, give **TICKER** at ~$price with currency; mention as-of time if present. If priceKind is "last_daily_close", say clearly this is the **last daily close** from chart data (Yahoo’s live quote API was unavailable) — not a live streaming print. Otherwise note quotes may be delayed ~15 min. All illustrative — not financial advice. Relate briefly to the macro regime (**RISK_ON**, **MODERATE**, or **RISK_OFF**). Never invent prices. For ok:false, suggest Yahoo or Google Finance.
+When QUOTE_SNAPSHOT is present: answer with a clear **Current price** (or **Prices**) section first. For each entry with ok:true, give **TICKER** at ~$price with currency; mention as-of time if present. If priceKind is "last_daily_close", say clearly this is the **last daily close** from chart data (Yahoo's live quote API was unavailable) - not a live streaming print. Otherwise note quotes may be delayed ~15 min. All illustrative - not financial advice. Relate briefly to the macro regime (**RISK_ON**, **MODERATE**, or **RISK_OFF**). Never invent prices. For ok:false, suggest Yahoo or Google Finance.
 
-When discussing news or headlines and a digest is present above: give a numbered list; each item must be **TICKER** — [article title](exact_url_from_digest) — source name, approximate date, and sentiment (bullish/neutral/bearish). Never invent URLs. If a digest entry has an empty url, quote the title without a link and say the link was unavailable.`;
+When discussing news or headlines and a digest is present above: give a numbered list; each item must be **TICKER** - [article title](exact_url_from_digest) - source name, approximate date, and sentiment (bullish/neutral/bearish). Never invent URLs. If a digest entry has an empty url, quote the title without a link and say the link was unavailable.`;
 
     let maxTokens = 800;
     if (userWantsNews(messages)) maxTokens = 1100;
@@ -244,7 +245,7 @@ When discussing news or headlines and a digest is present above: give a numbered
       timeout: 60000,
     });
 
-    const reply = data?.choices?.[0]?.message?.content ?? 'No response';
+    const reply = (data?.choices?.[0]?.message?.content ?? 'No response').replace(/[\u2014\u2013]/g, '-');
     res.json({ reply });
   } catch (e) {
     res.status(500).json({

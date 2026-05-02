@@ -13,9 +13,9 @@ function classifyRegime(gdpGrowth, currentRate, prevRate) {
 }
 
 const REGIME_LABELS = {
-  RISK_ON: 'Economy growing, rates stable — full momentum mode',
-  MODERATE: 'Growth OK but rates rising — diversified momentum',
-  RISK_OFF: 'Weak growth or restrictive rates — defensive positioning',
+  RISK_ON: 'Economy growing, rates stable - full momentum mode',
+  MODERATE: 'Growth OK but rates rising - diversified momentum',
+  RISK_OFF: 'Weak growth or restrictive rates - defensive positioning',
 };
 
 async function fetchFredSeries(seriesId, apiKey) {
@@ -70,7 +70,7 @@ async function getMacroRegimePayload() {
     ratesOk: true,
     label: REGIME_LABELS.MODERATE,
     lastUpdated: new Date().toISOString().slice(0, 10),
-    warning: 'FRED unavailable or API key missing — using MODERATE fallback',
+    warning: 'FRED unavailable or API key missing - using MODERATE fallback',
   };
 
   if (!apiKey || apiKey === 'your_fred_api_key_here') {

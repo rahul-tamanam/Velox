@@ -17,7 +17,7 @@ function idleState() {
  * Compares current portfolio health score to localStorage baseline after load,
  * then persists the current score for the next visit (write deferred for Strict Mode).
  *
- * States: ok (green, delta ≥ 0 or no baseline), amber (−5 ≤ delta ≤ −1), red (delta < −5).
+ * States: ok (green, delta >= 0 or no baseline), amber (-5 <= delta <= -1), red (delta < -5).
  */
 export default function RiskAlertCapsule({ summary }) {
   const [risk, setRisk] = useState(idleState);
@@ -153,7 +153,7 @@ export default function RiskAlertCapsule({ summary }) {
               <div className="flex justify-between gap-6">
                 <dt className="text-[var(--text-secondary)]">Current score</dt>
                 <dd className="font-medium tabular-nums">
-                  {current != null ? current : '—'}
+                  {current != null ? current : 'N/A'}
                 </dd>
               </div>
               {previous != null && current != null && (
@@ -171,14 +171,14 @@ export default function RiskAlertCapsule({ summary }) {
                         (delta ?? 0) === 0 && 'text-[var(--text-secondary)]'
                       )}
                     >
-                      {delta != null && delta > 0 ? `+${delta}` : delta === 0 ? '0' : '—'}
+                      {delta != null && delta > 0 ? `+${delta}` : delta === 0 ? '0' : 'N/A'}
                     </dd>
                   </div>
                 </>
               )}
               {previous == null && current != null && (
                 <p className="text-xs text-[var(--text-secondary)]">
-                  Baseline saved — future visits will compare against this score.
+                  Baseline saved - future visits will compare against this score.
                 </p>
               )}
               <div className="border-t border-[var(--border-subtle)] pt-2">
@@ -211,7 +211,7 @@ export default function RiskAlertCapsule({ summary }) {
                     isRed ? 'text-[var(--accent-red)]' : 'text-[var(--accent-neutral)]'
                   )}
                 >
-                  −{dropAmount}
+                  -{dropAmount}
                 </dd>
               </div>
               <div className="border-t border-[var(--border-subtle)] pt-2">

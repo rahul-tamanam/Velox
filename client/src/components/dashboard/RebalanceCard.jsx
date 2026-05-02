@@ -8,12 +8,12 @@ export default function RebalanceCard({ summary, riskProfile }) {
       return 'Consider shifting some stock exposure into diversified funds or bonds to match your conservative profile.';
     }
     if (riskProfile === 'aggressive' && stocks < 0.45) {
-      return 'You have meaningful fund allocation — if intentional for diversification, great; otherwise you could add selective stock sleeves.';
+      return 'You have meaningful fund allocation - if intentional for diversification, great; otherwise you could add selective stock sleeves.';
     }
     if (beta > 1.25) {
-      return 'Portfolio beta is elevated — pairing winners with lower-beta funds can smooth drawdowns.';
+      return 'Portfolio beta is elevated - pairing winners with lower-beta funds can smooth drawdowns.';
     }
-    return 'Allocation looks balanced versus your stated profile — revisit quarterly or after large moves.';
+    return 'Allocation looks balanced versus your stated profile - revisit quarterly or after large moves.';
   }, [summary, riskProfile]);
 
   return (

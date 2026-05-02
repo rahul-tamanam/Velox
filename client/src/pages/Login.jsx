@@ -21,7 +21,7 @@ export default function Login() {
       const apiErr = err.response?.data?.error;
       const hint =
         err.code === 'ERR_NETWORK' || err.message === 'Network Error'
-          ? ' Cannot reach API — make sure `npm run dev` is running and the server shows port 5000.'
+          ? ' Cannot reach API - make sure `npm run dev` is running and the server shows port 5000.'
           : '';
       setError(apiErr || `${err.message || 'Login failed'}.${hint}`);
     }

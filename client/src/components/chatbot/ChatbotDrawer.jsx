@@ -22,7 +22,7 @@ const panelTransition = {
 
 export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, macroRegime, portfolioTickers }) {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio — plain English only.' },
+    { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio - plain English only.' },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
   useEffect(() => {
     if (!open) return;
     setMessages([
-      { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio — plain English only.' },
+      { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio - plain English only.' },
     ]);
   }, [open]);
 
@@ -56,7 +56,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
           role: 'assistant',
           content:
             e.response?.data?.reply ||
-            'Assistant unavailable — please verify GROQ_API_KEY in server .env.',
+            'Assistant unavailable - please verify GROQ_API_KEY in server .env.',
         },
       ]);
     } finally {

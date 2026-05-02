@@ -77,7 +77,7 @@ export default function GoalTrackerWidget({
       <p className="mt-4 text-sm text-[var(--text-secondary)]">
         At your simulated median growth path, you could reach this goal in approximately{' '}
         <span className="font-mono text-[var(--text-primary)]">
-          {yearsToGoalMc != null ? `${yearsToGoalMc.toFixed(1)} yrs` : '—'}
+          {yearsToGoalMc != null ? `${yearsToGoalMc.toFixed(1)} yrs` : 'N/A'}
         </span>
         .
       </p>

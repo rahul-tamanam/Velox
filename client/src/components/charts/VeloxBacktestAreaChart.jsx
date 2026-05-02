@@ -16,7 +16,7 @@ const REGIME_FILL = {
 
 const MARGIN = { top: 20, right: 18, bottom: 46, left: 58 };
 
-/** Calendar date from API 'YYYY-MM-DD' — local clock noon avoids TZ day-shift bugs */
+/** Calendar date from API 'YYYY-MM-DD' - local clock noon avoids TZ day-shift bugs */
 function parseDate(s) {
   const raw = typeof s === 'string' ? s.split('T')[0] : '';
   const [y, mo, d] = raw.split('-').map((x) => Number(x));

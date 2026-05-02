@@ -289,7 +289,7 @@ export default function Dashboard() {
             <div className="card-surface space-y-4 px-6 py-5">
               <p className="text-lg font-medium tracking-tight text-[var(--text-primary)]">Ask Velox anything</p>
               <p className="ds-body max-w-xl leading-relaxed">
-                Open the assistant from the floating button — it already knows your holdings summary and macro regime
+                Open the assistant from the floating button - it already knows your holdings summary and macro regime
                 when Groq is configured.
               </p>
               <button type="button" className="ds-btn-primary" onClick={() => setChatOpen(true)}>

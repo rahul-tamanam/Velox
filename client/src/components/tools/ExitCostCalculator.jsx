@@ -9,7 +9,7 @@ import { fmtUsd } from '../../utils/formatters';
  *  - holdingPeriod: 'short' (< 1 yr) or 'long' (≥ 1 yr)
  *  - gain (long-term): gross capital gain in dollars
  *
- * Short-term gains are taxed as ordinary income — we estimate bracket
+ * Short-term gains are taxed as ordinary income - we estimate bracket
  * from gross proceeds as a rough proxy for income level.
  * Long-term rates: 0% / 15% / 20%
  */
@@ -21,14 +21,14 @@ function suggestTaxBracket(buyDate, buyPrice, sellPrice, quantity) {
   const grossProceeds = Number(sellPrice) * Number(quantity);
  
   if (isShortTerm) {
-    // Short-term: taxed as ordinary income — use gross proceeds as income proxy
+    // Short-term: taxed as ordinary income - use gross proceeds as income proxy
     if (grossProceeds < 11600)  return { rate: 10, label: 'Short-term · 10% bracket (est.)' };
     if (grossProceeds < 47150)  return { rate: 12, label: 'Short-term · 12% bracket (est.)' };
     if (grossProceeds < 100525) return { rate: 22, label: 'Short-term · 22% bracket (est.)' };
     if (grossProceeds < 191950) return { rate: 24, label: 'Short-term · 24% bracket (est.)' };
     return { rate: 32, label: 'Short-term · 32%+ bracket (est.)' };
   } else {
-    // Long-term: use gross proceeds as income proxy (same logic — conservative estimate)
+    // Long-term: use gross proceeds as income proxy (same logic - conservative estimate)
     if (grossProceeds < 44625)  return { rate: 0,  label: 'Long-term · 0%' };
     if (grossProceeds < 492300) return { rate: 15, label: 'Long-term · 15%' };
     return                             { rate: 20, label: 'Long-term · 20%' };

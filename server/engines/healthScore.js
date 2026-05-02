@@ -61,7 +61,7 @@ function computeHealthScore({
   let explanation =
     'Your portfolio blends diversification, volatility, goal progress, and drawdown cushion.';
   if (regimeKey === 'RISK_OFF' && rounded < 50) {
-    explanation = 'Macro headwinds detected — defensive posture recommended.';
+    explanation = 'Macro headwinds detected - defensive posture recommended.';
   } else if (regimeKey === 'RISK_ON' && rounded >= 71) {
     explanation = 'Strong portfolio shape with favorable macro tailwinds.';
   } else if (rounded >= 71) {
@@ -70,7 +70,7 @@ function computeHealthScore({
     explanation =
       'Room to improve: consider broader diversification or volatility balance.';
   } else {
-    explanation = 'Elevated risk posture — review concentration and timeline.';
+    explanation = 'Elevated risk posture - review concentration and timeline.';
   }
 
   return {

@@ -114,8 +114,8 @@ export default function ProfileModal({ open, onClose }) {
 
   if (!open) return null;
 
-  const displayName = user?.name ?? '—';
-  const displayEmail = user?.email ?? '—';
+  const displayName = user?.name ?? 'N/A';
+  const displayEmail = user?.email ?? 'N/A';
 
   async function submitPassword(e) {
     e.preventDefault();
@@ -347,8 +347,8 @@ export default function ProfileModal({ open, onClose }) {
                 const savedScore = scores[qi];
                 const chosen =
                   savedScore !== undefined && savedScore !== null
-                    ? q.options.find((o) => o.score === savedScore)?.label ?? '—'
-                    : '—';
+                    ? q.options.find((o) => o.score === savedScore)?.label ?? 'N/A'
+                    : 'N/A';
 
                 return (
                   <li key={q.id}>

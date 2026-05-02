@@ -1,5 +1,5 @@
 export function fmtUsd(n) {
-  if (n == null || Number.isNaN(n)) return '—';
+  if (n == null || Number.isNaN(n)) return 'N/A';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -8,7 +8,7 @@ export function fmtUsd(n) {
 }
 
 export function fmtPct(x, digits = 2) {
-  if (x == null || Number.isNaN(x)) return '—';
+  if (x == null || Number.isNaN(x)) return 'N/A';
   const p = x * 100;
   const sign = p > 0 ? '+' : '';
   return `${sign}${p.toFixed(digits)}%`;
