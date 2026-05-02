@@ -7,7 +7,6 @@ const TABS = [
   { id: 'tools', label: 'Tools' },
   { id: 'goals', label: 'Goals' },
   { id: 'news', label: 'News' },
-  { id: 'chatbot', label: 'Chatbot' },
 ];
 
 export default function Sidebar({ active, onSelect }) {

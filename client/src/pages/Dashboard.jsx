@@ -320,14 +320,14 @@ export default function Dashboard() {
         onConfirm={confirmSell}
       />
 
-      <ChatbotButton onClick={() => setChatOpen(true)} />
       <ChatbotDrawer
         open={chatOpen}
-        onClose={() => setChatOpen(false)}
+        onOpenChange={setChatOpen}
         portfolioSummary={portfolioSummary}
         macroRegime={macro}
         portfolioTickers={tickers}
       />
+      <ChatbotButton open={chatOpen} onOpenChange={setChatOpen} />
     </div>
   );
 }

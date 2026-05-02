@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import {
   ResponsiveContainer,
   LineChart,
@@ -54,6 +56,7 @@ export default function BacktestChart() {
   const [customDraft, setCustomDraft] = useState('');
   const [customEditing, setCustomEditing] = useState(false);
   const [data, setData] = useState(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   const isPresetCorpus = PRESETS.includes(corpus);
 
@@ -90,6 +93,11 @@ export default function BacktestChart() {
   );
 
   const stats = data?.stats;
+
+  const historyRows = useMemo(
+    () => (data?.positionHistory || []).slice(0, 60),
+    [data?.positionHistory]
+  );
 
   const backtestRangeLabel = useMemo(() => {
     const ds = data?.dates;
@@ -223,26 +231,68 @@ export default function BacktestChart() {
       </div>
 
       <div className="card-surface overflow-hidden">
-        <table className="w-full text-left text-xs">
-          <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)]">
-            <tr>
-              <th className="px-4 py-3">Period</th>
-              <th className="px-4 py-3">Regime</th>
-              <th className="px-4 py-3">Holdings</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(data?.positionHistory || []).slice(0, 60).map((row, i) => (
-              <tr key={i} className="border-t border-[var(--border)]">
-                <td className="px-4 py-2 font-mono text-[11px] text-[var(--text-secondary)]">
-                  {row.dateRange}
-                </td>
-                <td className="px-4 py-2">{row.regime}</td>
-                <td className="px-4 py-2 text-[var(--text-secondary)]">{row.holdings}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <button
+          type="button"
+          onClick={() => setHistoryOpen((o) => !o)}
+          aria-expanded={historyOpen}
+          className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition-colors hover:bg-[var(--bg-secondary)]/40"
+        >
+          <div className="min-w-0">
+            <p className="font-display text-sm font-semibold tracking-tight text-[var(--text-primary)]">
+              Period, regime &amp; holdings
+            </p>
+            <p className="mt-0.5 text-xs text-[var(--text-secondary)]">
+              {historyRows.length
+                ? `${historyRows.length} rebalance window${historyRows.length === 1 ? '' : 's'} · tap to ${historyOpen ? 'hide' : 'show'}`
+                : 'No rows yet'}
+            </p>
+          </div>
+          <motion.span
+            animate={{ rotate: historyOpen ? 180 : 0 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+            className="shrink-0 text-[var(--accent-gold)]"
+            aria-hidden
+          >
+            <ChevronDownIcon className="h-5 w-5" />
+          </motion.span>
+        </button>
+        <motion.div
+          initial={false}
+          animate={{
+            height: historyOpen ? 'auto' : 0,
+            opacity: historyOpen ? 1 : 0,
+          }}
+          transition={{
+            height: { type: 'spring', stiffness: 420, damping: 38, mass: 0.6 },
+            opacity: { duration: historyOpen ? 0.22 : 0.14, delay: historyOpen ? 0.04 : 0 },
+          }}
+          style={{ overflow: 'hidden' }}
+        >
+          <div className="border-t border-[var(--border)]">
+            <div className="max-h-[min(28rem,55vh)] overflow-x-auto overflow-y-auto">
+              <table className="w-full min-w-[20rem] text-left text-xs">
+                <thead className="sticky top-0 z-[1] bg-[var(--bg-secondary)] text-[var(--text-secondary)] shadow-[0_1px_0_var(--border)]">
+                  <tr>
+                    <th className="px-4 py-3">Period</th>
+                    <th className="px-4 py-3">Regime</th>
+                    <th className="px-4 py-3">Holdings</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {historyRows.map((row, i) => (
+                    <tr key={i} className="border-t border-[var(--border)]">
+                      <td className="px-4 py-2 font-mono text-[11px] text-[var(--text-secondary)]">
+                        {row.dateRange}
+                      </td>
+                      <td className="px-4 py-2">{row.regime}</td>
+                      <td className="px-4 py-2 text-[var(--text-secondary)]">{row.holdings}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       <div className="card-surface border border-[var(--border)] bg-[var(--bg-secondary)]/40 p-6 text-sm leading-relaxed text-[var(--text-secondary)]">
