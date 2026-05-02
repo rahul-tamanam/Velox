@@ -14,24 +14,23 @@ import { fmtUsd } from '../../utils/formatters';
  */
 function suggestTaxBracket(buyDate, buyPrice, sellPrice, quantity) {
   if (!buyDate || !sellPrice || !buyPrice || !quantity) return null;
-
+ 
   const holdMs = Date.now() - new Date(buyDate).getTime();
   const isShortTerm = holdMs < 365.25 * 24 * 3600 * 1000;
-  const gain = (Number(sellPrice) - Number(buyPrice)) * Number(quantity);
-
+  const grossProceeds = Number(sellPrice) * Number(quantity);
+ 
   if (isShortTerm) {
-    // Use gross proceeds as income proxy (more realistic than gain alone)
-    const grossProceeds = Number(sellPrice) * Number(quantity);
-    if (grossProceeds < 11600) return { rate: 10, label: 'Short-term · 10% bracket (est.)' };
-    if (grossProceeds < 47150) return { rate: 12, label: 'Short-term · 12% bracket (est.)' };
+    // Short-term: taxed as ordinary income — use gross proceeds as income proxy
+    if (grossProceeds < 11600)  return { rate: 10, label: 'Short-term · 10% bracket (est.)' };
+    if (grossProceeds < 47150)  return { rate: 12, label: 'Short-term · 12% bracket (est.)' };
     if (grossProceeds < 100525) return { rate: 22, label: 'Short-term · 22% bracket (est.)' };
     if (grossProceeds < 191950) return { rate: 24, label: 'Short-term · 24% bracket (est.)' };
     return { rate: 32, label: 'Short-term · 32%+ bracket (est.)' };
   } else {
-    // Long-term capital gains
-    if (gain < 44625) return { rate: 0, label: 'Long-term · 0% (gain below threshold)' };
-    if (gain < 492300) return { rate: 15, label: 'Long-term · 15%' };
-    return { rate: 20, label: 'Long-term · 20%' };
+    // Long-term: use gross proceeds as income proxy (same logic — conservative estimate)
+    if (grossProceeds < 44625)  return { rate: 0,  label: 'Long-term · 0%' };
+    if (grossProceeds < 492300) return { rate: 15, label: 'Long-term · 15%' };
+    return                             { rate: 20, label: 'Long-term · 20%' };
   }
 }
 
