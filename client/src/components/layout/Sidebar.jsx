@@ -7,11 +7,11 @@ import {
   BriefcaseIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  Cog6ToothIcon,
   EllipsisVerticalIcon,
   FlagIcon,
   NewspaperIcon,
   Squares2X2Icon,
+  UserCircleIcon,
   WrenchScrewdriverIcon,
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -34,7 +34,7 @@ function initialsFromName(name) {
   return name.slice(0, 2).toUpperCase();
 }
 
-export default function Sidebar({ active, onSelect }) {
+export default function Sidebar({ active, onSelect, onOpenProfile }) {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [collapsed, setCollapsed] = useState(() => {
@@ -87,9 +87,9 @@ export default function Sidebar({ active, onSelect }) {
     navigate('/');
   }
 
-  function handleSettings() {
+  function handleProfile() {
     setMenuOpen(false);
-    navigate('/onboarding');
+    onOpenProfile?.();
   }
 
   const iconIdle = 'text-white/50 group-hover:text-white/90';
@@ -192,11 +192,11 @@ export default function Sidebar({ active, onSelect }) {
             <button
               type="button"
               role="menuitem"
-              onClick={handleSettings}
+              onClick={handleProfile}
               className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/[0.06] hover:text-white"
             >
-              <Cog6ToothIcon className="h-4 w-4 text-white/50" />
-              Settings
+              <UserCircleIcon className="h-4 w-4 text-white/50" />
+              Profile
             </button>
             <button
               type="button"

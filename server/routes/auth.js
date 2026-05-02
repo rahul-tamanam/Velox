@@ -6,6 +6,30 @@ const { authMiddleware } = require('../middleware/auth');
 
 const router = express.Router();
 
+function parseOnboardingAnswers(raw) {
+  if (raw == null || raw === '') return [];
+  try {
+    const v = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    return Array.isArray(v) ? v : [];
+  } catch {
+    return [];
+  }
+}
+
+function userRowToClient(row) {
+  if (!row) return null;
+  return {
+    id: Number(row.id),
+    name: row.name,
+    email: row.email,
+    risk_profile: row.risk_profile,
+    goal_name: row.goal_name,
+    goal_target_amount: row.goal_target_amount,
+    goal_target_year: row.goal_target_year,
+    onboarding_answers: parseOnboardingAnswers(row.onboarding_answers),
+  };
+}
+
 function normalizeEmail(email) {
   return String(email || '')
     .trim()
@@ -35,7 +59,10 @@ router.post('/register', (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-    res.json({ token, user: { id: newId, name, email } });
+    res.json({
+      token,
+      user: { id: newId, name, email, onboarding_answers: [] },
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -58,15 +85,7 @@ router.post('/login', (req, res) => {
     });
     res.json({
       token,
-      user: {
-        id: userId,
-        name: user.name,
-        email: user.email,
-        risk_profile: user.risk_profile,
-        goal_name: user.goal_name,
-        goal_target_amount: user.goal_target_amount,
-        goal_target_year: user.goal_target_year,
-      },
+      user: userRowToClient(user),
     });
   } catch (e) {
     res.status(500).json({ error: e.message });
@@ -75,7 +94,7 @@ router.post('/login', (req, res) => {
 
 router.patch('/profile', authMiddleware, (req, res) => {
   try {
-    const { risk_profile, goal_name, goal_target_amount, goal_target_year, name } = req.body;
+    const { risk_profile, goal_name, goal_target_amount, goal_target_year, name, onboarding_answers } = req.body;
     const fields = [];
     const vals = [];
     if (risk_profile !== undefined) {
@@ -98,13 +117,54 @@ router.patch('/profile', authMiddleware, (req, res) => {
       fields.push('name = ?');
       vals.push(name);
     }
+    if (onboarding_answers !== undefined) {
+      fields.push('onboarding_answers = ?');
+      const stored =
+        typeof onboarding_answers === 'string' ? onboarding_answers : JSON.stringify(onboarding_answers);
+      vals.push(stored);
+    }
     if (!fields.length) return res.status(400).json({ error: 'No updates' });
     vals.push(req.user.id);
     db.prepare(`UPDATE users SET ${fields.join(', ')} WHERE id = ?`).run(...vals);
-    const user = db.prepare('SELECT id,name,email,risk_profile,goal_name,goal_target_amount,goal_target_year FROM users WHERE id = ?').get(
-      req.user.id
-    );
-    res.json({ user });
+    const row = db
+      .prepare(
+        'SELECT id,name,email,risk_profile,goal_name,goal_target_amount,goal_target_year,onboarding_answers FROM users WHERE id = ?'
+      )
+      .get(req.user.id);
+    res.json({ user: userRowToClient(row) });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.delete('/account', authMiddleware, (req, res) => {
+  try {
+    const uid = req.user.id;
+    db.prepare('DELETE FROM holdings WHERE user_id = ?').run(uid);
+    db.prepare('DELETE FROM transactions WHERE user_id = ?').run(uid);
+    db.prepare('DELETE FROM users WHERE id = ?').run(uid);
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.patch('/password', authMiddleware, (req, res) => {
+  try {
+    const { current_password, new_password } = req.body;
+    if (!current_password || !new_password) {
+      return res.status(400).json({ error: 'Missing fields' });
+    }
+    if (String(new_password).length < 6) {
+      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    }
+    const row = db.prepare('SELECT password_hash FROM users WHERE id = ?').get(req.user.id);
+    if (!row || !bcrypt.compareSync(current_password, row.password_hash)) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+    const hash = bcrypt.hashSync(new_password, 10);
+    db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hash, req.user.id);
+    res.json({ ok: true });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

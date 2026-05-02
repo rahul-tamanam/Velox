@@ -3,14 +3,24 @@ function computeHealthScore({
   portfolioVolatility,
   goalProgress,
   maxDrawdownEstimate,
+  regime,
 }) {
   const n = holdingsWithWeights?.length || 0;
   const herfindahl =
     holdingsWithWeights?.reduce((s, h) => s + (h.weight || 0) ** 2, 0) || 1;
   const effectiveN = herfindahl > 0 ? 1 / herfindahl : 1;
-  const diversificationScore = Math.min(100, ((effectiveN - 1) / 9) * 100);
+  const diversificationScore = Math.min(
+    100,
+    ((effectiveN - 1) / Math.max(n - 1, 9)) * 100
+  );
 
-  const vol = Math.min(Math.max(portfolioVolatility ?? 0.15, 0.05), 0.6);
+  const portfolioVol =
+    portfolioVolatility ??
+    (holdingsWithWeights ?? []).reduce(
+      (s, h) => s + (h.weight || 0) * (h.beta ?? 1),
+      0
+    ) * 0.16;
+  const vol = Math.min(Math.max(portfolioVol ?? 0.15, 0.05), 0.6);
   const volatilityScore = Math.max(0, 100 - ((vol - 0.1) / 0.35) * 100);
 
   const gp = Math.min(Math.max(goalProgress ?? 0.5, 0), 1);

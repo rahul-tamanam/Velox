@@ -63,6 +63,7 @@ router.post('/whatif', (req, res) => {
     const beforeHealth = computeHealthScore({
       holdingsWithWeights: Array.from({ length: hc }).map((_, i) => ({
         weight: 1 / hc,
+        beta: 1,
       })),
       portfolioVolatility: 0.18,
       goalProgress: Math.min(1, tv / ga),
@@ -72,6 +73,7 @@ router.post('/whatif', (req, res) => {
     const afterHealth = computeHealthScore({
       holdingsWithWeights: Array.from({ length: hc }).map((_, i) => ({
         weight: 1 / hc,
+        beta: 1,
       })),
       portfolioVolatility: 0.22,
       goalProgress: Math.min(1, newValue / ga),

@@ -17,7 +17,7 @@ function idleState() {
  * Compares current portfolio health score to localStorage baseline after load,
  * then persists the current score for the next visit (write deferred for Strict Mode).
  *
- * States: ok (green, delta ≥ 0 or no baseline), amber (−10 ≤ delta ≤ −1), red (delta < −10).
+ * States: ok (green, delta ≥ 0 or no baseline), amber (−5 ≤ delta ≤ −1), red (delta < −5).
  */
 export default function RiskAlertCapsule({ summary }) {
   const [risk, setRisk] = useState(idleState);
@@ -76,7 +76,7 @@ export default function RiskAlertCapsule({ summary }) {
         delta,
         recordedAt,
       });
-    } else if (delta >= -10) {
+    } else if (delta >= -5) {
       setRisk({
         severity: 'amber',
         previous: prevNum,

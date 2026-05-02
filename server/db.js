@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
   goal_name TEXT DEFAULT 'Retirement',
   goal_target_amount REAL DEFAULT 1000000,
   goal_target_year INTEGER DEFAULT 2045,
+  onboarding_answers TEXT DEFAULT '[]',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -42,6 +43,12 @@ CREATE TABLE IF NOT EXISTS transactions (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 `);
+
+try {
+  db.exec("ALTER TABLE users ADD COLUMN onboarding_answers TEXT DEFAULT '[]';");
+} catch {
+  /* column already exists */
+}
 
 const DEMO_EMAIL = 'demo@velox.com';
 const DEMO_PASSWORD = 'demo1234';

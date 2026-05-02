@@ -169,14 +169,12 @@ router.get('/summary', async (req, res) => {
     const goalAmt = user?.goal_target_amount ?? 1;
     const goalProgress = Math.min(1, totalValue / goalAmt);
 
-    const volGuess = Math.min(0.35, 0.12 + (weightedBeta - 1) * 0.08 + Math.max(0, 5 - enriched.length) * 0.02);
-
     const health = computeHealthScore({
       holdingsWithWeights: enriched.map((h) => ({
         ticker: h.ticker,
         weight: totalValue > 0 ? h.market_value / totalValue : 0,
+        beta: h.beta,
       })),
-      portfolioVolatility: volGuess,
       goalProgress,
       maxDrawdownEstimate: 0.18,
     });

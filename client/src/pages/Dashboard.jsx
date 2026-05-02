@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Sidebar from '../components/layout/Sidebar.jsx';
+import ProfileModal from '../components/profile/ProfileModal.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
 import MacroRegimeBadge from '../components/dashboard/MacroRegimeBadge.jsx';
@@ -33,6 +34,7 @@ export default function Dashboard() {
   const { holdings, summary, refresh } = usePortfolio();
   const [tab, setTab] = useState('overview');
   const [chatOpen, setChatOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [macro, setMacro] = useState(null);
   const [mcYears, setMcYears] = useState(null);
   const [simTab, setSimTab] = useState('montecarlo');
@@ -107,7 +109,7 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen min-h-0 overflow-hidden bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
-      <Sidebar active={tab} onSelect={setTab} />
+      <Sidebar active={tab} onSelect={setTab} onOpenProfile={() => setProfileOpen(true)} />
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <header className="relative flex shrink-0 flex-wrap items-center gap-4 border-b border-[var(--border)] bg-[var(--bg-secondary)]/70 px-4 py-4 lg:px-8">
           <select
@@ -297,6 +299,7 @@ export default function Dashboard() {
         portfolioTickers={tickers}
       />
       <ChatbotButton open={chatOpen} onOpenChange={setChatOpen} />
+      <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
     </div>
   );
 }

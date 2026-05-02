@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import api from '../utils/api';
 import { useAuth } from '../context/AuthContext.jsx';
 
-const QUESTIONS = [
+export const QUESTIONS = [
   {
     id: 'q1',
     prompt: 'How would you react if your portfolio dropped 20%?',
@@ -58,8 +58,11 @@ export default function Onboarding() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState([]);
 
-  async function finish(profile) {
-    const { data } = await api.patch('/auth/profile', { risk_profile: profile });
+  async function finish(profile, scores) {
+    const { data } = await api.patch('/auth/profile', {
+      risk_profile: profile,
+      onboarding_answers: JSON.stringify(scores),
+    });
     if (data?.user) {
       localStorage.setItem('velox_user', JSON.stringify(data.user));
       setUser(data.user);
@@ -73,7 +76,7 @@ export default function Onboarding() {
     if (step >= QUESTIONS.length - 1) {
       const s = next.reduce((a, b) => a + b, 0);
       const profile = s <= -2 ? 'conservative' : s >= 4 ? 'aggressive' : 'moderate';
-      finish(profile);
+      finish(profile, next);
       return;
     }
     setStep(step + 1);
