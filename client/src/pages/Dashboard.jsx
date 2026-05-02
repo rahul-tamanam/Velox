@@ -206,7 +206,7 @@ export default function Dashboard() {
               </div>
 
       <div
-        className="grid min-h-0 grid-cols-[minmax(240px,22%)_minmax(0,1fr)_minmax(340px,28%)] grid-rows-[minmax(0,340px)_minmax(0,1fr)] gap-3 overflow-hidden"
+        className="grid min-h-0 grid-cols-[minmax(240px,20%)_minmax(0,1fr)_minmax(320px,26%)] grid-rows-[minmax(0,320px)_minmax(220px,1fr)] gap-3 overflow-hidden"
         style={{
           gridTemplateAreas: `"health holdings market" "pnl pnl market"`,
         }}

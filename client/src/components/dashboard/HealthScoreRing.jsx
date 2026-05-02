@@ -158,8 +158,8 @@ export default function HealthScoreRing({
           <ShellCardTitleRow icon={<ShieldCheckIcon aria-hidden />} title="Portfolio health" />
         </InnerShellHeader>
 
-        <InnerShellBody className={compact ? 'gap-1 !pt-1 !pb-3 flex flex-col' : 'gap-2 flex flex-col justify-between'}>
-          <div className="mx-auto mt-1 flex w-full flex-col items-center shrink-0">
+        <InnerShellBody className={compact ? '!pt-2 !pb-3 flex flex-col items-center justify-center' : 'flex flex-col items-center justify-center gap-2'}>
+          <div className="mx-auto flex w-full flex-col items-center shrink-0">
             <svg viewBox="0 0 220 105" className="h-auto w-full max-h-[105px] overflow-visible" aria-hidden>
               <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="#3C3F45" strokeWidth={18} strokeLinecap="round" />
               <path d={progressPath} fill="none" stroke={arcColor} strokeWidth={18} strokeLinecap="round" />
@@ -182,7 +182,7 @@ export default function HealthScoreRing({
           </div>
 
           {explanation ? (
-            <p className="mt-auto shrink-0 w-full px-2 pb-1 text-center text-[0.72rem] leading-snug text-[var(--text-secondary)] break-words whitespace-normal">
+            <p className="mt-3 shrink-0 w-full px-2 text-center text-[0.72rem] leading-snug text-[var(--text-secondary)] break-words whitespace-normal">
               {explanation}
             </p>
           ) : null}
