@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import api from '../../utils/api';
 import InfoTooltip from '../ui/InfoTooltip.jsx';
+import NumberStepperInput from '../ui/NumberStepperInput.jsx';
 
 function typeLabel(type) {
   if (type === 'stock') return 'Stock';
@@ -181,24 +182,22 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                 </label>
                 <label className="text-xs text-[var(--text-secondary)]">
                   Quantity
-                  <input
+                  <NumberStepperInput
                     required
-                    type="number"
-                    step="any"
-                    min="0"
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
+                    className="mt-1 font-mono"
+                    step={0.0001}
+                    min={0}
                     value={buyForm.quantity}
                     onChange={(e) => setBuyForm({ ...buyForm, quantity: e.target.value })}
                   />
                 </label>
                 <label className="text-xs text-[var(--text-secondary)]">
                   Average buy price
-                  <input
+                  <NumberStepperInput
                     required
-                    type="number"
-                    step="any"
-                    min="0"
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
+                    className="mt-1 font-mono"
+                    step={0.01}
+                    min={0}
                     value={buyForm.avg_buy_price}
                     onChange={(e) => setBuyForm({ ...buyForm, avg_buy_price: e.target.value })}
                   />
@@ -254,25 +253,23 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                 </label>
                 <label className="text-xs text-[var(--text-secondary)]">
                   Quantity to sell
-                  <input
+                  <NumberStepperInput
                     required
-                    type="number"
-                    step="any"
-                    min="0"
+                    className="mt-1 font-mono"
+                    step={0.0001}
+                    min={0}
                     max={selectedHolding ? selectedHolding.quantity : undefined}
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
                     value={sellForm.quantity}
                     onChange={(e) => setSellForm({ ...sellForm, quantity: e.target.value })}
                   />
                 </label>
                 <label className="text-xs text-[var(--text-secondary)]">
                   Sell price
-                  <input
+                  <NumberStepperInput
                     required
-                    type="number"
-                    step="any"
-                    min="0"
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
+                    className="mt-1 font-mono"
+                    step={0.01}
+                    min={0}
                     value={sellForm.sell_price}
                     onChange={(e) => setSellForm({ ...sellForm, sell_price: e.target.value })}
                   />

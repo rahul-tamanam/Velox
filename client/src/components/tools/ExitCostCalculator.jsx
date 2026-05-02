@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import InfoTooltip from '../ui/InfoTooltip.jsx';
+import NumberStepperInput from '../ui/NumberStepperInput.jsx';
 import api from '../../utils/api';
 import { fmtUsd } from '../../utils/formatters';
 
@@ -78,31 +79,62 @@ export default function ExitCostCalculator({ holdings }) {
       <InfoTooltip text="Calculates your true net proceeds if you sold a holding today. Factors in brokerage fees, securities transaction tax (0.1%), and capital gains tax. Holdings under 1 year are taxed as short-term at your full bracket rate." />
       <p className="font-display text-xl">Exit cost calculator</p>
       <div className="grid gap-4 md:grid-cols-2">
-        {[
-          ['ticker', 'Ticker'],
-          ['quantity', 'Quantity'],
-          ['buyPrice', 'Buy price'],
-          ['sellPrice', 'Sell price'],
-          ['buyDate', 'Buy date (YYYY-MM-DD)'],
-          ['brokerageFeePct', 'Brokerage fee %'],
-        ].map(([key, label]) => (
-          <label key={key} className="block text-xs text-[var(--text-secondary)]">
-            {label}
-            <input
-              className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
-              value={form[key]}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  [key]:
-                    key === 'buyDate' || key === 'ticker'
-                      ? e.target.value
-                      : Number(e.target.value),
-                })
-              }
-            />
-          </label>
-        ))}
+        <label className="block text-xs text-[var(--text-secondary)]">
+          Ticker
+          <input
+            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 font-mono text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[rgba(240,180,41,0.5)]"
+            value={form.ticker}
+            onChange={(e) => setForm({ ...form, ticker: e.target.value })}
+          />
+        </label>
+        <label className="block text-xs text-[var(--text-secondary)]">
+          Quantity
+          <NumberStepperInput
+            className="mt-1 font-mono"
+            step={0.0001}
+            min={0}
+            value={form.quantity}
+            onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })}
+          />
+        </label>
+        <label className="block text-xs text-[var(--text-secondary)]">
+          Buy price
+          <NumberStepperInput
+            className="mt-1 font-mono"
+            step={0.01}
+            min={0}
+            value={form.buyPrice}
+            onChange={(e) => setForm({ ...form, buyPrice: Number(e.target.value) })}
+          />
+        </label>
+        <label className="block text-xs text-[var(--text-secondary)]">
+          Sell price
+          <NumberStepperInput
+            className="mt-1 font-mono"
+            step={0.01}
+            min={0}
+            value={form.sellPrice}
+            onChange={(e) => setForm({ ...form, sellPrice: Number(e.target.value) })}
+          />
+        </label>
+        <label className="block text-xs text-[var(--text-secondary)]">
+          Buy date (YYYY-MM-DD)
+          <input
+            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 font-mono text-sm text-white outline-none transition-colors focus:border-[rgba(240,180,41,0.5)]"
+            value={form.buyDate}
+            onChange={(e) => setForm({ ...form, buyDate: e.target.value })}
+          />
+        </label>
+        <label className="block text-xs text-[var(--text-secondary)]">
+          Brokerage fee %
+          <NumberStepperInput
+            className="mt-1 font-mono"
+            step={0.01}
+            min={0}
+            value={form.brokerageFeePct}
+            onChange={(e) => setForm({ ...form, brokerageFeePct: Number(e.target.value) })}
+          />
+        </label>
       </div>
       {/* Auto tax bracket field */}
       <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/60 p-4">
@@ -118,9 +150,11 @@ export default function ExitCostCalculator({ holdings }) {
         </div>
 
         {taxOverride ? (
-          <input
-            type="number"
-            className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
+          <NumberStepperInput
+            className="mt-2 font-mono"
+            step={1}
+            min={0}
+            max={50}
             value={form.taxBracketPct}
             onChange={(e) => setForm({ ...form, taxBracketPct: Number(e.target.value) })}
           />

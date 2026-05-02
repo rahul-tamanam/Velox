@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createChart } from 'lightweight-charts';
 import api from '../../utils/api';
+import ChartInsightPanel from './ChartInsightPanel.jsx';
 
 const PERIODS = [
   { id: '1d', label: '1D' },
@@ -17,6 +18,7 @@ export default function LiveStockChart({ tickers }) {
   const [ticker, setTicker] = useState(tickers?.[0] || 'SPY');
   const [period, setPeriod] = useState('1mo');
   const [error, setError] = useState(null);
+  const [candles, setCandles] = useState([]);
 
   useEffect(() => {
     if (tickers?.length && !tickers.includes(ticker)) {
@@ -69,16 +71,18 @@ export default function LiveStockChart({ tickers }) {
           params: { ticker, period },
         });
         if (cancelled) return;
-        const candles = (data.candles || []).map((c) => ({
+        const next = (data.candles || []).map((c) => ({
           time: c.time,
           open: c.open,
           high: c.high,
           low: c.low,
           close: c.close,
         }));
-        seriesRef.current.setData(candles);
+        setCandles(next);
+        seriesRef.current.setData(next);
         chartRef.current?.timeScale().fitContent();
       } catch (e) {
+        setCandles([]);
         setError(e.response?.data?.error || e.message);
       }
     })();
@@ -88,6 +92,7 @@ export default function LiveStockChart({ tickers }) {
   }, [ticker, period]);
 
   return (
+    <>
     <div className="card-surface p-5">
       <div className="flex flex-wrap items-center gap-3">
         <label className="text-xs text-[var(--text-secondary)]">Symbol</label>
@@ -122,5 +127,7 @@ export default function LiveStockChart({ tickers }) {
       {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
       <div ref={containerRef} className="mt-4 w-full" />
     </div>
+    <ChartInsightPanel ticker={ticker} period={period} candles={candles} />
+    </>
   );
 }

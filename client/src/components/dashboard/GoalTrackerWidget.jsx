@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { fmtUsd } from '../../utils/formatters';
+import NumberStepperInput from '../ui/NumberStepperInput.jsx';
 import api from '../../utils/api';
 
 export default function GoalTrackerWidget({
@@ -92,16 +93,19 @@ export default function GoalTrackerWidget({
               onChange={(e) => setForm({ ...form, goal_name: e.target.value })}
             />
             <label className="mt-3 block text-xs text-[var(--text-secondary)]">Target amount</label>
-            <input
-              type="number"
-              className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm font-mono"
+            <NumberStepperInput
+              className="mt-1 font-mono"
+              step={1000}
+              min={0}
               value={form.goal_target_amount}
               onChange={(e) => setForm({ ...form, goal_target_amount: Number(e.target.value) })}
             />
             <label className="mt-3 block text-xs text-[var(--text-secondary)]">Target year</label>
-            <input
-              type="number"
-              className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm font-mono"
+            <NumberStepperInput
+              className="mt-1 font-mono"
+              step={1}
+              min={2000}
+              max={2100}
               value={form.goal_target_year}
               onChange={(e) => setForm({ ...form, goal_target_year: Number(e.target.value) })}
             />

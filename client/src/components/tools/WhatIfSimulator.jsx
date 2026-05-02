@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import InfoTooltip from '../ui/InfoTooltip.jsx';
+import NumberStepperInput from '../ui/NumberStepperInput.jsx';
 import api from '../../utils/api';
 import { fmtUsd } from '../../utils/formatters';
 
@@ -49,9 +50,12 @@ export default function WhatIfSimulator({ summary, holdings, goalAmount }) {
         ))}
       </div>
       {scenario === 'custom' && (
-        <input
-          type="number"
-          className="w-40 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
+        <NumberStepperInput
+          wrapperClassName="w-40"
+          className="font-mono"
+          step={1}
+          min={0}
+          max={100}
           value={customPct}
           onChange={(e) => setCustomPct(Number(e.target.value))}
         />

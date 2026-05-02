@@ -12,6 +12,7 @@ import {
 import api from '../../utils/api';
 import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 import InfoTooltip from '../ui/InfoTooltip.jsx';
+import NumberStepperInput from '../ui/NumberStepperInput.jsx';
 
 export default function MonteCarloChart({ holdings, goalAmount }) {
   const [horizon, setHorizon] = useState(15);
@@ -74,10 +75,10 @@ export default function MonteCarloChart({ holdings, goalAmount }) {
           <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">
             Monthly contribution
           </p>
-          <input
-            type="number"
+          <NumberStepperInput
+            className="mt-2 w-40 font-mono"
+            step={1}
             min={0}
-            className="mt-2 w-40 rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
             value={contrib}
             onChange={(e) => setContrib(Number(e.target.value))}
           />
