@@ -117,7 +117,7 @@ export default function BacktestChart() {
                     setCustomDraft('');
                     setCorpus(c);
                   }}
-                  className={`rounded-lg border px-4 py-2 font-mono text-sm transition-colors ${
+                  className={`rounded-lg border px-4 py-2 text-sm transition-colors ${
                     isPresetCorpus && corpus === c && !customEditing
                       ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
                       : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
@@ -126,7 +126,7 @@ export default function BacktestChart() {
                   ${c.toLocaleString()}
                 </button>
               ))}
-              <label className="flex min-w-[11rem] flex-1 items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 font-mono text-sm">
+              <label className="flex min-w-[11rem] flex-1 items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-sm">
                 <span className="text-[var(--text-secondary)]">$</span>
                 <input
                   type="text"
@@ -218,7 +218,7 @@ export default function BacktestChart() {
         ].map(([k, v]) => (
           <div key={k} className="card-surface p-4">
             <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">{k}</p>
-            <p className="mt-2 font-mono text-xl text-[var(--text-primary)]">{v}</p>
+            <p className="mt-2 text-xl text-[var(--text-primary)]">{v}</p>
           </div>
         ))}
       </div>
@@ -274,7 +274,7 @@ export default function BacktestChart() {
                 <tbody>
                   {historyRows.map((row, i) => (
                     <tr key={i} className="border-t border-[var(--border)]">
-                      <td className="px-4 py-2 font-mono text-[11px] text-[var(--text-secondary)]">
+                      <td className="px-4 py-2 text-[11px] text-[var(--text-secondary)]">
                         {row.dateRange}
                       </td>
                       <td className="px-4 py-2">{row.regime}</td>

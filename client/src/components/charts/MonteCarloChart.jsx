@@ -70,14 +70,14 @@ export default function MonteCarloChart({ holdings, goalAmount }) {
             className="mt-2 w-56"
             style={{ accentColor: 'var(--accent)' }}
           />
-          <p className="font-mono text-sm text-[var(--text-primary)]">{horizon} yrs</p>
+          <p className="text-sm text-[var(--text-primary)]">{horizon} yrs</p>
         </div>
         <div>
           <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">
             Monthly contribution
           </p>
           <NumberStepperInput
-            className="mt-2 w-40 font-mono"
+            className="mt-2 w-40"
             step={1}
             min={0}
             value={contrib}
@@ -150,19 +150,19 @@ export default function MonteCarloChart({ holdings, goalAmount }) {
       <div className="mt-6 grid gap-3 md:grid-cols-3">
         <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
           <p className="text-xs text-[var(--text-secondary)]">Median outcome</p>
-          <p className="font-mono text-xl">
+          <p className="text-xl">
             {loading ? '…' : `$${Math.round(data?.medianFinal || 0).toLocaleString()}`}
           </p>
         </div>
         <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
           <p className="text-xs text-[var(--text-secondary)]">P(goal)</p>
-          <p className="font-mono text-xl">
+          <p className="text-xl">
             {loading ? '…' : `${((data?.probHitGoal || 0) * 100).toFixed(1)}%`}
           </p>
         </div>
         <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
           <p className="text-xs text-[var(--text-secondary)]">Stress P10</p>
-          <p className="font-mono text-xl">
+          <p className="text-xl">
             {loading ? '…' : `$${Math.round(data?.worstCaseP10 || 0).toLocaleString()}`}
           </p>
         </div>

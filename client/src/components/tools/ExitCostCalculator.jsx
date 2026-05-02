@@ -82,7 +82,7 @@ export default function ExitCostCalculator({ holdings }) {
         <label className="block text-xs text-[var(--text-secondary)]">
           Ticker
           <input
-            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 font-mono text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[rgba(253,96,2,0.55)]"
+            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[rgba(253,96,2,0.55)]"
             value={form.ticker}
             onChange={(e) => setForm({ ...form, ticker: e.target.value })}
           />
@@ -90,7 +90,7 @@ export default function ExitCostCalculator({ holdings }) {
         <label className="block text-xs text-[var(--text-secondary)]">
           Quantity
           <NumberStepperInput
-            className="mt-1 font-mono"
+            className="mt-1"
             step={0.0001}
             min={0}
             value={form.quantity}
@@ -100,7 +100,7 @@ export default function ExitCostCalculator({ holdings }) {
         <label className="block text-xs text-[var(--text-secondary)]">
           Buy price
           <NumberStepperInput
-            className="mt-1 font-mono"
+            className="mt-1"
             step={0.01}
             min={0}
             value={form.buyPrice}
@@ -110,7 +110,7 @@ export default function ExitCostCalculator({ holdings }) {
         <label className="block text-xs text-[var(--text-secondary)]">
           Sell price
           <NumberStepperInput
-            className="mt-1 font-mono"
+            className="mt-1"
             step={0.01}
             min={0}
             value={form.sellPrice}
@@ -120,7 +120,7 @@ export default function ExitCostCalculator({ holdings }) {
         <label className="block text-xs text-[var(--text-secondary)]">
           Buy date (YYYY-MM-DD)
           <input
-            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 font-mono text-sm text-white outline-none transition-colors focus:border-[rgba(253,96,2,0.55)]"
+            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 text-sm text-white outline-none transition-colors focus:border-[rgba(253,96,2,0.55)]"
             value={form.buyDate}
             onChange={(e) => setForm({ ...form, buyDate: e.target.value })}
           />
@@ -128,7 +128,7 @@ export default function ExitCostCalculator({ holdings }) {
         <label className="block text-xs text-[var(--text-secondary)]">
           Brokerage fee %
           <NumberStepperInput
-            className="mt-1 font-mono"
+            className="mt-1"
             step={0.01}
             min={0}
             value={form.brokerageFeePct}
@@ -151,7 +151,7 @@ export default function ExitCostCalculator({ holdings }) {
 
         {taxOverride ? (
           <NumberStepperInput
-            className="mt-2 font-mono"
+            className="mt-2"
             step={1}
             min={0}
             max={50}
@@ -160,7 +160,7 @@ export default function ExitCostCalculator({ holdings }) {
           />
         ) : (
           <div className="mt-2 flex items-center gap-3">
-            <span className="font-mono text-2xl text-[var(--text-primary)]">{form.taxBracketPct}%</span>
+            <span className="text-2xl text-[var(--text-primary)]">{form.taxBracketPct}%</span>
             <span className="text-xs text-[var(--text-secondary)]">
               {suggestTaxBracket(form.buyDate, form.buyPrice, form.sellPrice, form.quantity)?.label ??
                 'Enter buy date & prices to auto-detect'}
@@ -180,13 +180,13 @@ export default function ExitCostCalculator({ holdings }) {
             <p>Fees: {fmtUsd(out.brokerageFee)}</p>
             <p>STT (0.1%): {fmtUsd(out.stt)}</p>
             <p>Tax ({out.classification}): {fmtUsd(out.estimatedTax)}</p>
-            <p className="mt-2 font-mono text-lg font-semibold text-[var(--text-primary)]">
+            <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">
               Net {fmtUsd(out.netProceeds)}
             </p>
           </div>
           <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]/60 p-4 text-sm">
             <p className="text-xs uppercase text-[var(--text-secondary)]">Hold (approx.)</p>
-            <p className="font-mono text-lg">{fmtUsd(out.comparison?.holdApprox)}</p>
+            <p className="text-lg">{fmtUsd(out.comparison?.holdApprox)}</p>
             <p className="mt-2 text-xs text-[var(--text-secondary)]">
               Holding keeps risk exposure; selling realizes gains and locks proceeds shown left.
             </p>
