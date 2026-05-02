@@ -3,6 +3,29 @@ const axios = require('axios');
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
 
+/** Rolling window: headlines from the last 7 days only (not the same as the Velox backtest range). */
+const NEWS_RECENT_DAYS = 7;
+const NEWS_WINDOW_MS = NEWS_RECENT_DAYS * 24 * 60 * 60 * 1000;
+
+function newsApiFromIsoDate() {
+  const d = new Date();
+  d.setDate(d.getDate() - NEWS_RECENT_DAYS);
+  return d.toISOString().slice(0, 10);
+}
+
+function isPublishedInNewsRange(iso) {
+  if (!iso || typeof iso !== 'string') return false;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return false;
+  const now = Date.now();
+  const t = d.getTime();
+  return t >= now - NEWS_WINDOW_MS && t <= now;
+}
+
+function filterNewsDateRange(items) {
+  return items.filter((it) => isPublishedInNewsRange(it.publishedAt));
+}
+
 const BULL = /\b(rally|surge|gain|beat|upgrade|bull|growth|record|strong|optim)\b/i;
 const BEAR = /\b(fall|drop|crash|miss|downgrade|bear|lawsuit|fear|weak|cut)\b/i;
 
@@ -31,6 +54,7 @@ async function yahooFinanceSearchNews(ticker) {
   return news.map((n) => ({
     ticker,
     title: n.title || '',
+    url: String(n.link || n.clickThroughUrl || '').trim() || '',
     source: n.publisher || 'Yahoo Finance',
     publishedAt:
       n.providerPublishTime != null
@@ -46,6 +70,8 @@ async function newsApiForTickers(tickers) {
   if (!key || key === 'your_news_api_key_here') return [];
 
   const q = tickers.map((t) => `"${t}"`).join(' OR ');
+  const toDate = new Date();
+  toDate.setHours(23, 59, 59, 999);
   try {
     const { data, status } = await axios.get('https://newsapi.org/v2/everything', {
       timeout: 20000,
@@ -53,6 +79,8 @@ async function newsApiForTickers(tickers) {
         q,
         language: 'en',
         sortBy: 'publishedAt',
+        from: newsApiFromIsoDate(),
+        to: toDate.toISOString().slice(0, 10),
         pageSize: 40,
         apiKey: key,
       },
@@ -66,6 +94,7 @@ async function newsApiForTickers(tickers) {
       articles.push({
         ticker: tick,
         title,
+        url: String(a.url || '').trim() || '',
         source: a.source?.name || 'NewsAPI',
         publishedAt: a.publishedAt || '',
         sentiment: sentimentFor(title),
@@ -104,7 +133,7 @@ async function fetchHoldingsNews(tickers) {
     })
   );
   chunks.push(...(await newsApiForTickers(upper)));
-  const merged = dedupe(chunks);
+  const merged = filterNewsDateRange(dedupe(chunks));
   merged.sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
   return merged;
 }

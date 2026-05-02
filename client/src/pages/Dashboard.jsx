@@ -326,6 +326,7 @@ export default function Dashboard() {
         onClose={() => setChatOpen(false)}
         portfolioSummary={portfolioSummary}
         macroRegime={macro}
+        portfolioTickers={tickers}
       />
     </div>
   );

@@ -74,6 +74,14 @@ export default function BacktestChart() {
 
   const stats = data?.stats;
 
+  const backtestRangeLabel = useMemo(() => {
+    const ds = data?.dates;
+    if (!ds?.length) return null;
+    const last = ds[ds.length - 1];
+    const d = new Date(`${last}T12:00:00`);
+    return d.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }, [data]);
+
   return (
     <div className="space-y-6">
       <div className="card-surface border border-[var(--accent-gold)]/25 p-6">
@@ -81,7 +89,9 @@ export default function BacktestChart() {
           Velox Macro-Aware Momentum Algorithm
         </p>
         <p className="mt-2 max-w-3xl text-sm text-[var(--text-secondary)]">
-          Backtested 2020–2024 · Real FRED macro data · 11-ETF momentum universe with defensive rotation.
+          Backtested Jan 2020
+          {backtestRangeLabel ? ` – ${backtestRangeLabel}` : ''} · Real FRED macro data · 11-ETF momentum universe with
+          defensive rotation.
         </p>
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <MacroRegimeBadge />
@@ -103,7 +113,9 @@ export default function BacktestChart() {
                 </button>
               ))}
             </div>
-            <p className="text-xs text-[var(--text-secondary)]">Date range fixed: Jan 2020 – Dec 2024</p>
+            <p className="text-xs text-[var(--text-secondary)]">
+              Date range: Jan 2020 – {backtestRangeLabel || '…'} (current month runs through today, not future month-end)
+            </p>
           </div>
         </div>
       </div>

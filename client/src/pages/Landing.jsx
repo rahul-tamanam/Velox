@@ -103,7 +103,9 @@ export default function Landing() {
           <div className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-primary)]/70 p-6 text-center">
             <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">Illustrative backtest window</p>
             <p className="mt-2 font-mono text-4xl text-[var(--accent-gold)]">+64.86%</p>
-            <p className="text-sm text-[var(--text-secondary)]">Prototype calibration · Jan 2020 – Dec 2024 · vs SPY benchmark inside app</p>
+            <p className="text-sm text-[var(--text-secondary)]">
+              Prototype calibration · Jan 2020 through latest month · vs SPY benchmark inside app
+            </p>
           </div>
         </div>
       </section>

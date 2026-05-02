@@ -1,15 +1,19 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import api from '../../utils/api';
 
 const CHIPS = [
   'Explain my health score',
   'What is the current macro regime?',
   'Should I rebalance?',
+  'Latest news on my holdings',
+  'Current price of NVIDIA shares',
   'What is a mutual fund?',
 ];
 
-export default function ChatbotDrawer({ open, onClose, portfolioSummary, macroRegime }) {
+export default function ChatbotDrawer({ open, onClose, portfolioSummary, macroRegime, portfolioTickers }) {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio — plain English only.' },
   ]);
@@ -35,6 +39,7 @@ export default function ChatbotDrawer({ open, onClose, portfolioSummary, macroRe
         messages: next.map((m) => ({ role: m.role, content: m.content })),
         portfolioContext: portfolioSummary,
         macroRegime,
+        portfolioTickers: portfolioTickers || [],
       });
       setMessages([...next, { role: 'assistant', content: data.reply }]);
     } catch (e) {
@@ -101,7 +106,29 @@ export default function ChatbotDrawer({ open, onClose, portfolioSummary, macroRe
                       : 'bg-[var(--bg-card)] text-[var(--text-secondary)]'
                   }`}
                 >
-                  {m.content}
+                  {m.role === 'assistant' ? (
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        a: ({ ...props }) => (
+                          <a
+                            {...props}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-medium text-[var(--accent-gold)] underline underline-offset-2"
+                          />
+                        ),
+                        strong: ({ ...props }) => <strong className="text-[var(--text-primary)]" {...props} />,
+                        ul: ({ ...props }) => <ul className="mb-2 list-disc space-y-1 pl-4 last:mb-0" {...props} />,
+                        ol: ({ ...props }) => <ol className="mb-2 list-decimal space-y-1 pl-4 last:mb-0" {...props} />,
+                        p: ({ ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                      }}
+                    >
+                      {m.content}
+                    </ReactMarkdown>
+                  ) : (
+                    m.content
+                  )}
                 </div>
               ))}
               {loading && <p className="text-xs text-[var(--text-secondary)]">Thinking…</p>}

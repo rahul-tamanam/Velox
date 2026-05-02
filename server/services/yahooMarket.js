@@ -84,12 +84,6 @@ async function publicQuote(ticker) {
   return row;
 }
 
-async function getQuoteRow(ticker) {
-  const rapid = await rapidQuote(ticker);
-  if (rapid && rapid.regularMarketPrice != null) return rapid;
-  return publicQuote(ticker);
-}
-
 async function publicQuoteSummaryBeta(ticker) {
   const { data, status } = await axios.get(
     `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}`,
@@ -143,6 +137,45 @@ async function chartHistory(ticker, period1, period2, interval) {
     });
   }
   return rows;
+}
+
+/**
+ * When Yahoo's quote REST endpoint blocks (common 401), the chart API often still works.
+ * Returns a minimal quote-shaped row using the last daily bar (adj close).
+ */
+async function quoteFromChartLastClose(ticker) {
+  const sym = String(ticker).toUpperCase();
+  const period2 = new Date();
+  const period1 = new Date(Date.now() - 21 * 86400000);
+  const rows = await chartHistory(sym, period1, period2, '1d');
+  if (!rows?.length) return null;
+  const last = rows[rows.length - 1];
+  const px = last.adjClose ?? last.close;
+  if (px == null || Number.isNaN(Number(px))) return null;
+  return {
+    regularMarketPrice: Number(px),
+    currency: 'USD',
+    regularMarketTime: Math.floor(last.date.getTime() / 1000),
+    shortName: sym,
+    marketState: 'CHART_LAST_CLOSE',
+  };
+}
+
+async function getQuoteRow(ticker) {
+  const sym = String(ticker).toUpperCase();
+  const rapid = await rapidQuote(sym);
+  if (rapid && rapid.regularMarketPrice != null) return rapid;
+  try {
+    return await publicQuote(sym);
+  } catch (err) {
+    try {
+      const fromChart = await quoteFromChartLastClose(sym);
+      if (fromChart) return fromChart;
+    } catch {
+      /* fall through */
+    }
+    throw err;
+  }
 }
 
 module.exports = {

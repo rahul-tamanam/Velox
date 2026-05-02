@@ -82,10 +82,13 @@ export default function NewsSentimentFeed({ tickers }) {
           ))}
         </select>
       </div>
+      <p className="text-xs text-[var(--text-secondary)]">
+        Showing headlines from the <span className="text-[var(--text-primary)]">last 7 days</span> only.
+      </p>
       {!newsApiConfigured && tickers?.length > 0 && (
         <p className="text-xs text-[var(--text-secondary)]">
-          Showing Yahoo Finance headlines per ticker. Optionally set <span className="font-mono">NEWS_API_KEY</span>{' '}
-          on the server to merge NewsAPI articles.
+          Yahoo Finance per ticker. Optionally set <span className="font-mono">NEWS_API_KEY</span> on the server to merge
+          NewsAPI articles.
         </p>
       )}
       <div className="space-y-3">
@@ -100,7 +103,20 @@ export default function NewsSentimentFeed({ tickers }) {
               </span>
               <span className="text-xs text-[var(--text-secondary)]">{badge(n.sentiment)}</span>
             </div>
-            <p className="mt-2 text-sm text-[var(--text-primary)]">{n.title}</p>
+            <p className="mt-2 text-sm text-[var(--text-primary)]">
+              {n.url ? (
+                <a
+                  href={n.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-[var(--text-primary)] underline decoration-[var(--accent-gold)]/60 underline-offset-2 transition hover:text-[var(--accent-gold)]"
+                >
+                  {n.title}
+                </a>
+              ) : (
+                n.title
+              )}
+            </p>
             <p className="mt-2 text-xs text-[var(--text-secondary)]">
               {n.source} · {timeAgo(n.publishedAt)}
             </p>

@@ -201,10 +201,16 @@ function computeStats(values, spyValues, monthsPerYear = 12) {
   };
 }
 
-function monthPairsFrom2020to2024() {
+/** Monthly rebalance dates from Jan 2020 through the current calendar month (end date rolls forward with “today”). */
+function monthPairsFrom2020ThroughToday() {
   const pairs = [];
-  for (let y = 2020; y <= 2024; y++) {
-    for (let m = 1; m <= 12; m++) {
+  const now = new Date();
+  const endY = now.getFullYear();
+  const endM = now.getMonth() + 1;
+  for (let y = 2020; y <= endY; y++) {
+    const mLo = y === 2020 ? 1 : 1;
+    const mHi = y === endY ? endM : 12;
+    for (let m = mLo; m <= mHi; m++) {
       pairs.push({ y, m });
     }
   }
@@ -219,9 +225,17 @@ function calendarMonthEnd(y, m) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
+/** Local calendar date YYYY-MM-DD (server timezone). */
+function isoDateLocal(d) {
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 async function runMacroAwareBacktest(corpus = 100000) {
   const period1 = new Date('2019-05-01');
-  const period2 = new Date('2025-01-15');
+  const period2 = new Date();
 
   const fred = await loadFredHistorical();
   const gdpAsc = fred?.gdp || [{ date: '2000-01-01', value: 2 }];
@@ -242,7 +256,7 @@ async function runMacroAwareBacktest(corpus = 100000) {
   );
 
   const spySeries = seriesByTicker.SPY;
-  const monthPairs = monthPairsFrom2020to2024();
+  const monthPairs = monthPairsFrom2020ThroughToday();
 
   const dates = [];
   const portfolioValues = [];
@@ -255,6 +269,11 @@ async function runMacroAwareBacktest(corpus = 100000) {
 
   const dec2019End = calendarMonthEnd(2019, 12);
 
+  const runNow = new Date();
+  const todayStr = isoDateLocal(runNow);
+  const curYear = runNow.getFullYear();
+  const curMonth = runNow.getMonth() + 1;
+
   for (let i = 0; i < monthPairs.length; i++) {
     const { y, m } = monthPairs[i];
     const prevY = m === 1 ? y - 1 : y;
@@ -263,7 +282,9 @@ async function runMacroAwareBacktest(corpus = 100000) {
     const decisionStr = i === 0 ? dec2019End : decisionEnd;
 
     const startStr = m === 1 ? calendarMonthEnd(y - 1, 12) : calendarMonthEnd(y, m - 1);
-    const endStr = calendarMonthEnd(y, m);
+    const monthEndStr = calendarMonthEnd(y, m);
+    const isCurrentMonth = y === curYear && m === curMonth;
+    const endStr = isCurrentMonth ? todayStr : monthEndStr;
 
     const regime = regimeForMonthEnd(gdpAsc, fedAsc, decisionStr);
     const weights = pickMomentumAllocation(regime, seriesByTicker, decisionStr);
