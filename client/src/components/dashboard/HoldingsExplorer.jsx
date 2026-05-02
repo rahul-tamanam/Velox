@@ -142,7 +142,7 @@ export default function HoldingsExplorer({ holdings }) {
             <p className="mt-0.5 text-[0.72rem] text-[var(--text-secondary)]">Past week · select a holding</p>
           </div>
           <select
-            className="min-w-0 w-full rounded-[10px] border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 font-mono text-sm text-[var(--text-primary)] sm:w-[10rem] sm:flex-none"
+            className="min-w-0 w-full rounded-[10px] border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)] sm:w-[10rem] sm:flex-none"
             value={chartTicker}
             onChange={(e) => setChartTicker(e.target.value)}
             disabled={!filtered.length}

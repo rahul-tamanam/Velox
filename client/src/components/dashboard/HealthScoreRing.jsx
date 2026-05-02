@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { QuestionMarkCircleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { InnerShellBody, InnerShellHeader, InnerShellRoot } from '../ui/InnerShellCard.jsx';
 import { ShellCardTitleRow } from '../ui/ShellCardHeading.jsx';
 
@@ -99,17 +99,19 @@ export default function HealthScoreRing({
           aria-haspopup="dialog"
           aria-label="How portfolio health score is built"
           onMouseEnter={() => setOpen(true)}
+          onMouseLeave={() => setOpen(false)}
           onFocus={() => setOpen(true)}
-          className="flex h-5 w-5 cursor-help select-none items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-primary)] text-[10px] font-semibold text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
+          onBlur={() => setOpen(false)}
+          className="flex h-6 w-6 cursor-help select-none items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-primary)] text-[10px] font-semibold text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
         >
-          ⓘ
+          <QuestionMarkCircleIcon className="h-4 w-4" aria-hidden />
         </button>
 
         {open && (
           <div
             role="dialog"
             aria-label="Score breakdown"
-            className="absolute right-0 top-7 z-50 w-72 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-xl"
+            className="absolute right-0 top-8 z-50 w-64 max-w-[calc(100vw-1rem)] rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-xl"
             style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.45)' }}
           >
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">

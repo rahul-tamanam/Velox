@@ -91,12 +91,18 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
             transition={panelTransition}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex shrink-0 items-center justify-between border-b border-[var(--border)] px-4 py-3 sm:px-5 sm:py-4">
+            <div
+              className="flex shrink-0 items-center justify-between border-b border-[var(--border)] px-4 py-3 sm:px-5 sm:py-4"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(254,101,7,0.22) 0%, rgba(254,101,7,0.10) 42%, rgba(17,17,17,0.94) 100%)',
+              }}
+            >
               <div className="min-w-0 pr-2">
                 <p id="velox-assistant-title" className="font-display text-lg text-[var(--text-primary)]">
                   Velox Assistant
                 </p>
-                <p className="text-xs text-[var(--text-secondary)]">Powered by Groq (optional)</p>
+                <p className="text-xs text-[#FFD2B2]">Powered by Groq</p>
               </div>
               <button
                 type="button"
@@ -174,7 +180,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
                 <button
                   type="button"
                   onClick={() => send(input)}
-                  className="ds-btn-primary shrink-0"
+                  className="shrink-0 rounded-lg border border-[#FE6507] bg-[#FE6507] px-3 py-2 text-sm font-medium text-[#F0F0F0] transition-colors hover:bg-[#ea580c] hover:border-[#ea580c]"
                 >
                   Send
                 </button>
