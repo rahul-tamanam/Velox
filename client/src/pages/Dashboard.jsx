@@ -20,6 +20,7 @@ import NewsSentimentFeed from '../components/tools/NewsSentimentFeed.jsx';
 import TaxPreviewModal from '../components/tools/TaxPreviewModal.jsx';
 import ChatbotButton from '../components/chatbot/ChatbotButton.jsx';
 import ChatbotDrawer from '../components/chatbot/ChatbotDrawer.jsx';
+import InfoTooltip from '../components/ui/InfoTooltip.jsx';
 import api from '../utils/api';
 import { fmtPct, fmtUsd } from '../utils/formatters';
 
@@ -356,7 +357,8 @@ function AddHoldingForm({ onAdded }) {
   }
 
   return (
-    <form onSubmit={submit} className="card-surface grid gap-4 p-6 md:grid-cols-2">
+    <form onSubmit={submit} className="relative card-surface grid gap-4 p-6 md:grid-cols-2">
+      <InfoTooltip text="Add a stock, ETF, or fund to your portfolio. Enter the ticker symbol, number of shares, average price paid, and the date you bought it." />
       <p className="md:col-span-2 font-display text-xl text-[var(--accent-gold)]">Add holding</p>
       <label className="text-xs text-[var(--text-secondary)]">
         Ticker

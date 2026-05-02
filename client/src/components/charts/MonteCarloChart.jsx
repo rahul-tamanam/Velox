@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import api from '../../utils/api';
 import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
+import InfoTooltip from '../ui/InfoTooltip.jsx';
 
 export default function MonteCarloChart({ holdings, goalAmount }) {
   const [horizon, setHorizon] = useState(15);
@@ -54,7 +55,8 @@ export default function MonteCarloChart({ holdings, goalAmount }) {
     })) || [];
 
   return (
-    <div className="card-surface p-5">
+    <div className="relative card-surface p-5">
+      <InfoTooltip text="Runs 500 simulated futures for your portfolio using random market returns. The yellow band shows the likely range of outcomes. Median outcome is the 50th-percentile result; Stress P10 is the worst 10% scenario." />
       <div className="flex flex-wrap items-end gap-6">
         <div>
           <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">Horizon (years)</p>

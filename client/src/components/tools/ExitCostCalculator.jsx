@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import InfoTooltip from '../ui/InfoTooltip.jsx';
 import api from '../../utils/api';
 import { fmtUsd } from '../../utils/formatters';
 
@@ -33,7 +34,8 @@ export default function ExitCostCalculator({ holdings }) {
   }
 
   return (
-    <div className="card-surface space-y-5 p-6">
+    <div className="relative card-surface space-y-5 p-6">
+      <InfoTooltip text="Calculates your true net proceeds if you sold a holding today. Factors in brokerage fees, securities transaction tax (0.1%), and capital gains tax. Holdings under 1 year are taxed as short-term at your full bracket rate." />
       <p className="font-display text-xl">Exit cost calculator</p>
       <div className="grid gap-4 md:grid-cols-2">
         {[

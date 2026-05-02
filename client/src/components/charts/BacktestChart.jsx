@@ -14,6 +14,7 @@ import {
 import api from '../../utils/api';
 import MacroRegimeBadge from '../dashboard/MacroRegimeBadge.jsx';
 import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
+import InfoTooltip from '../ui/InfoTooltip.jsx';
 
 const REGIME_FILL = {
   RISK_ON: 'rgba(34, 197, 94, 0.14)',
@@ -108,7 +109,8 @@ export default function BacktestChart() {
   }, [data]);
 
   return (
-    <div className="space-y-6">
+    <div className="relative space-y-6">
+      <InfoTooltip text="The Velox Macro-Aware Momentum Algorithm backtests an 11-ETF universe from Jan 2020 using real FRED macro data. Rotates into top momentum ETFs when Risk-On; shifts defensive when Risk-Off. Past performance does not guarantee future results." />
       <div className="card-surface border border-[var(--accent-gold)]/25 p-6">
         <p className="font-display text-2xl font-semibold tracking-tight">
           Velox Macro-Aware Momentum Algorithm

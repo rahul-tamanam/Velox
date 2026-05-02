@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import InfoTooltip from '../ui/InfoTooltip.jsx';
 import api from '../../utils/api';
 import { fmtUsd } from '../../utils/formatters';
 
@@ -28,7 +29,8 @@ export default function WhatIfSimulator({ summary, holdings, goalAmount }) {
   }
 
   return (
-    <div className="card-surface space-y-5 p-6">
+    <div className="relative card-surface space-y-5 p-6">
+      <InfoTooltip text="Stress-tests your portfolio against macro shocks. Choose a scenario like a 20% market drop or rising rates and see the projected new portfolio value, health score impact, and rebalance recommendation." />
       <p className="font-display text-xl">What-if scenarios</p>
       <div className="flex flex-wrap gap-2">
         {SCENARIOS.map((s) => (
