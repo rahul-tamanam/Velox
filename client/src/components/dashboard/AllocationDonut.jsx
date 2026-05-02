@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { SECTOR_MAP } from '../../utils/constants';
+import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 
 const COLORS = ['#D4AF37', '#60A5FA', '#34D399', '#F472B6', '#A78BFA', '#FBBF24', '#94A3B8'];
 
@@ -50,15 +51,8 @@ export default function AllocationDonut({ holdings }) {
               ))}
             </Pie>
             <Tooltip
-              formatter={(v, _n, ctx) => [
-                `${ctx.payload.name}: $${Math.round(v).toLocaleString()}`,
-                '',
-              ]}
-              contentStyle={{
-                background: '#111827',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12,
-              }}
+              {...rechartsTooltipProps}
+              formatter={(v, name) => [`$${Math.round(v).toLocaleString()}`, name]}
             />
           </PieChart>
         </ResponsiveContainer>

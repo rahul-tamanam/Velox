@@ -21,9 +21,15 @@ router.post('/montecarlo', async (req, res) => {
   }
 });
 
+const CORPUS_MIN = 1_000;
+const CORPUS_MAX = 100_000_000;
+
 router.get('/backtest', async (req, res) => {
   try {
-    const corpus = Number(req.query.corpus) === 50000 ? 50000 : 100000;
+    let corpus = Number(req.query.corpus);
+    if (!Number.isFinite(corpus)) corpus = 100_000;
+    corpus = Math.round(corpus);
+    corpus = Math.min(Math.max(corpus, CORPUS_MIN), CORPUS_MAX);
     const result = await runMacroAwareBacktest(corpus);
     res.json(result);
   } catch (e) {

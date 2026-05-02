@@ -10,6 +10,7 @@ import {
   ComposedChart,
 } from 'recharts';
 import api from '../../utils/api';
+import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 
 export default function MonteCarloChart({ holdings, goalAmount }) {
   const [horizon, setHorizon] = useState(15);
@@ -93,14 +94,7 @@ export default function MonteCarloChart({ holdings, goalAmount }) {
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
             <XAxis dataKey="month" stroke="#8A9BC0" tick={{ fontSize: 10 }} />
             <YAxis stroke="#8A9BC0" tick={{ fontSize: 10 }} />
-            <Tooltip
-              formatter={(v) => `$${Math.round(v).toLocaleString()}`}
-              contentStyle={{
-                background: '#111827',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12,
-              }}
-            />
+            <Tooltip {...rechartsTooltipProps} formatter={(v) => `$${Math.round(v).toLocaleString()}`} />
             <Area type="monotone" dataKey="p90" stroke="none" fill="rgba(212,175,55,0.08)" />
             <Area type="monotone" dataKey="p75" stroke="none" fill="rgba(212,175,55,0.12)" />
             <Area type="monotone" dataKey="p50" stroke="#D4AF37" fill="url(#fanMc)" />

@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import api from '../../utils/api';
 import MacroRegimeBadge from '../dashboard/MacroRegimeBadge.jsx';
+import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 
 const REGIME_FILL = {
   RISK_ON: 'rgba(34, 197, 94, 0.14)',
@@ -36,9 +37,25 @@ function buildRegimeAreas(dates, regimes) {
   return areas;
 }
 
+const PRESETS = [50000, 100000];
+const CORPUS_MIN = 1000;
+const CORPUS_MAX = 100_000_000;
+
+function parseCorpusInput(raw) {
+  const digits = String(raw).replace(/[^\d]/g, '');
+  if (!digits) return null;
+  const n = Number(digits);
+  if (!Number.isFinite(n)) return null;
+  return Math.min(Math.max(Math.round(n), CORPUS_MIN), CORPUS_MAX);
+}
+
 export default function BacktestChart() {
   const [corpus, setCorpus] = useState(100000);
+  const [customDraft, setCustomDraft] = useState('');
+  const [customEditing, setCustomEditing] = useState(false);
   const [data, setData] = useState(null);
+
+  const isPresetCorpus = PRESETS.includes(corpus);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,14 +114,18 @@ export default function BacktestChart() {
           <MacroRegimeBadge />
           <div className="flex flex-col justify-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)]/60 p-5">
             <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">Corpus</p>
-            <div className="flex gap-2">
-              {[50000, 100000].map((c) => (
+            <div className="flex flex-wrap items-center gap-2">
+              {PRESETS.map((c) => (
                 <button
                   key={c}
                   type="button"
-                  onClick={() => setCorpus(c)}
+                  onClick={() => {
+                    setCustomEditing(false);
+                    setCustomDraft('');
+                    setCorpus(c);
+                  }}
                   className={`rounded-full px-4 py-2 font-mono text-sm ${
-                    corpus === c
+                    isPresetCorpus && corpus === c && !customEditing
                       ? 'bg-[var(--accent-gold)] text-[var(--bg-primary)]'
                       : 'border border-[var(--border)] text-[var(--text-secondary)]'
                   }`}
@@ -112,6 +133,38 @@ export default function BacktestChart() {
                   ${c.toLocaleString()}
                 </button>
               ))}
+              <label className="flex min-w-[11rem] flex-1 items-center gap-1 rounded-full border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 font-mono text-sm">
+                <span className="text-[var(--text-secondary)]">$</span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="Custom"
+                  value={
+                    customEditing
+                      ? customDraft
+                      : !isPresetCorpus
+                        ? corpus.toLocaleString('en-US')
+                        : ''
+                  }
+                  className="min-w-0 flex-1 bg-transparent text-[var(--text-primary)] outline-none placeholder:text-[var(--text-secondary)]"
+                  onFocus={() => {
+                    setCustomEditing(true);
+                    setCustomDraft(String(corpus));
+                  }}
+                  onChange={(e) => setCustomDraft(e.target.value.replace(/[^\d]/g, ''))}
+                  onBlur={() => {
+                    const next = parseCorpusInput(customDraft);
+                    if (next != null) setCorpus(next);
+                    setCustomEditing(false);
+                    setCustomDraft('');
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.target.blur();
+                    }
+                  }}
+                />
+              </label>
             </div>
             <p className="text-xs text-[var(--text-secondary)]">
               Date range: Jan 2020 – {backtestRangeLabel || '…'} (current month runs through today, not future month-end)
@@ -127,14 +180,7 @@ export default function BacktestChart() {
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
               <XAxis dataKey="date" stroke="#8A9BC0" tick={{ fontSize: 9 }} minTickGap={24} />
               <YAxis stroke="#8A9BC0" tick={{ fontSize: 10 }} />
-              <Tooltip
-                formatter={(v) => `$${Math.round(v).toLocaleString()}`}
-                contentStyle={{
-                  background: '#111827',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 12,
-                }}
-              />
+              <Tooltip {...rechartsTooltipProps} formatter={(v) => `$${Math.round(v).toLocaleString()}`} />
               {areas.map((a, idx) => (
                 <ReferenceArea
                   key={`${a.x1}-${a.x2}-${idx}`}

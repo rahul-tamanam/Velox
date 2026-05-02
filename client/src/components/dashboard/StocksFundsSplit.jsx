@@ -1,4 +1,5 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 
 export default function StocksFundsSplit({ stocksPct = 0, fundsPct = 0 }) {
   const data = [
@@ -19,12 +20,8 @@ export default function StocksFundsSplit({ stocksPct = 0, fundsPct = 0 }) {
               <Cell fill="#D4AF37" />
             </Pie>
             <Tooltip
+              {...rechartsTooltipProps}
               formatter={(v) => `${(v * 100).toFixed(1)}%`}
-              contentStyle={{
-                background: '#111827',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12,
-              }}
             />
           </PieChart>
         </ResponsiveContainer>

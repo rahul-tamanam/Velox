@@ -100,10 +100,10 @@ export default function ChatbotDrawer({ open, onClose, portfolioSummary, macroRe
               {messages.map((m, i) => (
                 <div
                   key={i}
-                  className={`max-w-[90%] rounded-2xl px-4 py-2 ${
+                  className={`max-w-[90%] rounded-2xl px-4 py-2 leading-relaxed ${
                     m.role === 'user'
                       ? 'ml-auto bg-[var(--accent-gold)]/15 text-[var(--text-primary)]'
-                      : 'bg-[var(--bg-card)] text-[var(--text-secondary)]'
+                      : 'bg-[var(--bg-card)] text-[var(--text-primary)]'
                   }`}
                 >
                   {m.role === 'assistant' ? (
@@ -121,7 +121,9 @@ export default function ChatbotDrawer({ open, onClose, portfolioSummary, macroRe
                         strong: ({ ...props }) => <strong className="text-[var(--text-primary)]" {...props} />,
                         ul: ({ ...props }) => <ul className="mb-2 list-disc space-y-1 pl-4 last:mb-0" {...props} />,
                         ol: ({ ...props }) => <ol className="mb-2 list-decimal space-y-1 pl-4 last:mb-0" {...props} />,
-                        p: ({ ...props }) => <p className="mb-2 last:mb-0" {...props} />,
+                        p: ({ ...props }) => (
+                          <p className="mb-2 text-[var(--text-primary)]/95 last:mb-0" {...props} />
+                        ),
                       }}
                     >
                       {m.content}

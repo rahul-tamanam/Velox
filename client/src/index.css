@@ -9,7 +9,8 @@
   --accent-gold: #d4af37;
   --accent-gold-light: #f0d060;
   --text-primary: #f0f4ff;
-  --text-secondary: #8a9bc0;
+  /* Slightly brighter than before for small labels / captions on navy */
+  --text-secondary: #9fb0d4;
   --green: #22c55e;
   --red: #ef4444;
   --amber: #f59e0b;
