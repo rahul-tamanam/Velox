@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../db');
 const { authMiddleware } = require('../middleware/auth');
 const { computeHealthScore } = require('../engines/healthScore');
+const { getMacroRegimePayload } = require('../engines/macroEngine');
 const { getQuoteRow, publicQuoteSummaryBeta } = require('../services/yahooMarket');
 
 const router = express.Router();
@@ -131,6 +132,9 @@ router.delete('/:id', (req, res) => {
 
 router.get('/summary', async (req, res) => {
   try {
+    const macroData = await getMacroRegimePayload().catch(() => ({
+      regime: 'MODERATE',
+    }));
     const rows = db.prepare('SELECT * FROM holdings WHERE user_id = ?').all(req.user.id);
     let totalValue = 0;
     let costBasis = 0;
@@ -165,9 +169,26 @@ router.get('/summary', async (req, res) => {
 
     const totalReturnPct = costBasis > 0 ? (totalValue - costBasis) / costBasis : 0;
 
-    const user = db.prepare('SELECT goal_target_amount, goal_target_year FROM users WHERE id = ?').get(req.user.id);
+    const user = db
+      .prepare(
+        'SELECT goal_target_amount, goal_target_year, risk_profile FROM users WHERE id = ?'
+      )
+      .get(req.user.id);
     const goalAmt = user?.goal_target_amount ?? 1;
     const goalProgress = Math.min(1, totalValue / goalAmt);
+
+    const maxWeight =
+      enriched.length > 0
+        ? Math.max(
+            ...enriched.map((h) =>
+              totalValue > 0 ? h.market_value / totalValue : 0
+            )
+          )
+        : 0;
+    const concentrationPenalty = Math.max(
+      0,
+      Math.min(20, ((maxWeight - 0.3) / 0.7) * 20)
+    );
 
     const health = computeHealthScore({
       holdingsWithWeights: enriched.map((h) => ({
@@ -176,7 +197,9 @@ router.get('/summary', async (req, res) => {
         beta: h.beta,
       })),
       goalProgress,
-      maxDrawdownEstimate: 0.18,
+      regime: macroData.regime,
+      riskProfile: user?.risk_profile ?? 'moderate',
+      concentrationPenalty,
     });
 
     const stocksShare = enriched

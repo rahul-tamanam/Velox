@@ -167,6 +167,7 @@ export default function Dashboard() {
                         compact
                         score={summary?.health?.score ?? 0}
                         explanation={summary?.health?.explanation}
+                        breakdown={summary?.health?.breakdown}
                       />
                     </div>
                     <div className="min-w-0 shrink-0 sm:w-[11.5rem]">
