@@ -79,6 +79,45 @@ router.post('/add', (req, res) => {
   }
 });
 
+router.post('/sell', (req, res) => {
+  try {
+    const { holding_id, quantity, sell_price, sell_date } = req.body;
+    const hid = Number(holding_id);
+    const qty = Number(quantity);
+    const price = Number(sell_price);
+    if (!Number.isFinite(hid) || !sell_date) {
+      return res.status(400).json({ error: 'Missing fields' });
+    }
+    if (!Number.isFinite(qty) || qty <= 0) {
+      return res.status(400).json({ error: 'Invalid quantity' });
+    }
+    if (!Number.isFinite(price) || price < 0) {
+      return res.status(400).json({ error: 'Invalid sell price' });
+    }
+    const row = db.prepare('SELECT * FROM holdings WHERE id = ? AND user_id = ?').get(hid, req.user.id);
+    if (!row) return res.status(404).json({ error: 'Not found' });
+    if (qty > row.quantity) {
+      return res.status(400).json({ error: 'Quantity exceeds holding' });
+    }
+    const newQty = row.quantity - qty;
+    if (newQty <= 0) {
+      db.prepare('DELETE FROM holdings WHERE id = ?').run(hid);
+    } else {
+      db.prepare('UPDATE holdings SET quantity = ? WHERE id = ?').run(newQty, hid);
+    }
+    db.prepare(
+      `INSERT INTO transactions (user_id, ticker, action, quantity, price, date) VALUES (?,?,?,?,?,?)`
+    ).run(req.user.id, row.ticker, 'sell', qty, price, sell_date);
+    res.json({
+      ok: true,
+      deleted: newQty <= 0,
+      remaining_quantity: newQty > 0 ? newQty : 0,
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 router.delete('/:id', (req, res) => {
   try {
     const row = db.prepare('SELECT * FROM holdings WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);

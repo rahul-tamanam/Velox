@@ -16,11 +16,10 @@ import BacktestChart from '../components/charts/BacktestChart.jsx';
 import ExitCostCalculator from '../components/tools/ExitCostCalculator.jsx';
 import WhatIfSimulator from '../components/tools/WhatIfSimulator.jsx';
 import NewsSentimentFeed from '../components/tools/NewsSentimentFeed.jsx';
-import TaxPreviewModal from '../components/tools/TaxPreviewModal.jsx';
 import ChatbotButton from '../components/chatbot/ChatbotButton.jsx';
 import ChatbotDrawer from '../components/chatbot/ChatbotDrawer.jsx';
-import InfoTooltip from '../components/ui/InfoTooltip.jsx';
 import RiskAlertCapsule from '../components/dashboard/RiskAlertCapsule.jsx';
+import BuySellHoldingModal from '../components/portfolio/BuySellHoldingModal.jsx';
 import api from '../utils/api';
 import { fmtPct, fmtUsd } from '../utils/formatters';
 
@@ -36,7 +35,6 @@ export default function Dashboard() {
   const [chatOpen, setChatOpen] = useState(false);
   const [macro, setMacro] = useState(null);
   const [mcYears, setMcYears] = useState(null);
-  const [sellTarget, setSellTarget] = useState(null);
   const [simTab, setSimTab] = useState('montecarlo');
 
   const tickers = useMemo(() => holdings.map((h) => h.ticker), [holdings]);
@@ -107,13 +105,6 @@ export default function Dashboard() {
     if (tab === 'chatbot') setChatOpen(true);
   }, [tab]);
 
-  async function confirmSell() {
-    if (!sellTarget) return;
-    await api.delete(`/portfolio/${sellTarget.id}`);
-    setSellTarget(null);
-    refresh();
-  }
-
   return (
     <div className="flex h-screen min-h-0 overflow-hidden bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
       <Sidebar active={tab} onSelect={setTab} />
@@ -183,7 +174,12 @@ export default function Dashboard() {
                 <RebalanceCard summary={summary} riskProfile={user?.risk_profile} />
               </div>
               <div className="card-surface overflow-hidden">
-                <table className="w-full text-left text-sm">
+                <table className="w-full table-fixed text-left text-sm">
+                  <colgroup>
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <col key={i} style={{ width: `${100 / 6}%` }} />
+                    ))}
+                  </colgroup>
                   <thead className="bg-[var(--bg-secondary)] text-xs uppercase text-[var(--text-secondary)]">
                     <tr>
                       <th className="px-4 py-3">Ticker</th>
@@ -192,7 +188,6 @@ export default function Dashboard() {
                       <th className="px-4 py-3">Avg buy</th>
                       <th className="px-4 py-3">Last</th>
                       <th className="px-4 py-3">P&amp;L</th>
-                      <th className="px-4 py-3">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -204,15 +199,6 @@ export default function Dashboard() {
                         <td className="px-4 py-3 font-mono">{fmtUsd(h.avg_buy_price)}</td>
                         <td className="px-4 py-3 font-mono">{fmtUsd(h.current_price)}</td>
                         <td className="px-4 py-3 font-mono">{fmtUsd(h.pl)}</td>
-                        <td className="px-4 py-3">
-                          <button
-                            type="button"
-                            className="text-xs text-red-300 hover:underline"
-                            onClick={() => setSellTarget(h)}
-                          >
-                            Sell
-                          </button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -223,8 +209,8 @@ export default function Dashboard() {
 
           {tab === 'portfolio' && (
             <div className="space-y-8">
+              <BuySellHoldingModal holdings={holdings} onDone={refresh} />
               <LiveStockChart tickers={tickers} />
-              <AddHoldingForm onAdded={refresh} />
             </div>
           )}
 
@@ -303,14 +289,6 @@ export default function Dashboard() {
         </main>
       </div>
 
-      <TaxPreviewModal
-        open={Boolean(sellTarget)}
-        onClose={() => setSellTarget(null)}
-        holding={sellTarget}
-        currentPrice={sellTarget?.current_price}
-        onConfirm={confirmSell}
-      />
-
       <ChatbotDrawer
         open={chatOpen}
         onOpenChange={setChatOpen}
@@ -320,94 +298,5 @@ export default function Dashboard() {
       />
       <ChatbotButton open={chatOpen} onOpenChange={setChatOpen} />
     </div>
-  );
-}
-
-function AddHoldingForm({ onAdded }) {
-  const [form, setForm] = useState({
-    ticker: '',
-    type: 'stock',
-    quantity: '',
-    avg_buy_price: '',
-    buy_date: '',
-  });
-
-  async function submit(e) {
-    e.preventDefault();
-    const payload = {
-      ticker: form.ticker.toUpperCase(),
-      type: form.type === 'etf' ? 'fund' : form.type,
-      quantity: Number(form.quantity),
-      avg_buy_price: Number(form.avg_buy_price),
-      buy_date: form.buy_date,
-    };
-    await api.post('/portfolio/add', payload);
-    setForm({ ticker: '', type: 'stock', quantity: '', avg_buy_price: '', buy_date: '' });
-    onAdded?.();
-  }
-
-  return (
-    <form onSubmit={submit} className="relative card-surface grid gap-4 p-6 md:grid-cols-2">
-      <InfoTooltip text="Add a stock, ETF, or fund to your portfolio. Enter the ticker symbol, number of shares, average price paid, and the date you bought it." />
-      <p className="md:col-span-2 font-display text-xl text-[var(--accent-gold)]">Add holding</p>
-      <label className="text-xs text-[var(--text-secondary)]">
-        Ticker
-        <input
-          required
-          className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm uppercase"
-          value={form.ticker}
-          onChange={(e) => setForm({ ...form, ticker: e.target.value })}
-        />
-      </label>
-      <label className="text-xs text-[var(--text-secondary)]">
-        Type
-        <select
-          className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm"
-          value={form.type}
-          onChange={(e) => setForm({ ...form, type: e.target.value })}
-        >
-          <option value="stock">Stock</option>
-          <option value="etf">ETF-as-Fund</option>
-        </select>
-      </label>
-      <label className="text-xs text-[var(--text-secondary)]">
-        Quantity
-        <input
-          required
-          type="number"
-          step="any"
-          className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
-          value={form.quantity}
-          onChange={(e) => setForm({ ...form, quantity: e.target.value })}
-        />
-      </label>
-      <label className="text-xs text-[var(--text-secondary)]">
-        Average buy price
-        <input
-          required
-          type="number"
-          step="any"
-          className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
-          value={form.avg_buy_price}
-          onChange={(e) => setForm({ ...form, avg_buy_price: e.target.value })}
-        />
-      </label>
-      <label className="text-xs text-[var(--text-secondary)] md:col-span-2">
-        Buy date
-        <input
-          required
-          type="date"
-          className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm"
-          value={form.buy_date}
-          onChange={(e) => setForm({ ...form, buy_date: e.target.value })}
-        />
-      </label>
-      <button
-        type="submit"
-        className="md:col-span-2 rounded-full bg-[var(--accent-gold)] py-3 font-semibold text-[var(--bg-primary)]"
-      >
-        Save holding
-      </button>
-    </form>
   );
 }
