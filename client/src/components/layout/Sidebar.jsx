@@ -19,7 +19,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 const STORAGE_KEY = 'velox_sidebar_collapsed';
 
 const TABS = [
-  { id: 'overview', label: 'Overview', Icon: Squares2X2Icon },
+  { id: 'dashboard', label: 'Dashboard', Icon: Squares2X2Icon },
   { id: 'portfolio', label: 'Portfolio', Icon: BriefcaseIcon },
   { id: 'simulate', label: 'Simulate', Icon: BeakerIcon },
   { id: 'tools', label: 'Tools', Icon: WrenchScrewdriverIcon },

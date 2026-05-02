@@ -18,6 +18,20 @@
   --regime-moderate: rgba(245, 158, 11, 0.08);
   --regime-risk-off: rgba(239, 68, 68, 0.08);
   --border: rgba(255, 255, 255, 0.08);
+
+  /* Shared chart tokens (defaults; Velox backtest overrides below) */
+  --chart-background: var(--bg-primary);
+  --chart-label: #8a9bc0;
+  --chart-line-primary: var(--accent-gold);
+  --chart-line-secondary: #64748b;
+  --chart-crosshair: rgba(212, 175, 55, 0.65);
+  --chart-grid: rgba(138, 155, 192, 0.18);
+}
+
+/* Velox vs SPY backtest: blue series + matching crosshair */
+.velox-backtest-area-chart {
+  --chart-line-primary: #60a5fa;
+  --chart-crosshair: rgba(96, 165, 250, 0.75);
 }
 
 .mesh-bg {

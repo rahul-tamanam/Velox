@@ -6,11 +6,9 @@ import { usePortfolio } from '../hooks/usePortfolio.js';
 import MacroRegimeBadge from '../components/dashboard/MacroRegimeBadge.jsx';
 import HealthScoreRing from '../components/dashboard/HealthScoreRing.jsx';
 import KPICard from '../components/dashboard/KPICard.jsx';
-import AllocationDonut from '../components/dashboard/AllocationDonut.jsx';
-import GoalTrackerWidget from '../components/dashboard/GoalTrackerWidget.jsx';
 import DiversificationHeatmap from '../components/dashboard/DiversificationHeatmap.jsx';
-import RebalanceCard from '../components/dashboard/RebalanceCard.jsx';
-import StocksFundsSplit from '../components/dashboard/StocksFundsSplit.jsx';
+import GoalTrackerWidget from '../components/dashboard/GoalTrackerWidget.jsx';
+import HoldingsExplorer from '../components/dashboard/HoldingsExplorer.jsx';
 import LiveStockChart from '../components/charts/LiveStockChart.jsx';
 import MonteCarloChart from '../components/charts/MonteCarloChart.jsx';
 import BacktestChart from '../components/charts/BacktestChart.jsx';
@@ -21,8 +19,10 @@ import ChatbotButton from '../components/chatbot/ChatbotButton.jsx';
 import ChatbotDrawer from '../components/chatbot/ChatbotDrawer.jsx';
 import RiskAlertCapsule from '../components/dashboard/RiskAlertCapsule.jsx';
 import BuySellHoldingModal from '../components/portfolio/BuySellHoldingModal.jsx';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import api from '../utils/api';
-import { fmtPct, fmtUsd } from '../utils/formatters';
+import { fmtPct } from '../utils/formatters';
+import { rechartsTooltipProps } from '../utils/rechartsTooltip';
 
 function typeLabel(type) {
   if (type === 'stock') return 'Stock';
@@ -32,7 +32,7 @@ function typeLabel(type) {
 export default function Dashboard() {
   const { user, setUser } = useAuth();
   const { holdings, summary, refresh } = usePortfolio();
-  const [tab, setTab] = useState('overview');
+  const [tab, setTab] = useState('dashboard');
   const [chatOpen, setChatOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [macro, setMacro] = useState(null);
@@ -118,7 +118,7 @@ export default function Dashboard() {
             onChange={(e) => setTab(e.target.value)}
           >
             {[
-              'overview',
+              'dashboard',
               'portfolio',
               'simulate',
               'tools',
@@ -141,10 +141,10 @@ export default function Dashboard() {
           </div>
         </header>
 
-        <main className="min-h-0 flex-1 overflow-y-auto space-y-8 px-4 py-8 lg:px-10">
-          {tab === 'overview' && (
-            <div className="space-y-8">
-              <div className="grid gap-4 lg:grid-cols-4">
+        <main className="min-h-0 flex-1 space-y-8 overflow-y-auto px-4 py-8 lg:px-10">
+          {tab === 'dashboard' && (
+            <div className="space-y-3">
+              <div className="grid gap-2 lg:grid-cols-4">
                 <KPICard title="Total portfolio value" value={summary?.totalValue ?? 0} />
                 <KPICard
                   title="Total return"
@@ -159,52 +159,28 @@ export default function Dashboard() {
                 />
                 <KPICard title="Portfolio beta" value={summary?.portfolioBeta ?? 1} />
               </div>
-              <MacroRegimeBadge />
-              <div className="grid gap-6 xl:grid-cols-3">
-                <HealthScoreRing
-                  score={summary?.health?.score ?? 0}
-                  explanation={summary?.health?.explanation}
-                />
-                <StocksFundsSplit
-                  stocksPct={summary?.stocksVsFunds?.stocksPct}
-                  fundsPct={summary?.stocksVsFunds?.fundsPct}
-                />
-                <AllocationDonut holdings={holdings} />
-              </div>
-              <div className="grid gap-6 lg:grid-cols-2">
-                <DiversificationHeatmap holdings={holdings} />
-                <RebalanceCard summary={summary} riskProfile={user?.risk_profile} />
-              </div>
-              <div className="card-surface overflow-hidden">
-                <table className="w-full table-fixed text-left text-sm">
-                  <colgroup>
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <col key={i} style={{ width: `${100 / 6}%` }} />
-                    ))}
-                  </colgroup>
-                  <thead className="bg-[var(--bg-secondary)] text-xs uppercase text-[var(--text-secondary)]">
-                    <tr>
-                      <th className="px-4 py-3">Ticker</th>
-                      <th className="px-4 py-3">Type</th>
-                      <th className="px-4 py-3">Qty</th>
-                      <th className="px-4 py-3">Avg buy</th>
-                      <th className="px-4 py-3">Last</th>
-                      <th className="px-4 py-3">P&amp;L</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {holdings.map((h) => (
-                      <tr key={h.id} className="border-t border-[var(--border)]">
-                        <td className="px-4 py-3 font-mono">{h.ticker}</td>
-                        <td className="px-4 py-3 text-[var(--text-secondary)]">{typeLabel(h.type)}</td>
-                        <td className="px-4 py-3 font-mono">{h.quantity}</td>
-                        <td className="px-4 py-3 font-mono">{fmtUsd(h.avg_buy_price)}</td>
-                        <td className="px-4 py-3 font-mono">{fmtUsd(h.current_price)}</td>
-                        <td className="px-4 py-3 font-mono">{fmtUsd(h.pl)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,440px)] lg:items-start lg:gap-3">
+                <div className="flex min-w-0 flex-col gap-2">
+                  <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-3">
+                    <div className="min-w-0 flex-1">
+                      <HealthScoreRing
+                        compact
+                        score={summary?.health?.score ?? 0}
+                        explanation={summary?.health?.explanation}
+                      />
+                    </div>
+                    <div className="min-w-0 shrink-0 sm:w-[11.5rem]">
+                      <StocksVsFundsDonutCard
+                        stocksPct={summary?.stocksVsFunds?.stocksPct}
+                        fundsPct={summary?.stocksVsFunds?.fundsPct}
+                      />
+                    </div>
+                  </div>
+                  <DiversificationHeatmap holdings={holdings} />
+                </div>
+                <div className="min-w-0 lg:sticky lg:top-4 lg:self-start">
+                  <HoldingsExplorer holdings={holdings} />
+                </div>
               </div>
             </div>
           )}
@@ -300,6 +276,71 @@ export default function Dashboard() {
       />
       <ChatbotButton open={chatOpen} onOpenChange={setChatOpen} />
       <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
+    </div>
+  );
+}
+
+function StocksVsFundsDonutCard({ stocksPct, fundsPct }) {
+  const stockFrac = Math.min(1, Math.max(0, stocksPct ?? 0));
+  const fundFrac = Math.min(1, Math.max(0, fundsPct ?? 0));
+  const sum = stockFrac + fundFrac;
+  const pieData =
+    sum < 1e-6
+      ? [{ name: 'No data', value: 1, fill: 'rgba(148,163,184,0.28)' }]
+      : [
+          { name: 'Stocks', value: stockFrac / sum, fill: '#38bdf8' },
+          { name: 'Funds', value: fundFrac / sum, fill: '#f59e0b' },
+        ];
+  const sPct = sum < 1e-6 ? 0 : (stockFrac / sum) * 100;
+  const fPct = sum < 1e-6 ? 0 : (fundFrac / sum) * 100;
+
+  return (
+    <div className="card-surface flex h-full flex-col items-center justify-center gap-2 p-3">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Stocks vs funds</p>
+      <div className="h-[7.5rem] w-[7.5rem] shrink-0">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={pieData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius="58%"
+              outerRadius="88%"
+              paddingAngle={sum < 1e-6 ? 0 : 2}
+              stroke="none"
+              isAnimationActive={false}
+            >
+              {pieData.map((entry, i) => (
+                <Cell key={i} fill={entry.fill} />
+              ))}
+            </Pie>
+            <Tooltip
+              {...rechartsTooltipProps}
+              formatter={(v, name) => [`${(Number(v) * 100).toFixed(1)}%`, name]}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      {sum >= 1e-6 && (
+        <div className="flex w-full flex-col gap-1 text-[10px] sm:text-[11px]">
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
+              <span className="h-2 w-2 shrink-0 rounded-full bg-sky-400" aria-hidden />
+              Stocks
+            </span>
+            <span className="font-mono font-semibold tabular-nums text-[var(--text-primary)]">{sPct.toFixed(1)}%</span>
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
+              <span className="h-2 w-2 shrink-0 rounded-full bg-amber-500" aria-hidden />
+              Funds
+            </span>
+            <span className="font-mono font-semibold tabular-nums text-[var(--text-primary)]">{fPct.toFixed(1)}%</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

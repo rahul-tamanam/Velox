@@ -1,26 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ReferenceArea,
-} from 'recharts';
 import api from '../../utils/api';
 import MacroRegimeBadge from '../dashboard/MacroRegimeBadge.jsx';
-import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
+import VeloxBacktestAreaChart from './VeloxBacktestAreaChart.jsx';
 import InfoTooltip from '../ui/InfoTooltip.jsx';
-
-const REGIME_FILL = {
-  RISK_ON: 'rgba(34, 197, 94, 0.14)',
-  MODERATE: 'rgba(245, 158, 11, 0.12)',
-  RISK_OFF: 'rgba(239, 68, 68, 0.14)',
-};
 
 function buildRegimeAreas(dates, regimes) {
   if (!dates?.length || !regimes?.length) return [];
@@ -58,6 +42,7 @@ export default function BacktestChart() {
   const [customEditing, setCustomEditing] = useState(false);
   const [data, setData] = useState(null);
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [showRegimeShading, setShowRegimeShading] = useState(false);
 
   const isPresetCorpus = PRESETS.includes(corpus);
 
@@ -184,37 +169,45 @@ export default function BacktestChart() {
       </div>
 
       <div className="card-surface p-5">
-        <div className="h-[420px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartRows} margin={{ top: 10, right: 16, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-              <XAxis dataKey="date" stroke="#8A9BC0" tick={{ fontSize: 9 }} minTickGap={24} />
-              <YAxis stroke="#8A9BC0" tick={{ fontSize: 10 }} />
-              <Tooltip {...rechartsTooltipProps} formatter={(v) => `$${Math.round(v).toLocaleString()}`} />
-              {areas.map((a, idx) => (
-                <ReferenceArea
-                  key={`${a.x1}-${a.x2}-${idx}`}
-                  x1={a.x1}
-                  x2={a.x2}
-                  fill={REGIME_FILL[a.regime] || REGIME_FILL.MODERATE}
-                  strokeOpacity={0}
-                />
-              ))}
-              <Line type="monotone" dataKey="velox" stroke="#D4AF37" strokeWidth={2} dot={false} />
-              <Line type="monotone" dataKey="spy" stroke="#64748B" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <p className="max-w-xl text-xs leading-relaxed text-[var(--text-secondary)]">
+            Velox is shown in <span className="text-sky-400">blue</span>; SPY stays gray. Regime tints are off by default so
+            the curves stay easy to read — turn them on when you want macro context on the chart.
+          </p>
+          <button
+            type="button"
+            aria-pressed={showRegimeShading}
+            onClick={() => setShowRegimeShading((v) => !v)}
+            className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+              showRegimeShading
+                ? 'border-sky-400/50 bg-sky-500/15 text-sky-100 hover:bg-sky-500/25'
+                : 'border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-sky-500/30 hover:text-[var(--text-primary)]'
+            }`}
+          >
+            {showRegimeShading ? 'Hide regime shading' : 'Show regime shading'}
+          </button>
         </div>
-        <div className="mt-4 flex flex-wrap gap-4 text-xs text-[var(--text-secondary)]">
-          <span className="flex items-center gap-2">
-            <span className="inline-block h-2 w-6 rounded bg-green-500/40" /> Risk-On shading
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="inline-block h-2 w-6 rounded bg-amber-500/40" /> Moderate shading
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="inline-block h-2 w-6 rounded bg-red-500/40" /> Risk-Off shading
-          </span>
+        <VeloxBacktestAreaChart
+          chartRows={chartRows}
+          regimeAreas={areas}
+          showRegimeShading={showRegimeShading}
+        />
+        <div className="mt-4 text-xs text-[var(--text-secondary)]">
+          {showRegimeShading ? (
+            <div className="flex flex-wrap gap-4">
+              <span className="flex items-center gap-2">
+                <span className="inline-block h-2 w-6 rounded bg-green-500/40" /> Risk-On
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="inline-block h-2 w-6 rounded bg-amber-500/40" /> Moderate
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="inline-block h-2 w-6 rounded bg-red-500/40" /> Risk-Off
+              </span>
+            </div>
+          ) : (
+            <p>Legend: use “Show regime shading” above to tint the chart by macro regime.</p>
+          )}
         </div>
       </div>
 

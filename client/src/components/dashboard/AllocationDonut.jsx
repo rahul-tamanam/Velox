@@ -25,19 +25,19 @@ export default function AllocationDonut({ holdings }) {
   }, [holdings]);
 
   return (
-    <div className="card-surface p-5">
-      <p className="mb-4 text-xs uppercase tracking-wider text-[var(--text-secondary)]">
+    <div className="card-surface p-3 sm:p-4">
+      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] sm:text-xs">
         Allocation by sleeve
       </p>
-      <div className="h-64">
+      <div className="h-40 sm:h-44">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               dataKey="value"
               nameKey="name"
-              innerRadius={60}
-              outerRadius={90}
+              innerRadius={48}
+              outerRadius={72}
               paddingAngle={2}
               onClick={(_, idx) => setActive(data[idx]?.name)}
             >

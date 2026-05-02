@@ -12,9 +12,9 @@ export default function KPICard({ title, value, sub, variant = 'money', delta })
   const pos = delta != null && delta >= 0;
 
   return (
-    <div className="card-surface p-5">
-      <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">{title}</p>
-      <p className="mt-2 font-mono text-2xl font-semibold text-[var(--text-primary)]">{formatted}</p>
+    <div className="card-surface p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] sm:text-xs">{title}</p>
+      <p className="mt-1.5 font-mono text-xl font-semibold tabular-nums text-[var(--text-primary)] sm:text-2xl">{formatted}</p>
       {sub != null && sub !== '' && (
         <p
           className={clsx(
