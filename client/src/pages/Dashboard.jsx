@@ -142,7 +142,7 @@ export default function Dashboard() {
           </select>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5 pr-[148px] lg:pr-[156px]">
             <p className="min-w-0 truncate text-xl font-semibold tracking-tight text-[var(--text-primary)]">
-              {`${user?.name ?? 'Jordan Belfort'}'s portfolio`}
+              {`${user?.name ?? 'Demo User'}'s portfolio`}
             </p>
           </div>
           <div className="pointer-events-none absolute inset-y-0 right-4 z-10 flex items-center lg:right-8">

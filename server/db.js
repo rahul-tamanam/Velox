@@ -89,7 +89,7 @@ function ensureDemoAccount() {
         `INSERT INTO users (name, email, password_hash, risk_profile, goal_name, goal_target_amount, goal_target_year)
          VALUES (?, ?, ?, 'moderate', 'Retirement', 1000000, 2045)`
       )
-      .run('Jordan Belfort', DEMO_EMAIL, hash);
+      .run('Demo User', DEMO_EMAIL, hash);
     uid = Number(info.lastInsertRowid);
     seedDemoHoldings(uid);
     return;
@@ -97,9 +97,9 @@ function ensureDemoAccount() {
 
   uid = Number(existing.id);
   db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').run(hash, uid);
-  db.prepare('UPDATE users SET name = ? WHERE lower(trim(email)) = lower(?)').run('Jordan Belfort', DEMO_EMAIL);
+  db.prepare('UPDATE users SET name = ? WHERE lower(trim(email)) = lower(?)').run('Demo User', DEMO_EMAIL);
   try {
-    db.prepare('UPDATE users SET name = ? WHERE lower(trim(name)) = lower(?)').run('Jordan Belfort', 'Demo Investor');
+    db.prepare('UPDATE users SET name = ? WHERE lower(trim(name)) = lower(?)').run('Demo User', 'Demo Investor');
   } catch {
     /* ignore */
   }

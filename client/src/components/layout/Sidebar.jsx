@@ -77,7 +77,7 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
     };
   }, []);
 
-  const displayName = user?.name ?? 'Jordan Belfort';
+  const displayName = user?.name ?? 'Demo User';
   const displayEmail = user?.email ?? 'demo@velox.app';
   const initials = initialsFromName(displayName);
 
