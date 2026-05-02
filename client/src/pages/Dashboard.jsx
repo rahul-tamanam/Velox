@@ -150,7 +150,7 @@ export default function Dashboard() {
 
         <main
           className={clsx(
-            'min-h-0 flex-1 px-4 lg:px-4',
+    'min-h-0 flex-1 px-4 lg:px-6 2xl:px-10',
             tab === 'portfolio'
               ? 'space-y-2 overflow-y-auto py-3 lg:py-4'
               : tab === 'dashboard'
@@ -160,7 +160,7 @@ export default function Dashboard() {
         >
           {tab === 'dashboard' && (
             <div className="grid h-full min-h-0 grid-rows-[auto_1fr] gap-3 overflow-hidden">
-              <div className="grid h-[120px] min-h-0 grid-cols-4 gap-3">
+      <div className="grid h-[120px] min-h-0 grid-cols-4 gap-3 2xl:grid-cols-4">
                 <div className="min-h-0">
                   <KPICard
                     innerShell
@@ -205,12 +205,12 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div
-                className="grid min-h-0 grid-cols-[280px_minmax(0,1fr)_450px] grid-rows-2 gap-3 overflow-hidden"
-                style={{
-                  gridTemplateAreas: `"health holdings market" "pnl pnl market"`,
-                }}
-              >
+      <div
+        className="grid min-h-0 grid-cols-[minmax(240px,22%)_minmax(0,1fr)_minmax(340px,28%)] grid-rows-[minmax(0,340px)_minmax(0,1fr)] gap-3 overflow-hidden"
+        style={{
+          gridTemplateAreas: `"health holdings market" "pnl pnl market"`,
+        }}
+      >
                 <div className="min-h-0 [grid-area:health]">
                   <HealthScoreRing
                     compact

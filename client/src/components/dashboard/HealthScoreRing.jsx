@@ -80,7 +80,7 @@ export default function HealthScoreRing({
   // Semicircle from left (180deg) to right (0deg)
   const angleRad = Math.PI - (pct / 100) * Math.PI;
   const cx = 110;
-  const cy = 102;
+  const cy = 90;
   const r = 82;
   const arcEndX = cx + r * Math.cos(angleRad);
   const arcEndY = cy - r * Math.sin(angleRad);
@@ -158,9 +158,9 @@ export default function HealthScoreRing({
           <ShellCardTitleRow icon={<ShieldCheckIcon aria-hidden />} title="Portfolio health" />
         </InnerShellHeader>
 
-        <InnerShellBody className={compact ? 'gap-2 !pt-1 !pb-2 overflow-hidden' : 'gap-3 overflow-hidden'}>
-          <div className="mx-auto mt-2 flex w-full max-w-[300px] flex-col items-center">
-            <svg viewBox="0 0 220 130" className="h-auto w-full max-h-[132px] max-w-[265px] overflow-visible" aria-hidden>
+        <InnerShellBody className={compact ? 'gap-1 !pt-1 !pb-3 flex flex-col' : 'gap-2 flex flex-col justify-between'}>
+          <div className="mx-auto mt-1 flex w-full flex-col items-center shrink-0">
+            <svg viewBox="0 0 220 105" className="h-auto w-full max-h-[105px] overflow-visible" aria-hidden>
               <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="#3C3F45" strokeWidth={18} strokeLinecap="round" />
               <path d={progressPath} fill="none" stroke={arcColor} strokeWidth={18} strokeLinecap="round" />
 
@@ -172,17 +172,17 @@ export default function HealthScoreRing({
                 return <circle key={i} cx={x} cy={y} r={1.6} fill="#4C5058" />;
               })}
 
-              <text x={cx} y={89} textAnchor="middle" fill="#F0F0F0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>
+              <text x={cx} y={77} textAnchor="middle" fill="#F0F0F0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>
                 {Math.round(pct)}
               </text>
-              <text x={cx} y={110} textAnchor="middle" fill="#9CA3AF" style={{ fontSize: '0.62rem', letterSpacing: '0.04em' }}>
+              <text x={cx} y={96} textAnchor="middle" fill="#9CA3AF" style={{ fontSize: '0.62rem', letterSpacing: '0.04em' }}>
                 Health Score
               </text>
             </svg>
           </div>
 
           {explanation ? (
-            <p className="mt-1 line-clamp-2 px-1 text-center text-[0.72rem] leading-snug text-[var(--text-secondary)]">
+            <p className="mt-auto shrink-0 w-full px-2 pb-1 text-center text-[0.72rem] leading-snug text-[var(--text-secondary)] break-words whitespace-normal">
               {explanation}
             </p>
           ) : null}

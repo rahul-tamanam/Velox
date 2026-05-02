@@ -262,6 +262,21 @@
   }
 }
 
+@keyframes velox-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  30% {
+    transform: translateX(0);
+  }
+  70% {
+    transform: translateX(calc(-100% + min(100%, 240px)));
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
 .risk-alert-dot-pulse {
   animation: risk-alert-dot-pulse 1.5s ease-in-out infinite;
   transform-origin: center;
