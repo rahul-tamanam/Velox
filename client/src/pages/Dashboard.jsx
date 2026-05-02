@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
@@ -21,6 +20,7 @@ import TaxPreviewModal from '../components/tools/TaxPreviewModal.jsx';
 import ChatbotButton from '../components/chatbot/ChatbotButton.jsx';
 import ChatbotDrawer from '../components/chatbot/ChatbotDrawer.jsx';
 import InfoTooltip from '../components/ui/InfoTooltip.jsx';
+import RiskAlertCapsule from '../components/dashboard/RiskAlertCapsule.jsx';
 import api from '../utils/api';
 import { fmtPct, fmtUsd } from '../utils/formatters';
 
@@ -30,8 +30,7 @@ function typeLabel(type) {
 }
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-  const { user, logout, setUser } = useAuth();
+  const { user, setUser } = useAuth();
   const { holdings, summary, refresh } = usePortfolio();
   const [tab, setTab] = useState('overview');
   const [chatOpen, setChatOpen] = useState(false);
@@ -116,10 +115,10 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
+    <div className="flex h-screen min-h-0 overflow-hidden bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
       <Sidebar active={tab} onSelect={setTab} />
-      <div className="flex min-h-screen flex-1 flex-col">
-        <header className="flex flex-wrap items-center gap-4 border-b border-[var(--border)] bg-[var(--bg-secondary)]/70 px-4 py-4 lg:px-8">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+        <header className="relative flex shrink-0 flex-wrap items-center gap-4 border-b border-[var(--border)] bg-[var(--bg-secondary)]/70 px-4 py-4 lg:px-8">
           <select
             className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm lg:hidden"
             value={tab}
@@ -139,26 +138,17 @@ export default function Dashboard() {
               </option>
             ))}
           </select>
-          <div className="flex flex-1 flex-col">
-            <p className="text-xs uppercase tracking-[0.35em] text-[var(--accent-gold)]">Velox</p>
-            <p className="font-display text-2xl">
-              Hello, {user?.name}{' '}
-              <span className="text-base text-[var(--text-secondary)]">· {user?.risk_profile}</span>
-            </p>
+          <div className="flex min-w-0 flex-1 items-center pr-[148px] lg:pr-[156px]">
+            <p className="min-w-0 truncate font-display text-2xl">Hello, {user?.name}</p>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              logout();
-              navigate('/');
-            }}
-            className="rounded-full border border-[var(--border)] px-4 py-2 text-xs text-[var(--text-secondary)]"
-          >
-            Sign out
-          </button>
+          <div className="pointer-events-none absolute inset-y-0 right-4 z-10 flex items-center lg:right-8">
+            <div className="pointer-events-auto">
+              <RiskAlertCapsule summary={summary} />
+            </div>
+          </div>
         </header>
 
-        <main className="flex-1 space-y-8 px-4 py-8 lg:px-10">
+        <main className="min-h-0 flex-1 overflow-y-auto space-y-8 px-4 py-8 lg:px-10">
           {tab === 'overview' && (
             <div className="space-y-8">
               <div className="grid gap-4 lg:grid-cols-4">
