@@ -3,21 +3,11 @@ import { Bar, BarChart, Cell, ReferenceLine, ResponsiveContainer, XAxis, YAxis }
 import { InnerShellBody, InnerShellHeader, InnerShellRoot } from '../ui/InnerShellCard.jsx';
 import { ShellCardTitleRow } from '../ui/ShellCardHeading.jsx';
 
-function formatCompactSigned(v) {
-  const abs = Math.abs(Number(v) || 0);
-  const sign = Number(v) >= 0 ? '+' : '-';
-  if (abs >= 1000) return `${sign}$${(abs / 1000).toFixed(1)}k`;
-  return `${sign}$${abs.toFixed(0)}`;
-}
-
 export default function PnlByPositionCard({ holdings = [] }) {
   const DATA = holdings.map((h) => ({
     name: h.ticker,
     value: ((h.current_price ?? h.avg_buy_price) - h.avg_buy_price) * h.quantity,
   }));
-  const winners = DATA.filter((d) => d.value > 0).reduce((s, d) => s + d.value, 0);
-  const losersAbs = Math.abs(DATA.filter((d) => d.value < 0).reduce((s, d) => s + d.value, 0));
-  const net = winners - losersAbs;
 
   return (
     <InnerShellRoot className="h-full min-h-0 min-w-0">
@@ -103,20 +93,6 @@ export default function PnlByPositionCard({ holdings = [] }) {
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-3 flex items-start justify-between gap-2 pt-3">
-        <div className="min-w-0">
-          <p className="text-[0.7rem] text-[#555555]">Winners</p>
-          <p className="text-[0.82rem] font-semibold text-[#22C55E]">{formatCompactSigned(winners)}</p>
-        </div>
-        <div className="min-w-0 text-center">
-          <p className="text-[0.7rem] text-[#555555]">Net</p>
-          <p className="text-[0.9rem] font-bold text-[#F0F0F0]">{formatCompactSigned(net)}</p>
-        </div>
-        <div className="min-w-0 text-right">
-          <p className="text-[0.7rem] text-[#555555]">Losers</p>
-          <p className="text-[0.82rem] font-semibold text-[#f87171]">-{formatCompactSigned(losersAbs).replace('+', '')}</p>
-        </div>
-      </div>
       </InnerShellBody>
     </InnerShellRoot>
   );

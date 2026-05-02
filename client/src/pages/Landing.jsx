@@ -10,7 +10,7 @@ const fade = {
 
 export default function Landing() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
+    <div className="relative h-screen overflow-x-hidden overflow-y-auto bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
       <Navbar />
 
       <section className="relative z-10 flex min-h-[100vh] min-h-[600px] flex-row items-center overflow-hidden pb-16 pt-10 pl-6 pr-0 lg:pl-16">

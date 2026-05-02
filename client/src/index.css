@@ -226,8 +226,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -235,12 +235,16 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: transparent;
+  border: 2px solid transparent;
   border-radius: 999px;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--border-subtle);
+  background: transparent;
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 ::-webkit-scrollbar-corner {
@@ -249,7 +253,7 @@
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
+  scrollbar-color: transparent transparent;
 }
 
 @keyframes risk-alert-dot-pulse {
