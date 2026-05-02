@@ -6,19 +6,19 @@ const FACTORS = [
   {
     key: 'diversification',
     label: 'Diversification',
-    weight: '30%',
+    weight: '45%',
     desc: 'How spread out your holdings are',
   },
   {
     key: 'volatility',
     label: 'Volatility',
-    weight: '25%',
+    weight: '30%',
     desc: 'Lower beta = calmer portfolio',
   },
   {
     key: 'goalAlignment',
     label: 'Goal Alignment',
-    weight: '25%',
+    weight: '5%',
     desc: 'Progress toward your target amount',
   },
   {

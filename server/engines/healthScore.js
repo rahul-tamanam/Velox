@@ -40,9 +40,9 @@ function computeHealthScore({
   const bufferScore = Math.max(0, 100 - (dd / 0.35) * 100);
 
   let score =
-    diversificationScore * 0.3 +
-    volatilityScore * 0.25 +
-    goalScore * 0.25 +
+    diversificationScore * 0.45 +
+    volatilityScore * 0.30 +
+    goalScore * 0.05 +
     bufferScore * 0.2;
 
   const regimeKey = regime ?? 'MODERATE';
