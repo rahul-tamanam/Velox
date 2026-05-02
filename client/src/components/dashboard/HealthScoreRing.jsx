@@ -1,24 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 import { ShieldCheckIcon } from '@heroicons/react/24/outline';
-import MiniDonutCard, { DONUT_FILL_ACCENT, DONUT_FILL_EMPTY } from './MiniDonutCard.jsx';
+import { InnerShellBody, InnerShellHeader, InnerShellRoot } from '../ui/InnerShellCard.jsx';
+import { ShellCardTitleRow } from '../ui/ShellCardHeading.jsx';
 
 const FACTORS = [
   {
     key: 'diversification',
     label: 'Diversification',
-    weight: '45%',
+    weight: '30%',
     desc: 'How spread out your holdings are',
   },
   {
     key: 'volatility',
     label: 'Volatility',
-    weight: '30%',
+    weight: '25%',
     desc: 'Lower beta = calmer portfolio',
   },
   {
     key: 'goalAlignment',
     label: 'Goal Alignment',
-    weight: '5%',
+    weight: '25%',
     desc: 'Progress toward your target amount',
   },
   {
@@ -42,27 +43,10 @@ function scoreColor(n) {
   return '#EF4444';
 }
 
-/** Remaining slice - neutral gray (health score isn't allocation-colored). */
-const HEALTH_REMAINING_FILL = 'rgba(255,255,255,0.12)';
-
-function buildHealthPieData(score) {
-  const pct = Math.min(100, Math.max(0, Number(score) || 0));
-  if (pct <= 0) {
-    return [{ name: 'None', value: 1, fill: DONUT_FILL_EMPTY }];
-  }
-  if (pct >= 100) {
-    return [{ name: 'Health', value: 1, fill: DONUT_FILL_ACCENT }];
-  }
-  return [
-    { name: 'Health', value: pct, fill: DONUT_FILL_ACCENT },
-    { name: 'Remaining', value: 100 - pct, fill: HEALTH_REMAINING_FILL },
-  ];
-}
-
 export default function HealthScoreRing({
   score = 0,
   explanation,
-  compact = false,
+  compact = true,
   embedded = false,
   breakdown,
 }) {
@@ -85,13 +69,22 @@ export default function HealthScoreRing({
   }, [open]);
 
   const pct = Math.min(100, Math.max(0, Number(score) || 0));
-  const pieData = buildHealthPieData(score);
+  const arcColor = scoreColor(pct);
 
   const factorScore = (key) => {
     const raw = breakdown?.[key];
     const n = typeof raw === 'number' && Number.isFinite(raw) ? raw : 0;
     return Math.min(100, Math.max(0, n));
   };
+
+  // Semicircle from left (180deg) to right (0deg)
+  const angleRad = Math.PI - (pct / 100) * Math.PI;
+  const cx = 110;
+  const cy = 102;
+  const r = 82;
+  const arcEndX = cx + r * Math.cos(angleRad);
+  const arcEndY = cy - r * Math.sin(angleRad);
+  const progressPath = `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${arcEndX} ${arcEndY}`;
 
   return (
     <div
@@ -158,29 +151,41 @@ export default function HealthScoreRing({
         )}
       </div>
 
-      <MiniDonutCard
-        variant={embedded ? 'embedded' : 'card'}
-        compact={compact}
-        title="Portfolio health"
-        titleIcon={<ShieldCheckIcon aria-hidden />}
-        pieData={pieData}
-        centerPrimary={pct}
-        centerSecondary="/ 100"
-        tooltipFormatter={(v, name) => [`${Number(v).toFixed(0)}`, name]}
-        footer={
-          <p
-            className={`text-center text-[var(--text-secondary)] ${
-              compact
-                ? embedded
-                  ? 'line-clamp-2 max-w-[11rem] text-xs leading-snug'
-                  : 'line-clamp-3 max-w-[11rem] text-xs leading-snug'
-                : 'max-w-xs text-sm'
-            }`}
-          >
-            {explanation}
-          </p>
-        }
-      />
+      <InnerShellRoot className="min-h-0 flex-1">
+        <InnerShellHeader glassEffect className="rounded-t-[12px]">
+          <ShellCardTitleRow icon={<ShieldCheckIcon aria-hidden />} title="Portfolio health" />
+        </InnerShellHeader>
+
+        <InnerShellBody className={compact ? 'gap-2 !pt-1 !pb-2 overflow-hidden' : 'gap-3 overflow-hidden'}>
+          <div className="mx-auto mt-2 flex w-full max-w-[300px] flex-col items-center">
+            <svg viewBox="0 0 220 130" className="h-auto w-full max-h-[132px] max-w-[265px] overflow-visible" aria-hidden>
+              <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="#3C3F45" strokeWidth={18} strokeLinecap="round" />
+              <path d={progressPath} fill="none" stroke={arcColor} strokeWidth={18} strokeLinecap="round" />
+
+              {Array.from({ length: 11 }, (_, i) => {
+                const t = i / 10;
+                const a = Math.PI - t * Math.PI;
+                const x = cx + (r - 17) * Math.cos(a);
+                const y = cy - (r - 17) * Math.sin(a);
+                return <circle key={i} cx={x} cy={y} r={1.6} fill="#4C5058" />;
+              })}
+
+              <text x={cx} y={89} textAnchor="middle" fill="#F0F0F0" style={{ fontSize: '1.6rem', fontWeight: 700 }}>
+                {Math.round(pct)}
+              </text>
+              <text x={cx} y={110} textAnchor="middle" fill="#9CA3AF" style={{ fontSize: '0.62rem', letterSpacing: '0.04em' }}>
+                Health Score
+              </text>
+            </svg>
+          </div>
+
+          {explanation ? (
+            <p className="mt-1 line-clamp-2 px-1 text-center text-[0.72rem] leading-snug text-[var(--text-secondary)]">
+              {explanation}
+            </p>
+          ) : null}
+        </InnerShellBody>
+      </InnerShellRoot>
     </div>
   );
 }

@@ -6,7 +6,8 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
 import HealthScoreRing from '../components/dashboard/HealthScoreRing.jsx';
 import KPICard from '../components/dashboard/KPICard.jsx';
-import DiversificationHeatmap from '../components/dashboard/DiversificationHeatmap.jsx';
+import HoldingsBreakdownCard from '../components/dashboard/HoldingsBreakdownCard.jsx';
+import PnlByPositionCard from '../components/dashboard/PnlByPositionCard.jsx';
 import GoalTrackerWidget from '../components/dashboard/GoalTrackerWidget.jsx';
 import HoldingsExplorer from '../components/dashboard/HoldingsExplorer.jsx';
 import LiveStockChart from '../components/charts/LiveStockChart.jsx';
@@ -19,11 +20,6 @@ import ChatbotButton from '../components/chatbot/ChatbotButton.jsx';
 import ChatbotDrawer from '../components/chatbot/ChatbotDrawer.jsx';
 import RiskAlertCapsule from '../components/dashboard/RiskAlertCapsule.jsx';
 import BuySellHoldingModal from '../components/portfolio/BuySellHoldingModal.jsx';
-import MiniDonutCard, {
-  DONUT_FILL_ACCENT,
-  DONUT_FILL_EMPTY,
-  DONUT_FILL_TRACK,
-} from '../components/dashboard/MiniDonutCard.jsx';
 import {
   ArrowTrendingUpIcon,
   BanknotesIcon,
@@ -120,7 +116,7 @@ export default function Dashboard() {
     <div className="flex h-screen min-h-0 overflow-hidden bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
       <Sidebar active={tab} onSelect={setTab} onOpenProfile={() => setProfileOpen(true)} />
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <header className="relative flex shrink-0 flex-wrap items-center gap-4 border-b border-[var(--border)] bg-[var(--bg-primary)] px-5 py-4 lg:px-8">
+        <header className="relative flex h-12 shrink-0 flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--bg-primary)] px-4 py-2 lg:px-4">
           <select
             className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-sm lg:hidden"
             value={tab}
@@ -141,8 +137,8 @@ export default function Dashboard() {
             ))}
           </select>
           <div className="flex min-w-0 flex-1 flex-col gap-0.5 pr-[148px] lg:pr-[156px]">
-            <p className="min-w-0 truncate text-xl font-semibold tracking-tight text-[var(--text-primary)]">
-              {`${user?.name ?? 'Demo User'}'s portfolio`}
+            <p className="min-w-0 truncate text-lg font-semibold tracking-tight text-[var(--text-primary)]">
+              {`${user?.name ?? 'Jordan Belfort'}'s portfolio`}
             </p>
           </div>
           <div className="pointer-events-none absolute inset-y-0 right-4 z-10 flex items-center lg:right-8">
@@ -154,69 +150,86 @@ export default function Dashboard() {
 
         <main
           className={clsx(
-            'min-h-0 flex-1 overflow-y-auto px-5 lg:px-8',
-            tab === 'portfolio' ? 'space-y-2 py-3 lg:py-4' : 'space-y-6 py-6 lg:py-8'
+            'min-h-0 flex-1 px-4 lg:px-4',
+            tab === 'portfolio'
+              ? 'space-y-2 overflow-y-auto py-3 lg:py-4'
+              : tab === 'dashboard'
+                ? 'overflow-hidden py-4'
+                : 'space-y-6 overflow-y-auto py-6 lg:py-8'
           )}
         >
           {tab === 'dashboard' && (
-            <div className="space-y-4">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                <KPICard
-                  innerShell
-                  title="Total portfolio value"
-                  titleIcon={<BanknotesIcon aria-hidden />}
-                  value={summary?.totalValue ?? 0}
-                  badgePct={summary?.todayChangePct}
-                  caption="Across all positions · live marks"
-                />
-                <KPICard
-                  innerShell
-                  title="Total return"
-                  titleIcon={<ArrowTrendingUpIcon aria-hidden />}
-                  value={summary?.totalReturnPct ?? 0}
-                  variant="pct"
-                  delta={summary?.totalReturnPct ?? 0}
-                  toneFromDelta
-                  caption="All-time vs cost basis"
-                />
-                <KPICard
-                  innerShell
-                  title="Today's change (approx)"
-                  titleIcon={<ChartBarIcon aria-hidden />}
-                  value={fmtPct(summary?.todayChangePct ?? 0)}
-                  delta={summary?.todayChangePct ?? 0}
-                  toneFromDelta
-                  caption="Vs prior session (estimated)"
-                />
-                <KPICard
-                  innerShell
-                  title="Portfolio beta"
-                  titleIcon={<ScaleIcon aria-hidden />}
-                  value={Number(summary?.portfolioBeta ?? 1).toFixed(2)}
-                  caption="Sensitivity vs market (1.0 = benchmark)"
-                />
-              </div>
-              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,440px)] lg:items-start">
-                <div className="flex min-w-0 flex-col gap-3">
-                  <div className="flex min-w-0 flex-col gap-2.5 sm:flex-row sm:items-stretch sm:gap-2.5">
-                    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-                      <HealthScoreRing
-                        compact
-                        score={summary?.health?.score ?? 0}
-                        explanation={summary?.health?.explanation}
-                        breakdown={summary?.health?.breakdown}
-                      />
-                    </div>
-                    <div className="flex min-h-0 min-w-0 shrink-0 flex-col sm:w-[11.5rem]">
-                      <StocksVsFundsDonutCard
-                        stocksPct={summary?.stocksVsFunds?.stocksPct}
-                        fundsPct={summary?.stocksVsFunds?.fundsPct}
-                      />
-                    </div>
-                  </div>
-                  <DiversificationHeatmap holdings={holdings} />
+            <div className="grid h-full min-h-0 grid-rows-[auto_1fr] gap-3 overflow-hidden">
+              <div className="grid h-[120px] min-h-0 grid-cols-4 gap-3">
+                <div className="min-h-0">
+                  <KPICard
+                    innerShell
+                    title="Total portfolio value"
+                    titleIcon={<BanknotesIcon aria-hidden />}
+                    value={summary?.totalValue ?? 0}
+                    badgePct={summary?.todayChangePct}
+                    caption="Across all positions · live marks"
+                  />
                 </div>
-                <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
+                <div className="min-h-0">
+                  <KPICard
+                    innerShell
+                    title="Total return"
+                    titleIcon={<ArrowTrendingUpIcon aria-hidden />}
+                    value={summary?.totalReturnPct ?? 0}
+                    variant="pct"
+                    delta={summary?.totalReturnPct ?? 0}
+                    toneFromDelta
+                    caption="All-time vs cost basis"
+                  />
+                </div>
+                <div className="min-h-0">
+                  <KPICard
+                    innerShell
+                    title="Today's change (approx)"
+                    titleIcon={<ChartBarIcon aria-hidden />}
+                    value={fmtPct(summary?.todayChangePct ?? 0)}
+                    delta={summary?.todayChangePct ?? 0}
+                    toneFromDelta
+                    caption="Vs prior session (estimated)"
+                  />
+                </div>
+                <div className="min-h-0">
+                  <KPICard
+                    innerShell
+                    title="Portfolio beta"
+                    titleIcon={<ScaleIcon aria-hidden />}
+                    value={Number(summary?.portfolioBeta ?? 1).toFixed(2)}
+                    caption="Sensitivity vs market (1.0 = benchmark)"
+                  />
+                </div>
+              </div>
+
+              <div
+                className="grid min-h-0 grid-cols-[280px_minmax(0,1fr)_450px] grid-rows-2 gap-3 overflow-hidden"
+                style={{
+                  gridTemplateAreas: `"health holdings market" "pnl pnl market"`,
+                }}
+              >
+                <div className="min-h-0 [grid-area:health]">
+                  <HealthScoreRing
+                    compact
+                    score={summary?.health?.score ?? 0}
+                    explanation={summary?.health?.explanation}
+                    breakdown={summary?.health?.breakdown}
+                  />
+                </div>
+                <div className="min-h-0 [grid-area:holdings]">
+                  <HoldingsBreakdownCard
+                    holdings={holdings}
+                    stocksPct={summary?.stocksVsFunds?.stocksPct}
+                    fundsPct={summary?.stocksVsFunds?.fundsPct}
+                  />
+                </div>
+                <div className="min-h-0 [grid-area:pnl]">
+                  <PnlByPositionCard />
+                </div>
+                <div className="min-h-0 overflow-hidden [grid-area:market]">
                   <HoldingsExplorer holdings={holdings} />
                 </div>
               </div>
@@ -289,7 +302,7 @@ export default function Dashboard() {
             <div className="card-surface space-y-4 px-6 py-5">
               <p className="text-lg font-medium tracking-tight text-[var(--text-primary)]">Ask Velox anything</p>
               <p className="ds-body max-w-xl leading-relaxed">
-                Open the assistant from the floating button - it already knows your holdings summary and macro regime
+                Open the assistant from the floating button — it already knows your holdings summary and macro regime
                 when Groq is configured.
               </p>
               <button type="button" className="ds-btn-primary" onClick={() => setChatOpen(true)}>
@@ -313,54 +326,3 @@ export default function Dashboard() {
   );
 }
 
-function StocksVsFundsDonutCard({ stocksPct, fundsPct }) {
-  const stockFrac = Math.min(1, Math.max(0, stocksPct ?? 0));
-  const fundFrac = Math.min(1, Math.max(0, fundsPct ?? 0));
-  const sum = stockFrac + fundFrac;
-  const pieData =
-    sum < 1e-6
-      ? [{ name: 'No data', value: 1, fill: DONUT_FILL_EMPTY }]
-      : [
-          { name: 'Stocks', value: stockFrac / sum, fill: DONUT_FILL_ACCENT },
-          { name: 'Funds', value: fundFrac / sum, fill: DONUT_FILL_TRACK },
-        ];
-  const sPct = sum < 1e-6 ? 0 : (stockFrac / sum) * 100;
-  const fPct = sum < 1e-6 ? 0 : (fundFrac / sum) * 100;
-
-  return (
-    <MiniDonutCard
-      title="Portfolio Mix"
-      pieData={pieData}
-      compact
-      tooltipFormatter={(v, name) => [`${(Number(v) * 100).toFixed(1)}%`, name]}
-      footer={
-        sum >= 1e-6 ? (
-          <div className="flex w-full flex-col gap-1 text-[10px] sm:text-[11px]">
-            <div className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-                <span
-                  className="h-2 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: DONUT_FILL_ACCENT }}
-                  aria-hidden
-                />
-                Stocks
-              </span>
-              <span className="font-semibold tabular-nums text-[var(--text-primary)]">{sPct.toFixed(1)}%</span>
-            </div>
-            <div className="flex items-center justify-between gap-2">
-              <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-                <span
-                  className="h-2 w-2 shrink-0 rounded-full"
-                  style={{ backgroundColor: DONUT_FILL_TRACK }}
-                  aria-hidden
-                />
-                Funds
-              </span>
-              <span className="font-semibold tabular-nums text-[var(--text-primary)]">{fPct.toFixed(1)}%</span>
-            </div>
-          </div>
-        ) : null
-      }
-    />
-  );
-}

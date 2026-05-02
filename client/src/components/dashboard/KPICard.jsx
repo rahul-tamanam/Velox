@@ -53,7 +53,7 @@ export default function KPICard({
   const valueBlock = (
     <p
       className={clsx(
-        'text-[1.75rem] font-semibold leading-tight tracking-tight tabular-nums sm:text-[2rem]',
+        'text-[1.35rem] font-semibold leading-tight tracking-tight tabular-nums sm:text-[1.6rem]',
         mainColored ? (pos ? 'text-[var(--accent-green)]' : 'text-[var(--accent-red)]') : 'text-[var(--text-primary)]'
       )}
     >

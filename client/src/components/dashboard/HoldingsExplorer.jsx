@@ -30,6 +30,8 @@ export default function HoldingsExplorer({ holdings }) {
   const [sleeve, setSleeve] = useState('stock');
   const [chartTicker, setChartTicker] = useState('');
   const [chartRows, setChartRows] = useState([]);
+  /** Ticker that `chartRows` was loaded for — avoids showing the wrong sleeve’s prices while fetching. */
+  const [rowsTicker, setRowsTicker] = useState(null);
   const [chartLoading, setChartLoading] = useState(false);
   const [chartError, setChartError] = useState(null);
 
@@ -64,23 +66,32 @@ export default function HoldingsExplorer({ holdings }) {
   }, [filtered, chartTicker]);
 
   useEffect(() => {
-    if (!chartTicker) return;
-    let cancelled = false;
-    (async () => {
-      setChartLoading(true);
+    if (!chartTicker) {
+      setChartRows([]);
+      setRowsTicker(null);
+      setChartLoading(false);
       setChartError(null);
+      return;
+    }
+    let cancelled = false;
+    const requestedTicker = chartTicker;
+    setChartLoading(true);
+    setChartError(null);
+    (async () => {
       try {
         const { data } = await api.get('/stocks/history', {
-          params: { ticker: chartTicker, period: CHART_PERIOD },
+          params: { ticker: requestedTicker, period: CHART_PERIOD },
         });
         if (cancelled) return;
         const candles = data.candles || [];
         const rows = candles.map((c, i) => ({ t: i, price: c.close }));
         setChartRows(rows);
+        setRowsTicker(requestedTicker);
       } catch (e) {
         if (!cancelled) {
           setChartError(e.response?.data?.error || e.message);
           setChartRows([]);
+          setRowsTicker(null);
         }
       } finally {
         if (!cancelled) setChartLoading(false);
@@ -91,15 +102,18 @@ export default function HoldingsExplorer({ holdings }) {
     };
   }, [chartTicker]);
 
+  const rowsInSync = rowsTicker === chartTicker && chartTicker !== '';
+
   const highLow = useMemo(() => {
-    if (!chartRows.length) return { hi: 0, lo: 0 };
+    if (!chartRows.length || !rowsInSync) return { hi: 0, lo: 0 };
     const prices = chartRows.map((r) => r.price);
     return { hi: Math.max(...prices), lo: Math.min(...prices) };
-  }, [chartRows]);
+  }, [chartRows, rowsInSync]);
 
-  const lastPrice = chartRows.length ? chartRows[chartRows.length - 1].price : null;
+  const lastPrice =
+    rowsInSync && chartRows.length ? chartRows[chartRows.length - 1].price : null;
   const periodReturnPct =
-    chartRows.length >= 2 && chartRows[0].price > 0
+    rowsInSync && chartRows.length >= 2 && chartRows[0].price > 0
       ? (chartRows[chartRows.length - 1].price - chartRows[0].price) / chartRows[0].price
       : null;
 
@@ -108,7 +122,7 @@ export default function HoldingsExplorer({ holdings }) {
     : 'Select a position';
 
   return (
-    <InnerShellRoot className="flex w-full max-w-[520px] flex-col lg:max-w-none xl:max-w-[440px] xl:justify-self-end">
+    <InnerShellRoot className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">
       <InnerShellHeader glassEffect>
         <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
           <div>
@@ -125,7 +139,7 @@ export default function HoldingsExplorer({ holdings }) {
                 </svg>
               }
             />
-            <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Past week · select a holding</p>
+            <p className="mt-0.5 text-[0.72rem] text-[var(--text-secondary)]">Past week · select a holding</p>
           </div>
           <select
             className="min-w-0 w-full rounded-[10px] border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 font-mono text-sm text-[var(--text-primary)] sm:w-[10rem] sm:flex-none"
@@ -142,8 +156,8 @@ export default function HoldingsExplorer({ holdings }) {
         </div>
       </InnerShellHeader>
 
-      <InnerShellBody className="gap-3 !pt-1 !pb-3">
-      <div className="ds-segment-wrap flex w-full [&>button]:min-h-8 [&>button]:flex-1">
+      <InnerShellBody className="flex min-h-0 flex-1 gap-2 overflow-hidden !pt-1 !pb-2">
+      <div className="ds-segment-wrap shrink-0 flex w-full [&>button]:min-h-8 [&>button]:flex-1">
         <button
           type="button"
           data-active={sleeve === 'stock'}
@@ -171,7 +185,7 @@ export default function HoldingsExplorer({ holdings }) {
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-baseline gap-3">
               <span className="text-xl font-semibold tabular-nums tracking-tight text-[var(--text-primary)] sm:text-2xl">
-                {lastPrice != null ? fmtUsd(lastPrice) : 'N/A'}
+                {lastPrice != null ? fmtUsd(lastPrice) : '—'}
               </span>
               {periodReturnPct != null && (
                 <span
@@ -187,12 +201,20 @@ export default function HoldingsExplorer({ holdings }) {
             <p className="text-xs font-medium text-[var(--text-secondary)]">{subtitle}</p>
           </div>
 
-          <div className="h-[200px] w-full rounded-[12px] border border-[var(--border)] bg-transparent p-1 sm:h-[210px]">
-            {chartLoading && <p className="p-4 text-xs text-[var(--text-secondary)]">Loading…</p>}
+          <div className="relative min-h-0 flex-1 w-full rounded-[12px] border border-[var(--border)] bg-transparent p-1">
             {chartError && !chartLoading && (
               <p className="p-4 text-xs text-[var(--accent-red)]">{chartError}</p>
             )}
-            {!chartLoading && !chartError && chartRows.length > 0 && (
+            {!chartError && chartLoading && !rowsInSync && (
+              <div className="flex h-full min-h-[160px] flex-col items-center justify-center gap-2 rounded-[10px] bg-[rgba(255,255,255,0.03)]">
+                <div
+                  className="h-6 w-6 animate-spin rounded-full border-2 border-[var(--border)] border-t-[var(--accent)]"
+                  aria-hidden
+                />
+                <p className="text-[11px] text-[var(--text-secondary)]">Loading chart…</p>
+              </div>
+            )}
+            {!chartError && rowsInSync && chartRows.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartRows} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid
@@ -212,7 +234,9 @@ export default function HoldingsExplorer({ holdings }) {
                     fill="var(--chart-fill)"
                     fillOpacity={1}
                     dot={false}
-                    isAnimationActive={false}
+                    isAnimationActive
+                    animationDuration={450}
+                    animationEasing="ease-out"
                     activeDot={{ r: 4, fill: 'var(--chart-stroke)', stroke: 'var(--bg-surface)', strokeWidth: 1 }}
                   />
                 </AreaChart>
@@ -224,13 +248,13 @@ export default function HoldingsExplorer({ holdings }) {
             <div className="flex h-8 flex-1 items-center justify-center gap-1.5 border-r border-[var(--border)] px-2 text-[11px]">
               <span className="font-normal text-[var(--text-secondary)]">Highest</span>
               <span className="font-mono font-semibold text-[var(--text-primary)]">
-                {chartRows.length ? highLow.hi.toFixed(3) : 'N/A'}
+                {rowsInSync && chartRows.length ? highLow.hi.toFixed(3) : '—'}
               </span>
             </div>
             <div className="flex h-8 flex-1 items-center justify-center gap-1.5 px-2 text-[11px]">
               <span className="font-normal text-[var(--text-secondary)]">Lowest</span>
               <span className="font-mono font-semibold text-[var(--text-primary)]">
-                {chartRows.length ? highLow.lo.toFixed(3) : 'N/A'}
+                {rowsInSync && chartRows.length ? highLow.lo.toFixed(3) : '—'}
               </span>
             </div>
           </div>

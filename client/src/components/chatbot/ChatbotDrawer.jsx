@@ -22,7 +22,7 @@ const panelTransition = {
 
 export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, macroRegime, portfolioTickers }) {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio - plain English only.' },
+    { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio — plain English only.' },
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
   useEffect(() => {
     if (!open) return;
     setMessages([
-      { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio - plain English only.' },
+      { role: 'assistant', content: 'Hi! Ask me anything about your Velox portfolio — plain English only.' },
     ]);
   }, [open]);
 
@@ -56,7 +56,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
           role: 'assistant',
           content:
             e.response?.data?.reply ||
-            'Assistant unavailable - please verify GROQ_API_KEY in server .env.',
+            'Assistant unavailable — please verify GROQ_API_KEY in server .env.',
         },
       ]);
     } finally {
@@ -106,18 +106,6 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
                 Close
               </button>
             </div>
-            <div className="flex max-h-[9.5rem] shrink-0 flex-wrap gap-2 overflow-y-auto border-b border-[var(--border)] px-3 py-2.5 sm:px-4 sm:py-3">
-              {CHIPS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  className="rounded-lg border border-[var(--border)] bg-transparent px-3 py-1 text-[11px] text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
-                  onClick={() => send(c)}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
             <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-3 py-3 text-sm sm:px-4 sm:py-4">
               {messages.map((m, i) => (
                 <motion.div
@@ -158,6 +146,20 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
                   )}
                 </motion.div>
               ))}
+              {!messages.some((m) => m.role === 'user') && (
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {CHIPS.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      className="rounded-lg border border-[var(--border)] bg-transparent px-3 py-1 text-[11px] text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
+                      onClick={() => send(c)}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              )}
               {loading && <p className="text-xs text-[var(--text-secondary)]">Thinking…</p>}
             </div>
             <div className="shrink-0 border-t border-[var(--border)] p-3 sm:p-4">

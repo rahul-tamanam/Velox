@@ -4,10 +4,12 @@ import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 import { InnerShellBody, InnerShellHeader, InnerShellRoot } from '../ui/InnerShellCard.jsx';
 import { ShellCardTitleRow } from '../ui/ShellCardHeading.jsx';
 
-/** Matches dashboard donut sizing - keep in sync across health + allocation splits */
+/** Matches dashboard donut sizing — keep in sync across health + holdings breakdown */
 export const DONUT_INNER_RADIUS = '58%';
 export const DONUT_OUTER_RADIUS = '88%';
 export const DONUT_PADDING_ANGLE = 2;
+/** Tailwind box for compact donut plot (9.25rem ≈ health / holdings ring size) */
+export const DONUT_COMPACT_CHART_CLASS = 'h-[9.25rem] w-[9.25rem]';
 
 export const DONUT_FILL_ACCENT = 'var(--accent)';
 export const DONUT_FILL_TRACK = '#0083FF';
@@ -30,7 +32,7 @@ export default function MiniDonutCard({
 }) {
   const pad =
     pieData.length > 1 ? DONUT_PADDING_ANGLE : 0;
-  const chartBox = compact ? 'h-[9.25rem] w-[9.25rem]' : 'h-40 w-40';
+  const chartBox = compact ? DONUT_COMPACT_CHART_CLASS : 'h-40 w-40';
   const scoreClass = compact ? 'text-3xl' : 'text-4xl';
 
   const ttProps =
@@ -79,12 +81,18 @@ export default function MiniDonutCard({
   if (innerShell && variant === 'card') {
     return (
       <InnerShellRoot className="min-h-0 flex-1">
-        <InnerShellHeader glassEffect>
+        <InnerShellHeader glassEffect className="rounded-t-[12px]">
           <ShellCardTitleRow icon={titleIcon ?? <ChartPieIcon aria-hidden />} title={title} />
         </InnerShellHeader>
-        <InnerShellBody className="flex flex-col items-center gap-2 !pt-1 !pb-3">
-          {chartInner}
-          {footer != null && footer !== false && <div className="w-full">{footer}</div>}
+        <InnerShellBody className="flex min-h-0 flex-1 flex-col !pt-1 !pb-3">
+          <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center">
+            {chartInner}
+          </div>
+          {footer != null && footer !== false && (
+            <div className="mt-auto w-full shrink-0 pt-2">
+              <div className="flex min-h-[2.75rem] flex-col items-center justify-center">{footer}</div>
+            </div>
+          )}
         </InnerShellBody>
       </InnerShellRoot>
     );

@@ -8,6 +8,9 @@
   #root {
     @apply font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
     background-color: var(--bg-primary);
     color: var(--text-primary);
   }

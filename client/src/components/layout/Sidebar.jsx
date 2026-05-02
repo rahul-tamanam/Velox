@@ -77,7 +77,7 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
     };
   }, []);
 
-  const displayName = user?.name ?? 'Demo User';
+  const displayName = user?.name ?? 'Jordan Belfort';
   const displayEmail = user?.email ?? 'demo@velox.app';
   const initials = initialsFromName(displayName);
 
@@ -95,7 +95,7 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
   return (
     <aside
       className={clsx(
-        'relative hidden h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-[var(--border)] bg-[var(--bg-elevated)] transition-[width] duration-200 ease-out lg:flex',
+        'relative hidden h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-[var(--border)] bg-[#111111] transition-[width] duration-200 ease-out lg:flex',
         collapsed ? 'w-14' : 'w-[220px]'
       )}
     >
