@@ -5,54 +5,16 @@ import { InnerShellBody, InnerShellHeader, InnerShellRoot } from '../ui/InnerShe
 import { ShellCardTitleRow } from '../ui/ShellCardHeading.jsx';
 import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 import {
-  DONUT_COMPACT_CHART_CLASS,
   DONUT_INNER_RADIUS,
   DONUT_OUTER_RADIUS,
   DONUT_PADDING_ANGLE,
 } from './MiniDonutCard.jsx';
 
-const STOCK_COLORS = ['#FE6507', '#ea580c', '#f97316'];
-const FUND_COLORS = ['#5B9CF6', '#3b82f6', '#2563eb'];
-
-const RAD = Math.PI / 180;
+const STOCK_COLORS = ['#FE6507', '#ea580c', '#f97316', '#fb923c', '#c2410c', '#9a3412'];
+const FUND_COLORS = ['#5B9CF6', '#3b82f6', '#2563eb', '#60a5fa', '#1d4ed8', '#93c5fd'];
 
 function isFundType(type) {
   return type === 'fund' || type === 'etf';
-}
-
-function renderLeaderLabel({ cx, cy, midAngle, outerRadius, name, payload }) {
-  const fill = payload?.fill ?? '#888';
-  const portfolioPct = payload?.portfolioPct ?? 0;
-  const sin = Math.sin(-RAD * midAngle);
-  const cos = Math.cos(-RAD * midAngle);
-  const mx = cx + (outerRadius + 4) * cos;
-  const my = cy + (outerRadius + 4) * sin;
-  const lx = cx + (outerRadius + 14) * cos;
-  const ly = cy + (outerRadius + 14) * sin;
-  const text = `${name}: ${portfolioPct.toFixed(1)}%`;
-  const flip = cos < 0 ? -1 : 1;
-  const tx = lx + flip * 30;
-  return (
-    <g>
-      <path
-        d={`M${mx},${my} Q ${(mx + lx) / 2},${(my + ly) / 2 - 6} ${lx},${ly}`}
-        stroke={fill}
-        strokeWidth={1.25}
-        fill="none"
-        opacity={0.95}
-      />
-      <text
-        x={tx}
-        y={ly}
-        fill="var(--text-primary)"
-        textAnchor={flip < 0 ? 'end' : 'start'}
-        dominantBaseline="middle"
-        style={{ fontSize: '0.7rem', fontWeight: 500 }}
-      >
-        {text}
-      </text>
-    </g>
-  );
 }
 
 export default function HoldingsBreakdownCard({ holdings, stocksPct, fundsPct }) {
@@ -70,8 +32,7 @@ export default function HoldingsBreakdownCard({ holdings, stocksPct, fundsPct })
         value: weight(h),
         kind: 'stock',
       }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 2);
+      .sort((a, b) => b.value - a.value);
 
     const fundList = (holdings || [])
       .filter((h) => isFundType(h.type))
@@ -80,8 +41,7 @@ export default function HoldingsBreakdownCard({ holdings, stocksPct, fundsPct })
         value: weight(h),
         kind: 'fund',
       }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 3);
+      .sort((a, b) => b.value - a.value);
 
     let si = 0;
     let fi = 0;
@@ -136,11 +96,9 @@ export default function HoldingsBreakdownCard({ holdings, stocksPct, fundsPct })
         <ShellCardTitleRow icon={<ChartPieIcon aria-hidden />} title="Holdings Breakdown" />
       </InnerShellHeader>
 
-      <InnerShellBody className="flex min-h-0 flex-1 flex-col overflow-hidden !pt-1 !pb-2">
-        <div className="relative mx-auto flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden px-1 py-1">
-          <div
-            className={`relative shrink-0 overflow-visible [&_.recharts-wrapper]:!overflow-visible [&_svg]:overflow-visible ${DONUT_COMPACT_CHART_CLASS}`}
-          >
+      <InnerShellBody className="flex flex-col min-h-0 flex-1 !pt-1 !pb-2">
+        <div className="relative mx-auto flex min-h-0 w-full flex-1 items-center justify-center px-1 py-1">
+          <div className="relative w-full" style={{ height: '180px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart margin={{ top: 2, right: 2, bottom: 2, left: 2 }}>
                 <Pie
@@ -154,8 +112,6 @@ export default function HoldingsBreakdownCard({ holdings, stocksPct, fundsPct })
                   paddingAngle={padAngle}
                   stroke="var(--bg-primary)"
                   strokeWidth={2}
-                  labelLine={false}
-                  label={(props) => renderLeaderLabel(props)}
                   isAnimationActive={false}
                 >
                   {pieSlices.map((entry, i) => (
@@ -166,9 +122,10 @@ export default function HoldingsBreakdownCard({ holdings, stocksPct, fundsPct })
                   {...rechartsTooltipProps}
                   formatter={(_, __, item) => {
                     const p = item?.payload?.portfolioPct;
-                    return p != null ? [`${Number(p).toFixed(1)}% of portfolio`, ''] : ['—', ''];
+                    const name = item?.payload?.name ?? '';
+                    return p != null ? [`${Number(p).toFixed(1)}% of portfolio`, name] : ['—', ''];
                   }}
-                  labelFormatter={(label) => label}
+                  labelFormatter={() => ''}
                 />
               </PieChart>
             </ResponsiveContainer>
