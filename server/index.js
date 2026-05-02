@@ -20,6 +20,7 @@ const chatbotRoutes = require('./routes/chatbot');
 const macroRoutes = require('./routes/macro');
 const newsRoutes = require('./routes/news');
 const toolsRoutes = require('./routes/tools');
+const aiRoutes = require('./routes/ai');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,6 +36,7 @@ app.use('/api/chatbot', chatbotRoutes);
 app.use('/api/macro', macroRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/tools', toolsRoutes);
+app.use('/api/ai', aiRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ ok: true, service: 'velox-api' });

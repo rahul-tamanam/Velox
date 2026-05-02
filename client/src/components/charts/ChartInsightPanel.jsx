@@ -12,11 +12,6 @@ const PERIOD_LABELS = {
   '1y': '1 year',
 };
 
-function formatUsd(n) {
-  if (n == null || Number.isNaN(n)) return '—';
-  return `$${Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
-}
-
 function InsightSkeleton() {
   return (
     <div className="animate-pulse space-y-2">
@@ -45,38 +40,31 @@ export default function ChartInsightPanel({ ticker, period, candles }) {
 
     let cancelled = false;
 
-    const trendLabel =
-      computed.trend === 'uptrend'
-        ? 'up'
-        : computed.trend === 'downtrend'
-          ? 'down'
-          : 'sideways';
-
     const tf = PERIOD_LABELS[period] || period;
-
-    const prompt = `You are a concise financial analyst. Given this candlestick data for ${ticker} over ${tf}:
-- First price: ${formatUsd(computed.firstClose)}
-- Last price: ${formatUsd(computed.lastClose)}
-- High: ${formatUsd(computed.high)}, Low: ${formatUsd(computed.low)}
-- Trend: ${trendLabel} (up/down/sideways)
-- Bullish candles: ${computed.bullCount}, Bearish candles: ${computed.bearCount}
-
-Write 2-3 sentences explaining what is happening in plain English for a retail investor. 
-Be specific about price action, momentum, and any notable pattern. No jargon.`;
 
     (async () => {
       setLoading(true);
       setError(null);
       try {
-        const out = await fetchChartInsight(prompt);
+        const out = await fetchChartInsight({
+          symbol: ticker,
+          timeframe: tf,
+          firstClose: computed.firstClose,
+          lastClose: computed.lastClose,
+          high: computed.high,
+          low: computed.low,
+          bullCount: computed.bullCount,
+          bearCount: computed.bearCount,
+          trend: computed.trend,
+        });
         if (!cancelled) {
           setText(out);
           setError(null);
         }
-      } catch (e) {
+      } catch {
         if (!cancelled) {
           setText('');
-          setError(e.message === 'MISSING_KEY' ? 'MISSING_KEY' : 'API_ERROR');
+          setError(true);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -151,7 +139,7 @@ Be specific about price action, momentum, and any notable pattern. No jargon.`;
             {loading && <InsightSkeleton />}
             {!loading && error && (
               <p className="text-sm text-red-300/90">
-                Unable to load analysis. Check your GROQ API key.
+                Unable to load analysis. Please try again.
               </p>
             )}
             {!loading && !error && text && (

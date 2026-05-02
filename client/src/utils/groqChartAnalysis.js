@@ -1,38 +1,20 @@
-function getGroqKey() {
-  return (
-    import.meta.env.VITE_GROQ_API_KEY ||
-    import.meta.env.NEXT_PUBLIC_GROQ_API_KEY ||
-    ''
-  );
-}
+import api from './api';
 
-export async function fetchChartInsight(prompt) {
-  const apiKey = getGroqKey().trim();
-  if (!apiKey) {
-    throw new Error('MISSING_KEY');
-  }
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      model: 'llama3-8b-8192',
-      messages: [{ role: 'user', content: prompt }],
-      temperature: 0.55,
-      max_tokens: 240,
-    }),
-  });
-
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(t || `Groq HTTP ${res.status}`);
-  }
-
-  const data = await res.json();
-  const text = data?.choices?.[0]?.message?.content?.trim();
-  if (!text) throw new Error('Empty response');
-  return text;
+/**
+ * Calls backend POST /api/ai/chart-analysis — Groq key stays server-side only.
+ *
+ * @param {object} payload
+ * @param {string} payload.symbol
+ * @param {string} payload.timeframe
+ * @param {number} payload.firstClose
+ * @param {number} payload.lastClose
+ * @param {number} payload.high
+ * @param {number} payload.low
+ * @param {number} payload.bullCount
+ * @param {number} payload.bearCount
+ * @param {string} payload.trend — 'uptrend' | 'downtrend' | 'sideways'
+ */
+export async function fetchChartInsight(payload) {
+  const { data } = await api.post('/ai/chart-analysis', payload);
+  return data.analysis;
 }
