@@ -9,9 +9,9 @@ import { AreaClosed, LinePath } from '@visx/shape';
 import { bisector } from 'd3-array';
 
 const REGIME_FILL = {
-  RISK_ON: 'rgba(34, 197, 94, 0.14)',
-  MODERATE: 'rgba(245, 158, 11, 0.12)',
-  RISK_OFF: 'rgba(239, 68, 68, 0.14)',
+  RISK_ON: 'rgba(255, 255, 255, 0.055)',
+  MODERATE: 'rgba(255, 255, 255, 0.035)',
+  RISK_OFF: 'rgba(255, 255, 255, 0.02)',
 };
 
 const MARGIN = { top: 20, right: 18, bottom: 46, left: 58 };
@@ -195,7 +195,7 @@ function ChartInner({ width, height, data, regimeAreas, showRegimeShading }) {
             y={MARGIN.top + (yScale(tick) ?? 0)}
             textAnchor="end"
             dominantBaseline="middle"
-            className="fill-[var(--chart-label)] text-[10px]"
+            className="fill-[var(--text-muted)] text-[11px]"
             style={{ fontVariantNumeric: 'tabular-nums' }}
           >
             {tick >= 1e6
@@ -213,7 +213,7 @@ function ChartInner({ width, height, data, regimeAreas, showRegimeShading }) {
             x={MARGIN.left + (xScale(dt) ?? 0)}
             y={height - 12}
             textAnchor="middle"
-            className="fill-[var(--chart-label)] text-[10px]"
+            className="fill-[var(--text-muted)] text-[11px]"
           >
             {dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </text>
@@ -254,8 +254,8 @@ function ChartInner({ width, height, data, regimeAreas, showRegimeShading }) {
               width={innerWidth}
               stroke="var(--chart-grid)"
               strokeWidth={1}
-              strokeOpacity={0.9}
-              strokeDasharray="4 4"
+              strokeOpacity={0.4}
+              strokeDasharray=""
               numTicks={5}
             />
           </g>
@@ -274,7 +274,7 @@ function ChartInner({ width, height, data, regimeAreas, showRegimeShading }) {
             y={getYSpy}
             curve={curveMonotoneX}
             stroke={`url(#${spyStrokeGrad})`}
-            strokeWidth={2}
+            strokeWidth={1}
             strokeLinecap="round"
           />
 
@@ -292,7 +292,7 @@ function ChartInner({ width, height, data, regimeAreas, showRegimeShading }) {
             y={getYVelox}
             curve={curveMonotoneX}
             stroke={`url(#${veloxStrokeGrad})`}
-            strokeWidth={2}
+            strokeWidth={1.5}
             strokeLinecap="round"
           />
 
@@ -352,7 +352,7 @@ function ChartInner({ width, height, data, regimeAreas, showRegimeShading }) {
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: 'spring', stiffness: 520, damping: 38 }}
-          className="pointer-events-none absolute z-10 w-[11.5rem] rounded-lg border border-[var(--border)] bg-[var(--bg-card)]/95 px-3 py-2.5 text-xs shadow-xl backdrop-blur-md"
+          className="pointer-events-none absolute z-10 w-[11.5rem] rounded-lg border border-[var(--border)] bg-[var(--bg-surface)]/95 px-3 py-2.5 text-xs backdrop-blur-md"
           style={{
             left: (() => {
               const cx = MARGIN.left + tip.vx;
@@ -405,7 +405,7 @@ function ChartInner({ width, height, data, regimeAreas, showRegimeShading }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.15 }}
-          className="pointer-events-none absolute z-[11] whitespace-nowrap rounded-full border border-[var(--chart-crosshair)] bg-[var(--bg-secondary)] px-2.5 py-1 text-[11px] font-medium tabular-nums text-sky-300 shadow-md"
+          className="pointer-events-none absolute z-[11] whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1 text-[11px] font-medium tabular-nums text-[var(--text-muted)]"
           style={{
             left: Math.min(Math.max(MARGIN.left + tip.vx, 52), width - 52),
             top: height - 26,

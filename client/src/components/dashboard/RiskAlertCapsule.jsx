@@ -122,10 +122,11 @@ export default function RiskAlertCapsule({ summary }) {
         className={clsx(
           'inline-flex h-7 items-center gap-2 rounded-full border px-3 text-[12px] font-medium leading-none transition-colors',
           isRed &&
-            'border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.08)] text-[#EF4444]',
+            'border-[rgba(248,113,113,0.35)] bg-[rgba(248,113,113,0.08)] text-[var(--accent-red)]',
           isAmber &&
-            'border-[rgba(240,180,41,0.3)] bg-[rgba(240,180,41,0.08)] text-[#F0B429]',
-          isOk && 'border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.04)] text-white/70'
+            'border-[rgba(163,163,163,0.35)] bg-[rgba(163,163,163,0.08)] text-[var(--accent-neutral)]',
+          isOk &&
+            'border-[var(--border)] bg-[rgba(74,222,128,0.08)] text-[var(--accent-green)]'
         )}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -133,9 +134,9 @@ export default function RiskAlertCapsule({ summary }) {
         <span
           className={clsx(
             'h-2 w-2 shrink-0 rounded-full',
-            isRed && 'bg-[#EF4444] risk-alert-dot-pulse',
-            isAmber && 'bg-[#F0B429]',
-            isOk && 'bg-[#22c55e]'
+            isRed && 'bg-[var(--accent-red)] risk-alert-dot-pulse',
+            isAmber && 'bg-[var(--accent-neutral)]',
+            isOk && 'bg-[var(--accent-green)]'
           )}
           aria-hidden
         />
@@ -144,7 +145,7 @@ export default function RiskAlertCapsule({ summary }) {
 
       {open && (
         <div
-          className="absolute right-0 top-[calc(100%+8px)] z-50 min-w-[220px] rounded-xl border border-[rgba(255,255,255,0.1)] bg-[#0d1117] px-4 py-3 text-sm shadow-xl"
+          className="panel-elevated absolute right-0 top-[calc(100%+8px)] z-50 min-w-[220px] px-4 py-3 text-sm"
           role="dialog"
         >
           {isOk && (
@@ -166,7 +167,7 @@ export default function RiskAlertCapsule({ summary }) {
                     <dd
                       className={clsx(
                         'font-medium tabular-nums',
-                        (delta ?? 0) > 0 && 'text-[#22c55e]',
+                        (delta ?? 0) > 0 && 'text-[var(--accent-green)]',
                         (delta ?? 0) === 0 && 'text-[var(--text-secondary)]'
                       )}
                     >
@@ -180,7 +181,7 @@ export default function RiskAlertCapsule({ summary }) {
                   Baseline saved — future visits will compare against this score.
                 </p>
               )}
-              <div className="border-t border-[rgba(255,255,255,0.08)] pt-2">
+              <div className="border-t border-[var(--border-subtle)] pt-2">
                 <dt className="text-xs text-[var(--text-secondary)]">Recorded</dt>
                 <dd className="mt-1 text-xs text-[var(--text-secondary)]">
                   {recordedAt.toLocaleString(undefined, {
@@ -207,13 +208,13 @@ export default function RiskAlertCapsule({ summary }) {
                 <dd
                   className={clsx(
                     'font-medium tabular-nums',
-                    isRed ? 'text-[#EF4444]' : 'text-[#F0B429]'
+                    isRed ? 'text-[var(--accent-red)]' : 'text-[var(--accent-neutral)]'
                   )}
                 >
                   −{dropAmount}
                 </dd>
               </div>
-              <div className="border-t border-[rgba(255,255,255,0.08)] pt-2">
+              <div className="border-t border-[var(--border-subtle)] pt-2">
                 <dt className="text-xs text-[var(--text-secondary)]">Recorded</dt>
                 <dd className="mt-1 text-xs text-[var(--text-secondary)]">
                   {recordedAt.toLocaleString(undefined, {

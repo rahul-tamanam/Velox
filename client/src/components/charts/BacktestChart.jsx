@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import api from '../../utils/api';
-import MacroRegimeBadge from '../dashboard/MacroRegimeBadge.jsx';
 import VeloxBacktestAreaChart from './VeloxBacktestAreaChart.jsx';
 import InfoTooltip from '../ui/InfoTooltip.jsx';
 
@@ -96,7 +95,7 @@ export default function BacktestChart() {
   return (
     <div className="relative space-y-6">
       <InfoTooltip text="The Velox Macro-Aware Momentum Algorithm backtests an 11-ETF universe from Jan 2020 using real FRED macro data. Rotates into top momentum ETFs when Risk-On; shifts defensive when Risk-Off. Past performance does not guarantee future results." />
-      <div className="card-surface border border-[var(--accent-gold)]/25 p-6">
+      <div className="card-surface p-6">
         <p className="font-display text-2xl font-semibold tracking-tight">
           Velox Macro-Aware Momentum Algorithm
         </p>
@@ -105,9 +104,8 @@ export default function BacktestChart() {
           {backtestRangeLabel ? ` – ${backtestRangeLabel}` : ''} · Real FRED macro data · 11-ETF momentum universe with
           defensive rotation.
         </p>
-        <div className="mt-6 grid gap-4 lg:grid-cols-2">
-          <MacroRegimeBadge />
-          <div className="flex flex-col justify-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)]/60 p-5">
+        <div className="mt-6">
+          <div className="flex max-w-xl flex-col justify-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)]/60 p-5">
             <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">Corpus</p>
             <div className="flex flex-wrap items-center gap-2">
               {PRESETS.map((c) => (
@@ -119,10 +117,10 @@ export default function BacktestChart() {
                     setCustomDraft('');
                     setCorpus(c);
                   }}
-                  className={`rounded-full px-4 py-2 font-mono text-sm ${
+                  className={`rounded-lg border px-4 py-2 font-mono text-sm transition-colors ${
                     isPresetCorpus && corpus === c && !customEditing
-                      ? 'bg-[var(--accent-gold)] text-[var(--bg-primary)]'
-                      : 'border border-[var(--border)] text-[var(--text-secondary)]'
+                      ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                      : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
                   }`}
                 >
                   ${c.toLocaleString()}
@@ -171,17 +169,17 @@ export default function BacktestChart() {
       <div className="card-surface p-5">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
           <p className="max-w-xl text-xs leading-relaxed text-[var(--text-secondary)]">
-            Velox is shown in <span className="text-sky-400">blue</span>; SPY stays gray. Regime tints are off by default so
-            the curves stay easy to read — turn them on when you want macro context on the chart.
+            Velox uses the brighter line and fill; SPY uses the secondary layer. Regime bands are off by default — turn them on
+            for subtle monochrome macro context behind the curves.
           </p>
           <button
             type="button"
             aria-pressed={showRegimeShading}
             onClick={() => setShowRegimeShading((v) => !v)}
-            className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors ${
+            className={`shrink-0 rounded-lg border px-4 py-2 text-[0.8rem] font-medium transition-colors ${
               showRegimeShading
-                ? 'border-sky-400/50 bg-sky-500/15 text-sky-100 hover:bg-sky-500/25'
-                : 'border-[var(--border)] bg-[var(--bg-secondary)] text-[var(--text-secondary)] hover:border-sky-500/30 hover:text-[var(--text-primary)]'
+                ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]'
+                : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]'
             }`}
           >
             {showRegimeShading ? 'Hide regime shading' : 'Show regime shading'}
@@ -196,13 +194,13 @@ export default function BacktestChart() {
           {showRegimeShading ? (
             <div className="flex flex-wrap gap-4">
               <span className="flex items-center gap-2">
-                <span className="inline-block h-2 w-6 rounded bg-green-500/40" /> Risk-On
+                <span className="inline-block h-2 w-6 rounded bg-[rgba(255,255,255,0.14)]" /> Risk-On
               </span>
               <span className="flex items-center gap-2">
-                <span className="inline-block h-2 w-6 rounded bg-amber-500/40" /> Moderate
+                <span className="inline-block h-2 w-6 rounded bg-[rgba(255,255,255,0.09)]" /> Moderate
               </span>
               <span className="flex items-center gap-2">
-                <span className="inline-block h-2 w-6 rounded bg-red-500/40" /> Risk-Off
+                <span className="inline-block h-2 w-6 rounded bg-[rgba(255,255,255,0.05)]" /> Risk-Off
               </span>
             </div>
           ) : (
@@ -230,7 +228,7 @@ export default function BacktestChart() {
           type="button"
           onClick={() => setHistoryOpen((o) => !o)}
           aria-expanded={historyOpen}
-          className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition-colors hover:bg-[var(--bg-secondary)]/40"
+          className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left transition-colors hover:bg-[var(--bg-elevated)]/40"
         >
           <div className="min-w-0">
             <p className="font-display text-sm font-semibold tracking-tight text-[var(--text-primary)]">
@@ -245,7 +243,7 @@ export default function BacktestChart() {
           <motion.span
             animate={{ rotate: historyOpen ? 180 : 0 }}
             transition={{ type: 'spring', stiffness: 320, damping: 28 }}
-            className="shrink-0 text-[var(--accent-gold)]"
+            className="shrink-0 text-[var(--text-muted)]"
             aria-hidden
           >
             <ChevronDownIcon className="h-5 w-5" />
@@ -266,11 +264,11 @@ export default function BacktestChart() {
           <div className="border-t border-[var(--border)]">
             <div className="max-h-[min(28rem,55vh)] overflow-x-auto overflow-y-auto">
               <table className="w-full min-w-[20rem] text-left text-xs">
-                <thead className="sticky top-0 z-[1] bg-[var(--bg-secondary)] text-[var(--text-secondary)] shadow-[0_1px_0_var(--border)]">
+                <thead className="ds-table-head sticky top-0 z-[1]">
                   <tr>
-                    <th className="px-4 py-3">Period</th>
-                    <th className="px-4 py-3">Regime</th>
-                    <th className="px-4 py-3">Holdings</th>
+                    <th className="px-4 py-3 font-normal">Period</th>
+                    <th className="px-4 py-3 font-normal">Regime</th>
+                    <th className="px-4 py-3 font-normal">Holdings</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -290,7 +288,7 @@ export default function BacktestChart() {
         </motion.div>
       </div>
 
-      <div className="card-surface border border-[var(--border)] bg-[var(--bg-secondary)]/40 p-6 text-sm leading-relaxed text-[var(--text-secondary)]">
+      <div className="card-surface border border-[var(--border)] bg-[var(--bg-elevated)]/40 p-6 text-sm leading-relaxed text-[var(--text-secondary)]">
         <p>
           During aggressive Fed hiking cycles, Velox reads rising real rates alongside GDP momentum and can switch
           into <span className="text-[var(--text-primary)]">Risk-Off</span> mode — leaning on gold, duration, bills,

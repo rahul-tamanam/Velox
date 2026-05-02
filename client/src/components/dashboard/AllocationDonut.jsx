@@ -3,7 +3,15 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { SECTOR_MAP } from '../../utils/constants';
 import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
 
-const COLORS = ['#D4AF37', '#60A5FA', '#34D399', '#F472B6', '#A78BFA', '#FBBF24', '#94A3B8'];
+const COLORS = [
+  'var(--accent)',
+  'rgba(255,255,255,0.22)',
+  'rgba(255,255,255,0.16)',
+  'rgba(255,255,255,0.12)',
+  'rgba(255,255,255,0.09)',
+  'rgba(255,255,255,0.06)',
+  'rgba(255,255,255,0.04)',
+];
 
 export default function AllocationDonut({ holdings }) {
   const [active, setActive] = useState(null);

@@ -17,8 +17,8 @@ export default function RebalanceCard({ summary, riskProfile }) {
   }, [summary, riskProfile]);
 
   return (
-    <div className="card-surface border border-[var(--accent-gold)]/25 bg-[var(--accent-gold)]/5 p-5">
-      <p className="text-xs uppercase tracking-wider text-[var(--accent-gold-light)]">Rebalance hint</p>
+    <div className="card-surface p-5">
+      <p className="ds-label uppercase tracking-[0.05em]">Rebalance hint</p>
       <p className="mt-2 text-sm leading-relaxed text-[var(--text-primary)]">{text}</p>
     </div>
   );

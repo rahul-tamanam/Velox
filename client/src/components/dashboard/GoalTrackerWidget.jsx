@@ -42,7 +42,7 @@ export default function GoalTrackerWidget({
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="rounded-full border border-[var(--accent-gold)] px-3 py-1 text-xs text-[var(--accent-gold)]"
+          className="rounded-lg border border-[var(--border)] bg-transparent px-3 py-1 text-[0.8rem] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
         >
           Edit
         </button>
@@ -53,9 +53,9 @@ export default function GoalTrackerWidget({
           <span>{fmtUsd(currentValue)}</span>
           <span>{fmtUsd(user?.goal_target_amount)}</span>
         </div>
-        <div className="mt-2 h-3 overflow-hidden rounded-full bg-white/5">
+        <div className="mt-2 h-3 overflow-hidden rounded-full bg-[rgba(255,255,255,0.06)]">
           <motion.div
-            className="h-full rounded-full bg-gradient-to-r from-[var(--accent-gold)] to-[var(--accent-gold-light)]"
+            className="h-full rounded-full bg-[rgba(255,255,255,0.28)]"
             initial={{ width: 0 }}
             animate={{ width: `${progress * 100}%` }}
             transition={{ duration: 1 }}
@@ -88,7 +88,7 @@ export default function GoalTrackerWidget({
             <p className="font-display text-lg">Update goal</p>
             <label className="mt-4 block text-xs text-[var(--text-secondary)]">Name</label>
             <input
-              className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm"
+              className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
               value={form.goal_name}
               onChange={(e) => setForm({ ...form, goal_name: e.target.value })}
             />
@@ -112,16 +112,12 @@ export default function GoalTrackerWidget({
             <div className="mt-6 flex justify-end gap-2">
               <button
                 type="button"
-                className="rounded-full px-4 py-2 text-sm text-[var(--text-secondary)]"
+                className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                 onClick={() => setOpen(false)}
               >
                 Cancel
               </button>
-              <button
-                type="button"
-                className="rounded-full bg-[var(--accent-gold)] px-5 py-2 text-sm font-semibold text-[var(--bg-primary)]"
-                onClick={save}
-              >
+              <button type="button" className="ds-btn-primary px-5" onClick={save}>
                 Save
               </button>
             </div>

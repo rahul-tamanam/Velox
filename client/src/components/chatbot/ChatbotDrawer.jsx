@@ -84,7 +84,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
             role="dialog"
             aria-modal="true"
             aria-labelledby="velox-assistant-title"
-            className="fixed bottom-24 right-4 z-[100] flex max-h-[min(72vh,540px)] w-[min(calc(100vw-2rem),400px)] flex-col overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] shadow-2xl shadow-black/40 sm:right-6"
+            className="fixed bottom-24 right-4 z-[100] flex max-h-[min(72vh,540px)] w-[min(calc(100vw-2rem),400px)] flex-col overflow-hidden rounded-[12px] border border-[var(--border)] bg-[var(--bg-elevated)] sm:right-6"
             initial={{ opacity: 0, y: 28, scale: 0.92 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 18, scale: 0.94 }}
@@ -93,7 +93,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
           >
             <div className="flex shrink-0 items-center justify-between border-b border-[var(--border)] px-4 py-3 sm:px-5 sm:py-4">
               <div className="min-w-0 pr-2">
-                <p id="velox-assistant-title" className="font-display text-lg text-[var(--accent-gold)]">
+                <p id="velox-assistant-title" className="font-display text-lg text-[var(--text-primary)]">
                   Velox Assistant
                 </p>
                 <p className="text-xs text-[var(--text-secondary)]">Powered by Groq (optional)</p>
@@ -111,7 +111,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
                 <button
                   key={c}
                   type="button"
-                  className="rounded-full bg-white/5 px-3 py-1 text-[11px] text-[var(--text-secondary)] transition-colors hover:bg-white/10 hover:text-[var(--text-primary)]"
+                  className="rounded-lg border border-[var(--border)] bg-transparent px-3 py-1 text-[11px] text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
                   onClick={() => send(c)}
                 >
                   {c}
@@ -125,10 +125,10 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                  className={`max-w-[90%] rounded-2xl px-4 py-2 leading-relaxed ${
+                  className={`max-w-[90%] rounded-[12px] border px-4 py-2 leading-relaxed ${
                     m.role === 'user'
-                      ? 'ml-auto bg-[var(--accent-gold)]/15 text-[var(--text-primary)]'
-                      : 'bg-[var(--bg-card)] text-[var(--text-primary)]'
+                      ? 'ml-auto border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                      : 'border-[var(--border-subtle)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
                   }`}
                 >
                   {m.role === 'assistant' ? (
@@ -140,7 +140,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
                             {...props}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-medium text-[var(--accent-gold)] underline underline-offset-2"
+                            className="font-medium text-[var(--text-secondary)] underline underline-offset-2 hover:text-[var(--text-primary)]"
                           />
                         ),
                         strong: ({ ...props }) => <strong className="text-[var(--text-primary)]" {...props} />,
@@ -163,7 +163,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
             <div className="shrink-0 border-t border-[var(--border)] p-3 sm:p-4">
               <div className="flex gap-2">
                 <input
-                  className="min-w-0 flex-1 rounded-xl border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-sm"
+                  className="min-w-0 flex-1 rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)]"
                   placeholder="Ask Velox…"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
@@ -172,7 +172,7 @@ export default function ChatbotDrawer({ open, onOpenChange, portfolioSummary, ma
                 <button
                   type="button"
                   onClick={() => send(input)}
-                  className="shrink-0 rounded-xl bg-[var(--accent-gold)] px-4 py-2 text-sm font-semibold text-[var(--bg-primary)]"
+                  className="ds-btn-primary shrink-0"
                 >
                   Send
                 </button>

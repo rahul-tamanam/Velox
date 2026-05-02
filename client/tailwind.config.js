@@ -4,15 +4,16 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
-        sans: ['Poppins', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
         velox: {
-          bg: '#0A0F1E',
-          card: '#1A2235',
-          gold: '#D4AF37',
+          bg: '#0a0a0a',
+          surface: '#111111',
+          elevated: '#161616',
+          border: '#222222',
         },
       },
     },

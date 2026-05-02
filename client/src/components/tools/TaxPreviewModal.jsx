@@ -33,16 +33,12 @@ export default function TaxPreviewModal({ open, onClose, holding, currentPrice, 
         <div className="mt-6 flex justify-end gap-2">
           <button
             type="button"
-            className="rounded-full px-4 py-2 text-sm text-[var(--text-secondary)]"
+            className="rounded-lg px-4 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
             onClick={onClose}
           >
             Cancel
           </button>
-          <button
-            type="button"
-            className="rounded-full bg-[var(--accent-gold)] px-5 py-2 text-sm font-semibold text-[var(--bg-primary)]"
-            onClick={proceed}
-          >
+          <button type="button" className="ds-btn-primary px-5" onClick={proceed}>
             Proceed with Sale
           </button>
         </div>

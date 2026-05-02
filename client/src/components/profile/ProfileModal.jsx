@@ -28,14 +28,28 @@ function RiskBadge({ profile }) {
   const { label, className } = useMemo(() => {
     const p = String(profile || 'moderate').toLowerCase();
     if (p === 'conservative')
-      return { label: 'Conservative', className: 'bg-blue-500/20 text-blue-300 ring-1 ring-blue-500/40' };
+      return {
+        label: 'Conservative',
+        className: 'border-[var(--border)] bg-[rgba(255,255,255,0.035)] text-[var(--text-secondary)]',
+      };
     if (p === 'aggressive')
-      return { label: 'Aggressive', className: 'bg-red-500/20 text-red-300 ring-1 ring-red-500/40' };
-    return { label: 'Moderate', className: 'bg-[#F0B429]/15 text-[#F0B429] ring-1 ring-[#F0B429]/35' };
+      return {
+        label: 'Aggressive',
+        className: 'border-[var(--border)] bg-[rgba(255,255,255,0.08)] text-[var(--text-primary)]',
+      };
+    return {
+      label: 'Moderate',
+      className: 'border-[var(--border)] bg-[rgba(255,255,255,0.055)] text-[var(--text-secondary)]',
+    };
   }, [profile]);
 
   return (
-    <span className={clsx('inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide', className)}>
+    <span
+      className={clsx(
+        'inline-flex rounded-full border px-3 py-1 text-[0.72rem] font-medium uppercase tracking-[0.05em]',
+        className
+      )}
+    >
       {label}
     </span>
   );
@@ -182,123 +196,119 @@ export default function ProfileModal({ open, onClose }) {
       onClick={onClose}
     >
       <div
-        className="relative my-auto w-full max-w-lg rounded-2xl border border-white/[0.08] bg-[#0d1117] shadow-2xl"
+        className="relative my-auto w-full max-w-lg rounded-[12px] border border-[var(--border)] bg-[var(--bg-surface)]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-lg p-1.5 text-white/50 transition-colors hover:bg-white/[0.06] hover:text-white"
+          className="absolute right-4 top-4 rounded-lg p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-secondary)]"
           aria-label="Close"
         >
           <XMarkIcon className="h-5 w-5" />
         </button>
 
-        <div className="border-b border-white/[0.06] px-6 pb-4 pt-6 pr-14">
-          <h2 id="profile-modal-title" className="font-display text-xl text-[#F0B429]">
+        <div className="border-b border-[var(--border-subtle)] px-6 pb-4 pt-6 pr-14">
+          <h2 id="profile-modal-title" className="font-display text-xl text-[var(--text-primary)]">
             Profile
           </h2>
-          <p className="mt-1 text-sm text-white/45">Account and risk questionnaire</p>
+          <p className="ds-body mt-1">Account and risk questionnaire</p>
         </div>
 
         <div className="max-h-[min(70vh,720px)] space-y-6 overflow-y-auto px-6 py-6">
           <section className="space-y-3">
             <div>
-              <p className="text-[11px] uppercase tracking-wider text-white/40">Name</p>
-              <p className="mt-0.5 text-sm font-medium text-white/90">{displayName}</p>
+              <p className="ds-label uppercase tracking-[0.05em]">Name</p>
+              <p className="mt-0.5 text-sm font-medium text-[var(--text-primary)]">{displayName}</p>
             </div>
             <div>
-              <p className="text-[11px] uppercase tracking-wider text-white/40">Email</p>
-              <p className="mt-0.5 text-sm font-medium text-white/90">{displayEmail}</p>
+              <p className="ds-label uppercase tracking-[0.05em]">Email</p>
+              <p className="mt-0.5 text-sm font-medium text-[var(--text-primary)]">{displayEmail}</p>
             </div>
             <div>
-              <p className="text-[11px] uppercase tracking-wider text-white/40">Password</p>
+              <p className="ds-label uppercase tracking-[0.05em]">Password</p>
               <div className="mt-1 flex items-center gap-2">
-                <span className="font-mono text-sm tracking-widest text-white/85">
+                <span className="font-mono text-sm tracking-widest text-[var(--text-primary)]">
                   {pwdMasked ? '••••••••' : '********'}
                 </span>
                 <button
                   type="button"
                   onClick={() => setPwdMasked((m) => !m)}
-                  className="rounded-lg p-1.5 text-[#F0B429]/80 transition-colors hover:bg-white/[0.06] hover:text-[#F0B429]"
+                  className="rounded-lg p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-secondary)]"
                   aria-label={pwdMasked ? 'Show password' : 'Hide password'}
                 >
                   {pwdMasked ? <EyeIcon className="h-5 w-5" /> : <EyeSlashIcon className="h-5 w-5" />}
                 </button>
               </div>
-              <p className="mt-1 text-xs text-white/35">
+              <p className="mt-1 text-[0.72rem] text-[var(--text-muted)]">
                 {pwdMasked ? 'Password is stored securely on the server.' : 'Your password is never shown after signup.'}
               </p>
             </div>
           </section>
 
-          <section className="border-t border-white/[0.06] pt-6">
+          <section className="border-t border-[var(--border-subtle)] pt-6">
             <button
               type="button"
               onClick={() => setPwdSectionOpen((o) => !o)}
-              className="text-sm font-semibold text-[#F0B429] transition-opacity hover:opacity-90"
+              className="text-sm font-medium text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]"
             >
               {pwdSectionOpen ? 'Cancel change password' : 'Change password'}
             </button>
             {pwdSectionOpen && (
               <form onSubmit={submitPassword} className="mt-4 space-y-3">
                 <label className="block">
-                  <span className="text-xs text-white/50">Current password</span>
+                  <span className="ds-body">Current password</span>
                   <input
                     type="password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="mt-1 w-full rounded-xl border border-white/[0.08] bg-[#0d1117] px-3 py-2 text-sm text-white outline-none ring-[#F0B429]/30 focus:ring-2"
+                    className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--text-muted)]"
                     autoComplete="current-password"
                   />
                 </label>
                 <label className="block">
-                  <span className="text-xs text-white/50">New password</span>
+                  <span className="ds-body">New password</span>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="mt-1 w-full rounded-xl border border-white/[0.08] bg-[#0d1117] px-3 py-2 text-sm text-white outline-none ring-[#F0B429]/30 focus:ring-2"
+                    className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--text-muted)]"
                     autoComplete="new-password"
                   />
                 </label>
                 <label className="block">
-                  <span className="text-xs text-white/50">Confirm new password</span>
+                  <span className="ds-body">Confirm new password</span>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="mt-1 w-full rounded-xl border border-white/[0.08] bg-[#0d1117] px-3 py-2 text-sm text-white outline-none ring-[#F0B429]/30 focus:ring-2"
+                    className="mt-1 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none transition-colors focus:border-[var(--text-muted)]"
                     autoComplete="new-password"
                   />
                 </label>
-                {pwdError && <p className="text-sm text-red-400">{pwdError}</p>}
-                <button
-                  type="submit"
-                  disabled={pwdSaving}
-                  className="rounded-xl bg-[#F0B429] px-4 py-2 text-sm font-semibold text-[#0d1117] transition-opacity disabled:opacity-50"
-                >
+                {pwdError && <p className="text-sm text-[var(--accent-red)]">{pwdError}</p>}
+                <button type="submit" disabled={pwdSaving} className="ds-btn-primary disabled:opacity-50">
                   {pwdSaving ? 'Saving…' : 'Update password'}
                 </button>
               </form>
             )}
           </section>
 
-          <section className="border-t border-white/[0.06] pt-6">
+          <section className="border-t border-[var(--border-subtle)] pt-6">
             <div className="flex flex-wrap items-center gap-3">
-              <p className="text-[11px] uppercase tracking-wider text-white/40">Risk profile</p>
+              <p className="ds-label uppercase tracking-[0.05em]">Risk profile</p>
               <RiskBadge profile={user?.risk_profile} />
             </div>
           </section>
 
-          <section className="border-t border-white/[0.06] pt-6">
+          <section className="border-t border-[var(--border-subtle)] pt-6">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-medium text-white/90">Onboarding answers</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Onboarding answers</p>
               {!editingAnswers ? (
                 <button
                   type="button"
                   onClick={() => setEditingAnswers(true)}
-                  className="text-sm font-semibold text-[#F0B429] hover:opacity-90"
+                  className="text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                 >
                   Edit answers
                 </button>
@@ -316,7 +326,7 @@ export default function ProfileModal({ open, onClose }) {
                       );
                       setAnswersError('');
                     }}
-                    className="text-sm text-white/60 hover:text-white"
+                    className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                   >
                     Cancel
                   </button>
@@ -324,7 +334,7 @@ export default function ProfileModal({ open, onClose }) {
                     type="button"
                     disabled={!allPicked || answersSaving}
                     onClick={saveEditedAnswers}
-                    className="rounded-lg bg-[#F0B429] px-3 py-1.5 text-sm font-semibold text-[#0d1117] disabled:opacity-40"
+                    className="ds-btn-primary disabled:opacity-40"
                   >
                     {answersSaving ? 'Saving…' : 'Save'}
                   </button>
@@ -342,9 +352,9 @@ export default function ProfileModal({ open, onClose }) {
 
                 return (
                   <li key={q.id}>
-                    <p className="text-sm font-medium text-white/85">{q.prompt}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{q.prompt}</p>
                     {!editingAnswers ? (
-                      <p className="mt-1.5 text-sm text-[#F0B429]/90">{chosen}</p>
+                      <p className="mt-1.5 text-sm text-[var(--text-secondary)]">{chosen}</p>
                     ) : (
                       <div className="mt-2 flex flex-wrap gap-2">
                         {q.options.map((opt) => {
@@ -359,10 +369,10 @@ export default function ProfileModal({ open, onClose }) {
                                 setEditScores(next);
                               }}
                               className={clsx(
-                                'rounded-xl border px-3 py-2 text-left text-xs transition-colors sm:text-sm',
+                                'rounded-lg border px-3 py-2 text-left text-[0.8rem] transition-colors',
                                 selected
-                                  ? 'border-[#F0B429] bg-[#F0B429]/10 text-[#F0B429]'
-                                  : 'border-white/[0.08] bg-white/[0.03] text-white/75 hover:border-white/20'
+                                  ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                                  : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
                               )}
                             >
                               {opt.label}
@@ -375,21 +385,21 @@ export default function ProfileModal({ open, onClose }) {
                 );
               })}
             </ul>
-            {answersError && <p className="mt-3 text-sm text-red-400">{answersError}</p>}
+            {answersError && <p className="mt-3 text-sm text-[var(--accent-red)]">{answersError}</p>}
           </section>
 
-          <section className="border-t border-white/[0.06] pt-6">
+          <section className="border-t border-[var(--border-subtle)] pt-6">
             {!showDeleteConfirm ? (
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="w-full rounded-xl border border-red-400/20 bg-transparent px-4 py-3 text-center text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10"
+                className="w-full rounded-lg border border-[rgba(248,113,113,0.35)] bg-transparent px-4 py-3 text-center text-sm font-medium text-[var(--accent-red)] transition-colors hover:bg-[rgba(248,113,113,0.08)]"
               >
                 Delete account
               </button>
             ) : (
               <div className="space-y-4">
-                <p className="text-sm text-white/80">
+                <p className="ds-body text-[var(--text-primary)]">
                   This will permanently delete your account and all data.
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -397,7 +407,7 @@ export default function ProfileModal({ open, onClose }) {
                     type="button"
                     disabled={deleteSubmitting}
                     onClick={confirmDeleteAccount}
-                    className="rounded-xl bg-red-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-red-500 disabled:opacity-50"
+                    className="rounded-lg border border-[rgba(248,113,113,0.45)] bg-[var(--btn-primary-bg)] px-4 py-2.5 text-sm font-semibold text-[var(--accent-red)] transition-colors hover:bg-[var(--btn-primary-hover)] disabled:opacity-50"
                   >
                     {deleteSubmitting ? 'Deleting…' : 'Yes, delete my account'}
                   </button>
@@ -408,12 +418,12 @@ export default function ProfileModal({ open, onClose }) {
                       setShowDeleteConfirm(false);
                       setDeleteError('');
                     }}
-                    className="rounded-xl border border-white/15 bg-transparent px-4 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white disabled:opacity-50"
+                    className="ds-btn-primary disabled:opacity-50"
                   >
                     Cancel
                   </button>
                 </div>
-                {deleteError && <p className="text-sm text-red-400">{deleteError}</p>}
+                {deleteError && <p className="text-sm text-[var(--accent-red)]">{deleteError}</p>}
               </div>
             )}
           </section>

@@ -30,22 +30,22 @@ export default function LiveStockChart({ tickers }) {
     if (!containerRef.current) return;
     const chart = createChart(containerRef.current, {
       layout: {
-        background: { color: '#111827' },
-        textColor: '#CBD5E1',
+        background: { color: '#111111' },
+        textColor: '#555555',
       },
       grid: {
-        vertLines: { color: 'rgba(255,255,255,0.06)' },
-        horzLines: { color: 'rgba(255,255,255,0.06)' },
+        vertLines: { color: 'rgba(34,34,34,0.8)' },
+        horzLines: { color: 'rgba(34,34,34,0.8)' },
       },
       width: containerRef.current.clientWidth,
       height: 360,
     });
     const series = chart.addCandlestickSeries({
-      upColor: '#22C55E',
-      downColor: '#EF4444',
+      upColor: '#4ade80',
+      downColor: '#f87171',
       borderVisible: false,
-      wickUpColor: '#22C55E',
-      wickDownColor: '#EF4444',
+      wickUpColor: '#4ade80',
+      wickDownColor: '#f87171',
     });
     chartRef.current = chart;
     seriesRef.current = series;
@@ -93,11 +93,11 @@ export default function LiveStockChart({ tickers }) {
 
   return (
     <>
-    <div className="card-surface p-5">
-      <div className="flex flex-wrap items-center gap-3">
-        <label className="text-xs text-[var(--text-secondary)]">Symbol</label>
+    <div className="card-surface p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <label className="text-[11px] text-[var(--text-secondary)]">Symbol</label>
         <select
-          className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm font-mono"
+          className="rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-2.5 py-1.5 text-xs font-mono"
           value={ticker}
           onChange={(e) => setTicker(e.target.value)}
         >
@@ -107,25 +107,22 @@ export default function LiveStockChart({ tickers }) {
             </option>
           ))}
         </select>
-        <div className="ml-auto flex gap-1">
+        <div className="ds-segment-wrap ml-auto">
           {PERIODS.map((p) => (
             <button
               key={p.id}
               type="button"
+              data-active={period === p.id}
               onClick={() => setPeriod(p.id)}
-              className={`rounded-lg px-3 py-1 text-xs font-mono ${
-                period === p.id
-                  ? 'bg-[var(--accent-gold)] text-[var(--bg-primary)]'
-                  : 'bg-white/5 text-[var(--text-secondary)]'
-              }`}
+              className={`ds-segment font-mono text-[11px] ${period === p.id ? 'ds-segment--active' : ''}`}
             >
               {p.label}
             </button>
           ))}
         </div>
       </div>
-      {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
-      <div ref={containerRef} className="mt-4 w-full" />
+      {error && <p className="mt-2 text-xs text-[var(--accent-red)]">{error}</p>}
+      <div ref={containerRef} className="mt-2 w-full" />
     </div>
     <ChartInsightPanel ticker={ticker} period={period} candles={candles} />
     </>

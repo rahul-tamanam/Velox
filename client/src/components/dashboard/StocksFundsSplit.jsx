@@ -16,8 +16,8 @@ export default function StocksFundsSplit({ stocksPct = 0, fundsPct = 0 }) {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie data={data} dataKey="value" innerRadius={45} outerRadius={70} paddingAngle={3}>
-              <Cell fill="#60A5FA" />
-              <Cell fill="#D4AF37" />
+              <Cell fill="var(--accent)" />
+              <Cell fill="rgba(255,255,255,0.1)" />
             </Pie>
             <Tooltip
               {...rechartsTooltipProps}

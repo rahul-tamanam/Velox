@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
+import clsx from 'clsx';
 import Sidebar from '../components/layout/Sidebar.jsx';
 import ProfileModal from '../components/profile/ProfileModal.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { usePortfolio } from '../hooks/usePortfolio.js';
-import MacroRegimeBadge from '../components/dashboard/MacroRegimeBadge.jsx';
 import HealthScoreRing from '../components/dashboard/HealthScoreRing.jsx';
 import KPICard from '../components/dashboard/KPICard.jsx';
 import DiversificationHeatmap from '../components/dashboard/DiversificationHeatmap.jsx';
@@ -19,10 +19,19 @@ import ChatbotButton from '../components/chatbot/ChatbotButton.jsx';
 import ChatbotDrawer from '../components/chatbot/ChatbotDrawer.jsx';
 import RiskAlertCapsule from '../components/dashboard/RiskAlertCapsule.jsx';
 import BuySellHoldingModal from '../components/portfolio/BuySellHoldingModal.jsx';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import MiniDonutCard, {
+  DONUT_FILL_ACCENT,
+  DONUT_FILL_EMPTY,
+  DONUT_FILL_TRACK,
+} from '../components/dashboard/MiniDonutCard.jsx';
+import {
+  ArrowTrendingUpIcon,
+  BanknotesIcon,
+  ChartBarIcon,
+  ScaleIcon,
+} from '@heroicons/react/24/outline';
 import api from '../utils/api';
 import { fmtPct } from '../utils/formatters';
-import { rechartsTooltipProps } from '../utils/rechartsTooltip';
 
 function typeLabel(type) {
   if (type === 'stock') return 'Stock';
@@ -111,9 +120,9 @@ export default function Dashboard() {
     <div className="flex h-screen min-h-0 overflow-hidden bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
       <Sidebar active={tab} onSelect={setTab} onOpenProfile={() => setProfileOpen(true)} />
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-        <header className="relative flex shrink-0 flex-wrap items-center gap-4 border-b border-[var(--border)] bg-[var(--bg-secondary)]/70 px-4 py-4 lg:px-8">
+        <header className="relative flex shrink-0 flex-wrap items-center gap-4 border-b border-[var(--border)] bg-[var(--bg-primary)] px-5 py-4 lg:px-8">
           <select
-            className="w-full rounded-xl border border-[var(--border)] bg-[var(--bg-card)] px-3 py-2 text-sm lg:hidden"
+            className="w-full rounded-[10px] border border-[var(--border)] bg-[var(--bg-surface)] px-3 py-2 text-sm lg:hidden"
             value={tab}
             onChange={(e) => setTab(e.target.value)}
           >
@@ -131,8 +140,10 @@ export default function Dashboard() {
               </option>
             ))}
           </select>
-          <div className="flex min-w-0 flex-1 items-center pr-[148px] lg:pr-[156px]">
-            <p className="min-w-0 truncate font-display text-2xl">Hello, {user?.name}</p>
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5 pr-[148px] lg:pr-[156px]">
+            <p className="min-w-0 truncate text-xl font-semibold tracking-tight text-[var(--text-primary)]">
+              {`${user?.name ?? 'Jordan Belfort'}'s portfolio`}
+            </p>
           </div>
           <div className="pointer-events-none absolute inset-y-0 right-4 z-10 flex items-center lg:right-8">
             <div className="pointer-events-auto">
@@ -141,28 +152,54 @@ export default function Dashboard() {
           </div>
         </header>
 
-        <main className="min-h-0 flex-1 space-y-8 overflow-y-auto px-4 py-8 lg:px-10">
+        <main
+          className={clsx(
+            'min-h-0 flex-1 overflow-y-auto px-5 lg:px-8',
+            tab === 'portfolio' ? 'space-y-2 py-3 lg:py-4' : 'space-y-6 py-6 lg:py-8'
+          )}
+        >
           {tab === 'dashboard' && (
-            <div className="space-y-3">
-              <div className="grid gap-2 lg:grid-cols-4">
-                <KPICard title="Total portfolio value" value={summary?.totalValue ?? 0} />
+            <div className="space-y-4">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <KPICard
+                  innerShell
+                  title="Total portfolio value"
+                  titleIcon={<BanknotesIcon aria-hidden />}
+                  value={summary?.totalValue ?? 0}
+                  badgePct={summary?.todayChangePct}
+                  caption="Across all positions · live marks"
+                />
+                <KPICard
+                  innerShell
                   title="Total return"
+                  titleIcon={<ArrowTrendingUpIcon aria-hidden />}
                   value={summary?.totalReturnPct ?? 0}
                   variant="pct"
                   delta={summary?.totalReturnPct ?? 0}
+                  toneFromDelta
+                  caption="All-time vs cost basis"
                 />
                 <KPICard
+                  innerShell
                   title="Today's change (approx)"
+                  titleIcon={<ChartBarIcon aria-hidden />}
                   value={fmtPct(summary?.todayChangePct ?? 0)}
                   delta={summary?.todayChangePct ?? 0}
+                  toneFromDelta
+                  caption="Vs prior session (estimated)"
                 />
-                <KPICard title="Portfolio beta" value={summary?.portfolioBeta ?? 1} />
+                <KPICard
+                  innerShell
+                  title="Portfolio beta"
+                  titleIcon={<ScaleIcon aria-hidden />}
+                  value={Number(summary?.portfolioBeta ?? 1).toFixed(2)}
+                  caption="Sensitivity vs market (1.0 = benchmark)"
+                />
               </div>
-              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,440px)] lg:items-start lg:gap-3">
-                <div className="flex min-w-0 flex-col gap-2">
-                  <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-stretch sm:gap-3">
-                    <div className="min-w-0 flex-1">
+              <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(260px,440px)] lg:items-start">
+                <div className="flex min-w-0 flex-col gap-3">
+                  <div className="flex min-w-0 flex-col gap-2.5 sm:flex-row sm:items-stretch sm:gap-2.5">
+                    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
                       <HealthScoreRing
                         compact
                         score={summary?.health?.score ?? 0}
@@ -170,7 +207,7 @@ export default function Dashboard() {
                         breakdown={summary?.health?.breakdown}
                       />
                     </div>
-                    <div className="min-w-0 shrink-0 sm:w-[11.5rem]">
+                    <div className="flex min-h-0 min-w-0 shrink-0 flex-col sm:w-[11.5rem]">
                       <StocksVsFundsDonutCard
                         stocksPct={summary?.stocksVsFunds?.stocksPct}
                         fundsPct={summary?.stocksVsFunds?.fundsPct}
@@ -179,7 +216,7 @@ export default function Dashboard() {
                   </div>
                   <DiversificationHeatmap holdings={holdings} />
                 </div>
-                <div className="min-w-0 lg:sticky lg:top-4 lg:self-start">
+                <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
                   <HoldingsExplorer holdings={holdings} />
                 </div>
               </div>
@@ -187,7 +224,7 @@ export default function Dashboard() {
           )}
 
           {tab === 'portfolio' && (
-            <div className="space-y-8">
+            <div className="flex min-h-0 flex-1 flex-col gap-2">
               <BuySellHoldingModal holdings={holdings} onDone={refresh} />
               <LiveStockChart tickers={tickers} />
             </div>
@@ -195,15 +232,14 @@ export default function Dashboard() {
 
           {tab === 'simulate' && (
             <div className="space-y-10">
-              <MacroRegimeBadge />
-              <div className="flex flex-wrap gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)]/60 p-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => setSimTab('montecarlo')}
-                  className={`flex-1 rounded-xl px-4 py-2 text-sm font-semibold ${
+                  className={`min-h-[36px] min-w-[8rem] flex-1 rounded-lg border px-3 py-1.5 text-[0.8rem] font-medium transition-colors ${
                     simTab === 'montecarlo'
-                      ? 'bg-[var(--accent-gold)] text-[var(--bg-primary)]'
-                      : 'text-[var(--text-secondary)]'
+                      ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                      : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
                   }`}
                 >
                   Monte Carlo
@@ -211,10 +247,10 @@ export default function Dashboard() {
                 <button
                   type="button"
                   onClick={() => setSimTab('velox')}
-                  className={`flex-1 rounded-xl px-4 py-2 text-sm font-semibold ${
+                  className={`min-h-[36px] min-w-[8rem] flex-1 rounded-lg border px-3 py-1.5 text-[0.8rem] font-medium transition-colors ${
                     simTab === 'velox'
-                      ? 'bg-[var(--accent-gold)] text-[var(--bg-primary)]'
-                      : 'text-[var(--text-secondary)]'
+                      ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                      : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
                   }`}
                 >
                   Velox Algorithm
@@ -228,7 +264,7 @@ export default function Dashboard() {
           )}
 
           {tab === 'tools' && (
-            <div className="space-y-8">
+            <div className="space-y-6">
               <ExitCostCalculator holdings={holdings} />
               <WhatIfSimulator
                 summary={summary}
@@ -250,17 +286,13 @@ export default function Dashboard() {
           {tab === 'news' && <NewsSentimentFeed tickers={tickers} />}
 
           {tab === 'chatbot' && (
-            <div className="card-surface space-y-4 p-8">
-              <p className="font-display text-2xl text-[var(--accent-gold)]">Ask Velox anything</p>
-              <p className="text-sm text-[var(--text-secondary)]">
+            <div className="card-surface space-y-4 px-6 py-5">
+              <p className="text-lg font-medium tracking-tight text-[var(--text-primary)]">Ask Velox anything</p>
+              <p className="ds-body max-w-xl leading-relaxed">
                 Open the assistant from the floating button — it already knows your holdings summary and macro regime
                 when Groq is configured.
               </p>
-              <button
-                type="button"
-                className="rounded-full bg-[var(--accent-gold)] px-6 py-3 font-semibold text-[var(--bg-primary)]"
-                onClick={() => setChatOpen(true)}
-              >
+              <button type="button" className="ds-btn-primary" onClick={() => setChatOpen(true)}>
                 Launch assistant
               </button>
             </div>
@@ -287,61 +319,48 @@ function StocksVsFundsDonutCard({ stocksPct, fundsPct }) {
   const sum = stockFrac + fundFrac;
   const pieData =
     sum < 1e-6
-      ? [{ name: 'No data', value: 1, fill: 'rgba(148,163,184,0.28)' }]
+      ? [{ name: 'No data', value: 1, fill: DONUT_FILL_EMPTY }]
       : [
-          { name: 'Stocks', value: stockFrac / sum, fill: '#38bdf8' },
-          { name: 'Funds', value: fundFrac / sum, fill: '#f59e0b' },
+          { name: 'Stocks', value: stockFrac / sum, fill: DONUT_FILL_ACCENT },
+          { name: 'Funds', value: fundFrac / sum, fill: DONUT_FILL_TRACK },
         ];
   const sPct = sum < 1e-6 ? 0 : (stockFrac / sum) * 100;
   const fPct = sum < 1e-6 ? 0 : (fundFrac / sum) * 100;
 
   return (
-    <div className="card-surface flex h-full flex-col items-center justify-center gap-2 p-3">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">Stocks vs funds</p>
-      <div className="h-[7.5rem] w-[7.5rem] shrink-0">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={pieData}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              innerRadius="58%"
-              outerRadius="88%"
-              paddingAngle={sum < 1e-6 ? 0 : 2}
-              stroke="none"
-              isAnimationActive={false}
-            >
-              {pieData.map((entry, i) => (
-                <Cell key={i} fill={entry.fill} />
-              ))}
-            </Pie>
-            <Tooltip
-              {...rechartsTooltipProps}
-              formatter={(v, name) => [`${(Number(v) * 100).toFixed(1)}%`, name]}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-      {sum >= 1e-6 && (
-        <div className="flex w-full flex-col gap-1 text-[10px] sm:text-[11px]">
-          <div className="flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-sky-400" aria-hidden />
-              Stocks
-            </span>
-            <span className="font-mono font-semibold tabular-nums text-[var(--text-primary)]">{sPct.toFixed(1)}%</span>
+    <MiniDonutCard
+      title="Portfolio Mix"
+      pieData={pieData}
+      compact
+      tooltipFormatter={(v, name) => [`${(Number(v) * 100).toFixed(1)}%`, name]}
+      footer={
+        sum >= 1e-6 ? (
+          <div className="flex w-full flex-col gap-1 text-[10px] sm:text-[11px]">
+            <div className="flex items-center justify-between gap-2">
+              <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ backgroundColor: DONUT_FILL_ACCENT }}
+                  aria-hidden
+                />
+                Stocks
+              </span>
+              <span className="font-semibold tabular-nums text-[var(--text-primary)]">{sPct.toFixed(1)}%</span>
+            </div>
+            <div className="flex items-center justify-between gap-2">
+              <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
+                <span
+                  className="h-2 w-2 shrink-0 rounded-full"
+                  style={{ backgroundColor: DONUT_FILL_TRACK }}
+                  aria-hidden
+                />
+                Funds
+              </span>
+              <span className="font-semibold tabular-nums text-[var(--text-primary)]">{fPct.toFixed(1)}%</span>
+            </div>
           </div>
-          <div className="flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1.5 text-[var(--text-secondary)]">
-              <span className="h-2 w-2 shrink-0 rounded-full bg-amber-500" aria-hidden />
-              Funds
-            </span>
-            <span className="font-mono font-semibold tabular-nums text-[var(--text-primary)]">{fPct.toFixed(1)}%</span>
-          </div>
-        </div>
-      )}
-    </div>
+        ) : null
+      }
+    />
   );
 }

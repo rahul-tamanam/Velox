@@ -39,7 +39,7 @@ export default function Register() {
       <Navbar simple />
       <div className="mx-auto flex max-w-md flex-col gap-8 px-6 py-16">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="font-display text-3xl text-[var(--accent-gold)]">Create Velox</h1>
+          <h1 className="font-display text-3xl text-[var(--text-primary)]">Create Velox</h1>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Local JWT auth · your data stays on this machine.
           </p>
@@ -51,22 +51,19 @@ export default function Register() {
               <input
                 type={field.includes('password') || field === 'confirm' ? 'password' : field === 'email' ? 'email' : 'text'}
                 required
-                className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
                 value={form[field]}
                 onChange={(e) => setForm({ ...form, [field]: e.target.value })}
               />
             </label>
           ))}
-          {error && <p className="text-sm text-red-400">{error}</p>}
-          <button
-            type="submit"
-            className="w-full rounded-full bg-[var(--accent-gold)] py-3 font-semibold text-[var(--bg-primary)]"
-          >
+          {error && <p className="text-sm text-[var(--accent-red)]">{error}</p>}
+          <button type="submit" className="ds-btn-primary w-full py-3 font-medium">
             Continue
           </button>
           <p className="text-center text-xs text-[var(--text-secondary)]">
             Already have an account?{' '}
-            <Link className="text-[var(--accent-gold)]" to="/login">
+            <Link className="text-[var(--text-secondary)] underline-offset-2 hover:text-[var(--text-primary)]" to="/login">
               Sign in
             </Link>
           </p>

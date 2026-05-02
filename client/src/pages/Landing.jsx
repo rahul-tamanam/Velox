@@ -11,12 +11,13 @@ const fade = {
 export default function Landing() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-[var(--bg-primary)] font-sans text-[var(--text-primary)]">
-      <div className="mesh-bg" />
       <Navbar />
 
       <section className="relative z-10 flex min-h-[90vh] flex-col justify-center px-6 pb-16 pt-10 lg:px-16">
         <motion.div variants={fade} initial="hidden" animate="show" transition={{ duration: 0.7 }}>
-          <p className="text-xs uppercase tracking-[0.35em] text-[var(--accent-gold)]">Goldman Sachs × UTD Hackathon</p>
+          <p className="text-[0.65rem] font-normal uppercase tracking-[0.08em] text-[var(--text-muted)]">
+            Goldman Sachs × UTD Hackathon
+          </p>
           <h1 className="mt-6 max-w-4xl font-display text-4xl leading-tight md:text-6xl">
             Your wealth, finally making sense.
           </h1>
@@ -26,17 +27,14 @@ export default function Landing() {
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-              <Link
-                to="/register"
-                className="inline-flex rounded-full bg-[var(--accent-gold)] px-8 py-3 font-semibold text-[var(--bg-primary)]"
-              >
+              <Link to="/register" className="ds-btn-primary inline-flex px-8 py-3 font-medium">
                 Get Started
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <Link
                 to="/login"
-                className="inline-flex rounded-full border border-[var(--accent-gold)] px-8 py-3 font-semibold text-[var(--accent-gold)]"
+                className="inline-flex rounded-lg border border-[var(--border)] bg-transparent px-8 py-3 text-[0.8rem] font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]"
               >
                 See Demo
               </Link>
@@ -48,7 +46,7 @@ export default function Landing() {
         </motion.div>
       </section>
 
-      <section className="relative z-10 border-t border-[var(--border)] bg-[var(--bg-secondary)]/40 px-6 py-20 lg:px-16">
+      <section className="relative z-10 border-t border-[var(--border)] bg-[var(--bg-elevated)]/40 px-6 py-20 lg:px-16">
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
           {[
             {
@@ -73,7 +71,7 @@ export default function Landing() {
               transition={{ delay: i * 0.08 }}
               className="card-surface p-6"
             >
-              <p className="font-display text-xl text-[var(--accent-gold)]">{f.title}</p>
+              <p className="ds-section-title text-xl">{f.title}</p>
               <p className="mt-3 text-sm text-[var(--text-secondary)]">{f.body}</p>
             </motion.div>
           ))}
@@ -81,8 +79,8 @@ export default function Landing() {
       </section>
 
       <section className="relative z-10 px-6 py-20 lg:px-16">
-        <div className="mx-auto max-w-5xl card-surface border border-[var(--accent-gold)]/25 p-8 lg:p-12">
-          <p className="text-xs uppercase tracking-[0.25em] text-[var(--accent-gold)]">Signature engine</p>
+        <div className="card-surface mx-auto max-w-5xl p-8 lg:p-12">
+          <p className="text-[0.65rem] font-normal uppercase tracking-[0.08em] text-[var(--text-muted)]">Signature engine</p>
           <h2 className="mt-4 font-display text-3xl md:text-4xl">Velox Macro-Aware Momentum</h2>
           <p className="mt-4 max-w-3xl text-[var(--text-secondary)]">
             Monthly rotations across an 11-ETF sleeve universe when macro reads supportive — and an explicit defensive basket
@@ -91,18 +89,18 @@ export default function Landing() {
           <div className="mt-10 flex flex-col items-center gap-6 md:flex-row md:justify-center">
             {['Risk-On', 'Moderate', 'Risk-Off'].map((label, idx) => (
               <div key={label} className="flex items-center gap-4">
-                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] px-6 py-4 text-center font-display text-lg">
+                <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] px-6 py-4 text-center font-display text-lg">
                   {label}
                 </div>
                 {idx < 2 && (
-                  <span className="hidden text-[var(--accent-gold)] md:inline">→</span>
+                  <span className="hidden text-[var(--text-muted)] md:inline">→</span>
                 )}
               </div>
             ))}
           </div>
           <div className="mt-10 rounded-2xl border border-[var(--border)] bg-[var(--bg-primary)]/70 p-6 text-center">
             <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">Illustrative backtest window</p>
-            <p className="mt-2 font-mono text-4xl text-[var(--accent-gold)]">+64.86%</p>
+            <p className="mt-2 font-mono text-4xl font-semibold tabular-nums text-[var(--text-primary)]">+64.86%</p>
             <p className="text-sm text-[var(--text-secondary)]">
               Prototype calibration · Jan 2020 through latest month · vs SPY benchmark inside app
             </p>
@@ -110,10 +108,10 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="relative z-10 border-t border-[var(--border)] bg-[var(--bg-secondary)]/30 px-6 py-16 lg:px-16">
+      <section className="relative z-10 border-t border-[var(--border)] bg-[var(--bg-elevated)]/30 px-6 py-16 lg:px-16">
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 md:flex-row md:justify-between">
           <div>
-            <p className="font-display text-2xl text-[var(--accent-gold)]">Works with Stocks AND Mutual Funds</p>
+            <p className="font-display text-2xl text-[var(--text-primary)]">Works with Stocks AND Mutual Funds</p>
             <p className="mt-2 text-sm text-[var(--text-secondary)]">
               ETFs like QQQ or GLD act as fund proxies — tagged cleanly so your dashboard always explains stocks vs funds.
             </p>
@@ -141,7 +139,7 @@ export default function Landing() {
               transition={{ delay: i * 0.12 }}
               className="card-surface border border-[var(--border)] p-6"
             >
-              <p className="font-mono text-xs text-[var(--accent-gold)]">{s.step}</p>
+              <p className="font-mono text-xs text-[var(--text-muted)]">{s.step}</p>
               <p className="mt-3 font-display text-xl">{s.title}</p>
               <p className="mt-3 text-sm text-[var(--text-secondary)]">{s.body}</p>
             </motion.div>

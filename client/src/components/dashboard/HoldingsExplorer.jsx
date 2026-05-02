@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -11,6 +11,8 @@ import {
 import api from '../../utils/api';
 import { fmtPct, fmtUsd } from '../../utils/formatters';
 import { rechartsTooltipProps } from '../../utils/rechartsTooltip';
+import { InnerShellBody, InnerShellHeader, InnerShellRoot } from '../ui/InnerShellCard.jsx';
+import { ShellCardTitleRow } from '../ui/ShellCardHeading.jsx';
 
 /** Fixed window for market tracker (no period toggle). */
 const CHART_PERIOD = '1wk';
@@ -106,38 +108,48 @@ export default function HoldingsExplorer({ holdings }) {
     : 'Select a position';
 
   return (
-    <div className="card-surface flex w-full max-w-[520px] flex-col gap-3 p-4 shadow-none lg:max-w-none xl:max-w-[440px] xl:justify-self-end">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 text-sm font-semibold tracking-tight text-[var(--text-primary)] sm:text-base">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" className="text-[var(--accent-gold)]" aria-hidden>
-            <g fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2s7.071 0 8.535 1.464C22 4.93 22 7.286 22 12s0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z" />
-              <path strokeLinecap="round" d="M7 18V9m5 9V6m5 12v-5" />
-            </g>
-          </svg>
-          <span>Market tracker</span>
+    <InnerShellRoot className="flex w-full max-w-[520px] flex-col lg:max-w-none xl:max-w-[440px] xl:justify-self-end">
+      <InnerShellHeader glassEffect>
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+          <div>
+            <ShellCardTitleRow
+              title="Market tracker"
+              icon={
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path
+                    d="M2 12c0-4.714 0-7.071 1.464-8.536C4.93 2 7.286 2 12 2s7.071 0 8.535 1.464C22 4.93 22 7.286 22 12s0 7.071-1.465 8.535C19.072 22 16.714 22 12 22s-7.071 0-8.536-1.465C2 19.072 2 16.714 2 12Z"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  />
+                  <path strokeLinecap="round" d="M7 18V9m5 9V6m5 12v-5" stroke="currentColor" strokeWidth="1.5" />
+                </svg>
+              }
+            />
+            <p className="mt-0.5 text-xs text-[var(--text-secondary)]">Past week · select a holding</p>
+          </div>
+          <select
+            className="min-w-0 w-full rounded-[10px] border border-[var(--border)] bg-[var(--bg-primary)] px-3 py-2 font-mono text-sm text-[var(--text-primary)] sm:w-[10rem] sm:flex-none"
+            value={chartTicker}
+            onChange={(e) => setChartTicker(e.target.value)}
+            disabled={!filtered.length}
+          >
+            {filtered.map((h) => (
+              <option key={h.id} value={h.ticker}>
+                {h.ticker}
+              </option>
+            ))}
+          </select>
         </div>
-        <select
-          className="min-w-0 w-full rounded-lg border border-[var(--border)] bg-[var(--bg-secondary)] px-2.5 py-1.5 font-mono text-sm text-[var(--text-primary)] sm:w-[10rem] sm:flex-none"
-          value={chartTicker}
-          onChange={(e) => setChartTicker(e.target.value)}
-          disabled={!filtered.length}
-        >
-          {filtered.map((h) => (
-            <option key={h.id} value={h.ticker}>
-              {h.ticker}
-            </option>
-          ))}
-        </select>
-      </div>
+      </InnerShellHeader>
 
-      <div className="flex w-full gap-0 overflow-hidden rounded-xl border border-[var(--border)]">
+      <InnerShellBody className="gap-3 !pt-1 !pb-3">
+      <div className="ds-segment-wrap flex w-full [&>button]:min-h-8 [&>button]:flex-1">
         <button
           type="button"
           data-active={sleeve === 'stock'}
           onClick={() => setSleeve('stock')}
           disabled={stocksCount === 0}
-          className="relative flex h-8 min-w-0 flex-1 items-center justify-center border-r border-[var(--border)] bg-transparent text-[11px] font-semibold text-[var(--text-secondary)] outline-none transition-colors last:border-r-0 hover:bg-white/5 disabled:opacity-40 data-[active=true]:bg-[var(--bg-secondary)] data-[active=true]:text-[var(--text-primary)]"
+          className={`ds-segment text-[11px] disabled:opacity-40 ${sleeve === 'stock' ? 'ds-segment--active' : ''}`}
         >
           Stocks ({stocksCount})
         </button>
@@ -146,7 +158,7 @@ export default function HoldingsExplorer({ holdings }) {
           data-active={sleeve === 'fund'}
           onClick={() => setSleeve('fund')}
           disabled={fundsCount === 0}
-          className="relative flex h-8 min-w-0 flex-1 items-center justify-center bg-transparent text-[11px] font-semibold text-[var(--text-secondary)] outline-none transition-colors hover:bg-white/5 disabled:opacity-40 data-[active=true]:bg-[var(--bg-secondary)] data-[active=true]:text-[var(--text-primary)]"
+          className={`ds-segment text-[11px] disabled:opacity-40 ${sleeve === 'fund' ? 'ds-segment--active' : ''}`}
         >
           Funds ({fundsCount})
         </button>
@@ -163,65 +175,52 @@ export default function HoldingsExplorer({ holdings }) {
               </span>
               {periodReturnPct != null && (
                 <span
-                  className={`inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs font-semibold tabular-nums ${
-                    periodReturnPct >= 0 ? 'bg-emerald-500/15 text-emerald-300' : 'bg-red-500/15 text-red-300'
+                  className={`inline-flex h-7 items-center gap-0.5 rounded-full px-2 tabular-nums ${
+                    periodReturnPct >= 0 ? 'ds-badge-trend-up' : 'ds-badge-trend-down'
                   }`}
                 >
-                  {periodReturnPct >= 0 ? (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" aria-hidden>
-                      <path
-                        fill="none"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                        d="M6 18L18 6m0 0H9m9 0v9"
-                      />
-                    </svg>
-                  ) : (
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" aria-hidden>
-                      <path
-                        fill="none"
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="1.5"
-                        d="M18 6L6 18m0 0h9m-9 0V9"
-                      />
-                    </svg>
-                  )}
+                  <span aria-hidden>{periodReturnPct >= 0 ? '↗' : '↘'}</span>
                   {fmtPct(periodReturnPct)}
                 </span>
               )}
             </div>
-            <p className="text-xs font-medium uppercase tracking-wide text-[var(--text-secondary)]">{subtitle}</p>
+            <p className="text-xs font-medium text-[var(--text-secondary)]">{subtitle}</p>
           </div>
 
-          <div className="h-[200px] w-full rounded-lg border border-[var(--border)] bg-[var(--bg-primary)]/50 p-1 sm:h-[210px]">
+          <div className="h-[200px] w-full rounded-[12px] border border-[var(--border)] bg-transparent p-1 sm:h-[210px]">
             {chartLoading && <p className="p-4 text-xs text-[var(--text-secondary)]">Loading…</p>}
-            {chartError && !chartLoading && <p className="p-4 text-xs text-red-300">{chartError}</p>}
+            {chartError && !chartLoading && (
+              <p className="p-4 text-xs text-[var(--accent-red)]">{chartError}</p>
+            )}
             {!chartLoading && !chartError && chartRows.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartRows} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                  <CartesianGrid vertical={false} stroke="rgba(255,255,255,0.06)" />
-                  <XAxis dataKey="t" hide />
-                  <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} />
+                <AreaChart data={chartRows} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                  <CartesianGrid
+                    vertical={false}
+                    stroke="var(--border)"
+                    strokeOpacity={0.4}
+                    strokeDasharray={undefined}
+                  />
+                  <XAxis dataKey="t" hide axisLine={false} tickLine={false} />
+                  <YAxis hide domain={['dataMin - 1', 'dataMax + 1']} axisLine={false} tickLine={false} />
                   <Tooltip {...rechartsTooltipProps} formatter={(v) => fmtUsd(v)} labelFormatter={() => chartTicker} />
-                  <Line
+                  <Area
                     type="monotone"
                     dataKey="price"
-                    stroke="#3b82f6"
-                    strokeWidth={2}
+                    stroke="var(--chart-stroke)"
+                    strokeWidth={1.5}
+                    fill="var(--chart-fill)"
+                    fillOpacity={1}
                     dot={false}
                     isAnimationActive={false}
-                    activeDot={{ r: 4, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
+                    activeDot={{ r: 4, fill: 'var(--chart-stroke)', stroke: 'var(--bg-surface)', strokeWidth: 1 }}
                   />
-                </LineChart>
+                </AreaChart>
               </ResponsiveContainer>
             )}
           </div>
 
-          <div className="flex w-full gap-0 overflow-hidden rounded-xl border border-[var(--border)]">
+          <div className="flex w-full gap-0 overflow-hidden rounded-[10px] border border-[var(--border)]">
             <div className="flex h-8 flex-1 items-center justify-center gap-1.5 border-r border-[var(--border)] px-2 text-[11px]">
               <span className="font-normal text-[var(--text-secondary)]">Highest</span>
               <span className="font-mono font-semibold text-[var(--text-primary)]">
@@ -237,6 +236,7 @@ export default function HoldingsExplorer({ holdings }) {
           </div>
         </>
       )}
-    </div>
+      </InnerShellBody>
+    </InnerShellRoot>
   );
 }

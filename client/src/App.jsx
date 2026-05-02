@@ -21,6 +21,7 @@ function PrivateRoute({ children }) {
 
 export default function App() {
   return (
+    <div className="min-h-screen font-sans text-[var(--text-primary)] antialiased">
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
@@ -43,5 +44,6 @@ export default function App() {
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </div>
   );
 }

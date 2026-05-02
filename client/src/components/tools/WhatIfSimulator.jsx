@@ -39,10 +39,10 @@ export default function WhatIfSimulator({ summary, holdings, goalAmount }) {
             key={s.id}
             type="button"
             onClick={() => setScenario(s.id)}
-            className={`rounded-full px-4 py-2 text-xs ${
+            className={`rounded-lg border px-4 py-2 text-[0.8rem] font-medium transition-colors ${
               scenario === s.id
-                ? 'bg-[var(--accent-gold)] text-[var(--bg-primary)]'
-                : 'border border-[var(--border)] text-[var(--text-secondary)]'
+                ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
             }`}
           >
             {s.label}
@@ -60,16 +60,12 @@ export default function WhatIfSimulator({ summary, holdings, goalAmount }) {
           onChange={(e) => setCustomPct(Number(e.target.value))}
         />
       )}
-      <button
-        type="button"
-        onClick={run}
-        className="rounded-full border border-[var(--accent-gold)] px-6 py-2 text-[var(--accent-gold)]"
-      >
+      <button type="button" onClick={run} className="ds-btn-primary px-6">
         Simulate
       </button>
 
       {result && (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/60 p-5 text-sm">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]/60 p-5 text-sm">
           <p className="text-xs uppercase text-[var(--text-secondary)]">{result.scenarioLabel}</p>
           <p className="mt-2 font-mono text-lg">
             New portfolio value {fmtUsd(result.newPortfolioValue)}

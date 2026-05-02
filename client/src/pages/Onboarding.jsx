@@ -87,7 +87,7 @@ export default function Onboarding() {
   return (
     <div className="flex min-h-screen flex-col bg-[var(--bg-primary)] px-6 py-12 font-sans">
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col justify-center">
-        <p className="text-xs uppercase tracking-[0.4em] text-[var(--accent-gold)]">Onboarding</p>
+        <p className="text-[0.65rem] font-normal uppercase tracking-[0.08em] text-[var(--text-muted)]">Onboarding</p>
         <AnimatePresence mode="wait">
           <motion.div
             key={q.id}
@@ -95,7 +95,7 @@ export default function Onboarding() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.35 }}
-            className="mt-8 card-surface border border-[var(--accent-gold)]/30 p-8"
+            className="card-surface mt-8 p-8"
           >
             <p className="text-sm text-[var(--text-secondary)]">
               Question {step + 1} / {QUESTIONS.length}
@@ -107,7 +107,7 @@ export default function Onboarding() {
                   key={opt.label}
                   type="button"
                   onClick={() => choose(opt.score)}
-                  className="w-full rounded-2xl border border-[var(--border)] bg-[var(--bg-secondary)] px-4 py-4 text-left text-sm transition hover:border-[var(--accent-gold)] hover:text-[var(--accent-gold-light)]"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--bg-elevated)] px-4 py-4 text-left text-sm text-[var(--text-secondary)] transition hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
                 >
                   {opt.label}
                 </button>

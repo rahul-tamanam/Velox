@@ -68,6 +68,20 @@ router.post('/register', (req, res) => {
   }
 });
 
+router.get('/me', authMiddleware, (req, res) => {
+  try {
+    const row = db
+      .prepare(
+        'SELECT id,name,email,risk_profile,goal_name,goal_target_amount,goal_target_year,onboarding_answers FROM users WHERE id = ?'
+      )
+      .get(req.user.id);
+    if (!row) return res.status(404).json({ error: 'User not found' });
+    res.json({ user: userRowToClient(row) });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 router.post('/login', (req, res) => {
   try {
     const email = normalizeEmail(req.body.email);

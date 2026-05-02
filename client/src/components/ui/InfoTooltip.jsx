@@ -12,7 +12,7 @@ export default function InfoTooltip({ text }) {
         onFocus={() => setShow(true)}
         onBlur={() => setShow(false)}
         aria-label="More information"
-        className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] text-[10px] font-semibold text-[var(--text-secondary)] transition hover:border-[var(--accent-gold)] hover:text-[var(--accent-gold)] cursor-help select-none"
+        className="flex h-5 w-5 cursor-help select-none items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] text-[10px] font-semibold text-[var(--text-secondary)] transition hover:border-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
       >
         i
       </button>
@@ -20,7 +20,7 @@ export default function InfoTooltip({ text }) {
       {show && (
         <div
           role="tooltip"
-          className="absolute right-0 top-7 w-64 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-3 text-xs leading-relaxed text-[var(--text-secondary)] shadow-xl"
+          className="absolute right-0 top-7 w-64 rounded-[12px] border border-[var(--border)] bg-[var(--bg-surface)] p-3 text-xs leading-relaxed text-[var(--text-secondary)]"
           style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.45)' }}
         >
           {text}

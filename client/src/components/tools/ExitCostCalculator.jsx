@@ -82,7 +82,7 @@ export default function ExitCostCalculator({ holdings }) {
         <label className="block text-xs text-[var(--text-secondary)]">
           Ticker
           <input
-            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 font-mono text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[rgba(240,180,41,0.5)]"
+            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 font-mono text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[rgba(253,96,2,0.55)]"
             value={form.ticker}
             onChange={(e) => setForm({ ...form, ticker: e.target.value })}
           />
@@ -120,7 +120,7 @@ export default function ExitCostCalculator({ holdings }) {
         <label className="block text-xs text-[var(--text-secondary)]">
           Buy date (YYYY-MM-DD)
           <input
-            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 font-mono text-sm text-white outline-none transition-colors focus:border-[rgba(240,180,41,0.5)]"
+            className="mt-1 w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] px-3 py-2 font-mono text-sm text-white outline-none transition-colors focus:border-[rgba(253,96,2,0.55)]"
             value={form.buyDate}
             onChange={(e) => setForm({ ...form, buyDate: e.target.value })}
           />
@@ -137,13 +137,13 @@ export default function ExitCostCalculator({ holdings }) {
         </label>
       </div>
       {/* Auto tax bracket field */}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/60 p-4">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]/60 p-4">
         <div className="flex items-center justify-between">
           <p className="text-xs text-[var(--text-secondary)]">Tax bracket %</p>
           <button
             type="button"
             onClick={() => setTaxOverride((v) => !v)}
-            className="text-[10px] text-[var(--accent-gold)] underline underline-offset-2"
+            className="text-[10px] text-[var(--text-secondary)] underline underline-offset-2 hover:text-[var(--text-primary)]"
           >
             {taxOverride ? 'Use auto' : 'Override'}
           </button>
@@ -168,27 +168,23 @@ export default function ExitCostCalculator({ holdings }) {
           </div>
         )}
       </div>
-      <button
-        type="button"
-        onClick={calc}
-        className="rounded-full bg-[var(--accent-gold)] px-6 py-2 font-semibold text-[var(--bg-primary)]"
-      >
+      <button type="button" onClick={calc} className="ds-btn-primary px-6">
         Calculate
       </button>
 
       {out && (
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-4 text-sm">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4 text-sm">
             <p className="text-xs uppercase text-[var(--text-secondary)]">Sell now</p>
             <p>Gross: {fmtUsd(out.grossProceeds)}</p>
             <p>Fees: {fmtUsd(out.brokerageFee)}</p>
             <p>STT (0.1%): {fmtUsd(out.stt)}</p>
             <p>Tax ({out.classification}): {fmtUsd(out.estimatedTax)}</p>
-            <p className="mt-2 font-mono text-lg text-[var(--accent-gold-light)]">
+            <p className="mt-2 font-mono text-lg font-semibold text-[var(--text-primary)]">
               Net {fmtUsd(out.netProceeds)}
             </p>
           </div>
-          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/60 p-4 text-sm">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]/60 p-4 text-sm">
             <p className="text-xs uppercase text-[var(--text-secondary)]">Hold (approx.)</p>
             <p className="font-mono text-lg">{fmtUsd(out.comparison?.holdApprox)}</p>
             <p className="mt-2 text-xs text-[var(--text-secondary)]">

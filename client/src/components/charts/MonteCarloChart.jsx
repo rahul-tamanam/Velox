@@ -57,7 +57,7 @@ export default function MonteCarloChart({ holdings, goalAmount }) {
 
   return (
     <div className="relative card-surface p-5">
-      <InfoTooltip text="Runs 500 simulated futures for your portfolio using random market returns. The yellow band shows the likely range of outcomes. Median outcome is the 50th-percentile result; Stress P10 is the worst 10% scenario." />
+      <InfoTooltip text="Runs 500 simulated futures for your portfolio using random market returns. The shaded band shows the likely range of outcomes. Median outcome is the 50th-percentile result; Stress P10 is the worst 10% scenario." />
       <div className="flex flex-wrap items-end gap-6">
         <div>
           <p className="text-xs uppercase tracking-wider text-[var(--text-secondary)]">Horizon (years)</p>
@@ -67,7 +67,8 @@ export default function MonteCarloChart({ holdings, goalAmount }) {
             max={30}
             value={horizon}
             onChange={(e) => setHorizon(Number(e.target.value))}
-            className="mt-2 w-56 accent-[var(--accent-gold)]"
+            className="mt-2 w-56"
+            style={{ accentColor: 'var(--accent)' }}
           />
           <p className="font-mono text-sm text-[var(--text-primary)]">{horizon} yrs</p>
         </div>
@@ -90,37 +91,76 @@ export default function MonteCarloChart({ holdings, goalAmount }) {
           <ComposedChart data={chartData}>
             <defs>
               <linearGradient id="fanMc" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.35} />
-                <stop offset="100%" stopColor="#D4AF37" stopOpacity={0} />
+                <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.32} />
+                <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="fanMcP75" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.14} />
+                <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
+              </linearGradient>
+              <linearGradient id="fanMcP90" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--accent)" stopOpacity={0.08} />
+                <stop offset="100%" stopColor="var(--accent)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-            <XAxis dataKey="month" stroke="#8A9BC0" tick={{ fontSize: 10 }} />
-            <YAxis stroke="#8A9BC0" tick={{ fontSize: 10 }} />
+            <CartesianGrid
+              vertical={false}
+              stroke="var(--border)"
+              strokeOpacity={0.4}
+              strokeDasharray={undefined}
+            />
+            <XAxis
+              dataKey="month"
+              axisLine={false}
+              tickLine={false}
+              tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
+            />
+            <YAxis axisLine={false} tickLine={false} tick={{ fill: 'var(--text-muted)', fontSize: 11 }} />
             <Tooltip {...rechartsTooltipProps} formatter={(v) => `$${Math.round(v).toLocaleString()}`} />
-            <Area type="monotone" dataKey="p90" stroke="none" fill="rgba(212,175,55,0.08)" />
-            <Area type="monotone" dataKey="p75" stroke="none" fill="rgba(212,175,55,0.12)" />
-            <Area type="monotone" dataKey="p50" stroke="#D4AF37" fill="url(#fanMc)" />
-            <Line type="monotone" dataKey="p25" stroke="#64748B" dot={false} strokeWidth={1} />
-            <Line type="monotone" dataKey="p10" stroke="#475569" dot={false} strokeWidth={1} strokeDasharray="4 4" />
+            <Area type="monotone" dataKey="p90" stroke="none" fill="url(#fanMcP90)" fillOpacity={1} />
+            <Area type="monotone" dataKey="p75" stroke="none" fill="url(#fanMcP75)" fillOpacity={1} />
+            <Area
+              type="monotone"
+              dataKey="p50"
+              stroke="var(--chart-stroke)"
+              strokeWidth={1.5}
+              fill="url(#fanMc)"
+            />
+            <Line
+              type="monotone"
+              dataKey="p25"
+              stroke="var(--accent)"
+              strokeOpacity={0.38}
+              dot={false}
+              strokeWidth={1}
+            />
+            <Line
+              type="monotone"
+              dataKey="p10"
+              stroke="var(--accent)"
+              strokeOpacity={0.22}
+              dot={false}
+              strokeWidth={1}
+              strokeDasharray="4 4"
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
 
       <div className="mt-6 grid gap-3 md:grid-cols-3">
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
           <p className="text-xs text-[var(--text-secondary)]">Median outcome</p>
           <p className="font-mono text-xl">
             {loading ? '…' : `$${Math.round(data?.medianFinal || 0).toLocaleString()}`}
           </p>
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
           <p className="text-xs text-[var(--text-secondary)]">P(goal)</p>
           <p className="font-mono text-xl">
             {loading ? '…' : `${((data?.probHitGoal || 0) * 100).toFixed(1)}%`}
           </p>
         </div>
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] p-4">
           <p className="text-xs text-[var(--text-secondary)]">Stress P10</p>
           <p className="font-mono text-xl">
             {loading ? '…' : `$${Math.round(data?.worstCaseP10 || 0).toLocaleString()}`}

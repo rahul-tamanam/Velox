@@ -94,7 +94,7 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
             setMode('buy');
             setOpen(true);
           }}
-          className="rounded-full bg-[#F0B429] px-6 py-2.5 text-sm font-semibold text-[#0a0f1e] transition-opacity hover:opacity-90"
+          className="rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-3.5 py-1.5 text-xs font-semibold text-white shadow-none transition hover:brightness-110 active:brightness-95"
         >
           Buy / Sell
         </button>
@@ -111,17 +111,17 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
           }}
         >
           <div
-            className="card-surface relative w-full max-w-lg border border-[var(--border)] p-6 shadow-2xl"
+            className="card-surface relative w-full max-w-lg p-6"
             onMouseDown={(e) => e.stopPropagation()}
           >
             <InfoTooltip text="Buy adds a new lot to your portfolio. Sell reduces or closes an existing position." />
             <div className="mb-4 flex items-start justify-between gap-3">
-              <h2 id="buy-sell-title" className="font-display text-xl text-[#F0B429]">
+              <h2 id="buy-sell-title" className="font-display text-xl text-[var(--text-primary)]">
                 Buy / Sell Holding
               </h2>
               <button
                 type="button"
-                className="rounded-lg px-2 py-1 text-sm text-[var(--text-secondary)] hover:bg-white/5 hover:text-[var(--text-primary)]"
+                className="rounded-lg px-2 py-1 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
                 onClick={() => setOpen(false)}
                 aria-label="Close"
               >
@@ -134,10 +134,10 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                 type="button"
                 onClick={() => setMode('buy')}
                 className={clsx(
-                  'flex-1 rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
+                  'flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-colors',
                   mode === 'buy'
-                    ? 'border-transparent bg-[#F0B429] text-[#0a0f1e]'
-                    : 'border-[rgba(255,255,255,0.12)] bg-transparent text-white/50 hover:text-white/80'
+                    ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                    : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
                 )}
               >
                 Buy
@@ -147,11 +147,11 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                 onClick={() => setMode('sell')}
                 disabled={sellDisabled}
                 className={clsx(
-                  'flex-1 rounded-full border px-4 py-2 text-sm font-semibold transition-colors',
+                  'flex-1 rounded-lg border px-4 py-2 text-sm font-medium transition-colors',
                   sellDisabled && 'cursor-not-allowed opacity-40',
                   mode === 'sell'
-                    ? 'border-transparent bg-[#F0B429] text-[#0a0f1e]'
-                    : 'border-[rgba(255,255,255,0.12)] bg-transparent text-white/50 hover:text-white/80'
+                    ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                    : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
                 )}
               >
                 Sell
@@ -164,7 +164,7 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                   Ticker
                   <input
                     required
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm uppercase"
+                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 font-mono text-sm uppercase"
                     value={buyForm.ticker}
                     onChange={(e) => setBuyForm({ ...buyForm, ticker: e.target.value })}
                   />
@@ -172,7 +172,7 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                 <label className="text-xs text-[var(--text-secondary)]">
                   Type
                   <select
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
                     value={buyForm.type}
                     onChange={(e) => setBuyForm({ ...buyForm, type: e.target.value })}
                   >
@@ -207,15 +207,12 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                   <input
                     required
                     type="date"
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
                     value={buyForm.buy_date}
                     onChange={(e) => setBuyForm({ ...buyForm, buy_date: e.target.value })}
                   />
                 </label>
-                <button
-                  type="submit"
-                  className="md:col-span-2 w-full rounded-full bg-[#F0B429] py-3 font-semibold text-[#0a0f1e] hover:opacity-95"
-                >
+                <button type="submit" className="ds-btn-primary md:col-span-2 w-full py-3 font-medium">
                   Save holding
                 </button>
               </form>
@@ -227,7 +224,7 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                   Ticker
                   <select
                     required
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 font-mono text-sm"
+                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 font-mono text-sm"
                     value={sellForm.holding_id}
                     onChange={(e) => {
                       const id = e.target.value;
@@ -279,15 +276,12 @@ export default function BuySellHoldingModal({ holdings, onDone }) {
                   <input
                     required
                     type="date"
-                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-2 text-sm"
                     value={sellForm.sell_date}
                     onChange={(e) => setSellForm({ ...sellForm, sell_date: e.target.value })}
                   />
                 </label>
-                <button
-                  type="submit"
-                  className="md:col-span-2 w-full rounded-full bg-[#F0B429] py-3 font-semibold text-[#0a0f1e] hover:opacity-95"
-                >
+                <button type="submit" className="ds-btn-primary md:col-span-2 w-full py-3 font-medium">
                   Confirm sell
                 </button>
               </form>

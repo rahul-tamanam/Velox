@@ -96,7 +96,7 @@ const NumberStepperInput = forwardRef(function NumberStepperInput(
   );
 
   const iconClass =
-    'text-[rgba(255,255,255,0.4)] transition-colors group-hover:text-[rgba(240,180,41,0.9)]';
+    'text-[rgba(255,255,255,0.4)] transition-colors group-hover:text-[rgba(253,96,2,0.95)]';
 
   return (
     <div className={clsx('relative', wrapperClassName)}>
@@ -116,7 +116,7 @@ const NumberStepperInput = forwardRef(function NumberStepperInput(
         value={value === undefined || value === null ? '' : value}
         onChange={onChange}
         className={clsx(
-          'w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] py-2 pl-3 pr-8 text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[rgba(240,180,41,0.5)] disabled:cursor-not-allowed disabled:opacity-50',
+          'w-full rounded-lg border border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] py-2 pl-3 pr-8 text-sm text-white outline-none transition-colors placeholder:text-white/35 focus:border-[rgba(253,96,2,0.55)] disabled:cursor-not-allowed disabled:opacity-50',
           className
         )}
         {...rest}

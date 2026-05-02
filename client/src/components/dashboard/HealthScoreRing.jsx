@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import MiniDonutCard, { DONUT_FILL_ACCENT, DONUT_FILL_EMPTY } from './MiniDonutCard.jsx';
 
 const FACTORS = [
   {
@@ -41,6 +42,23 @@ function scoreColor(n) {
   return '#EF4444';
 }
 
+/** Remaining slice — neutral gray (health score isn’t allocation-colored). */
+const HEALTH_REMAINING_FILL = 'rgba(255,255,255,0.12)';
+
+function buildHealthPieData(score) {
+  const pct = Math.min(100, Math.max(0, Number(score) || 0));
+  if (pct <= 0) {
+    return [{ name: 'None', value: 1, fill: DONUT_FILL_EMPTY }];
+  }
+  if (pct >= 100) {
+    return [{ name: 'Health', value: 1, fill: DONUT_FILL_ACCENT }];
+  }
+  return [
+    { name: 'Health', value: pct, fill: DONUT_FILL_ACCENT },
+    { name: 'Remaining', value: 100 - pct, fill: HEALTH_REMAINING_FILL },
+  ];
+}
+
 export default function HealthScoreRing({
   score = 0,
   explanation,
@@ -66,19 +84,8 @@ export default function HealthScoreRing({
     };
   }, [open]);
 
-  const pct = Math.min(100, Math.max(0, score));
-  const r = compact ? 44 : 52;
-  const sw = compact ? 10 : 12;
-  const svg = compact ? 120 : 144;
-  const c = 2 * Math.PI * r;
-  const offset = c - (pct / 100) * c;
-  const color = pct <= 40 ? '#EF4444' : pct <= 70 ? '#F59E0B' : '#22C55E';
-  const cx = svg / 2;
-  const cy = svg / 2;
-
-  const shell = embedded
-    ? `relative flex min-w-0 flex-1 flex-col items-center ${compact ? 'gap-2' : 'gap-4'}`
-    : `relative card-surface flex flex-col items-center ${compact ? 'gap-2 p-3' : 'gap-4 p-6'}`;
+  const pct = Math.min(100, Math.max(0, Number(score) || 0));
+  const pieData = buildHealthPieData(score);
 
   const factorScore = (key) => {
     const raw = breakdown?.[key];
@@ -87,8 +94,12 @@ export default function HealthScoreRing({
   };
 
   return (
-    <div className={shell}>
-      <div ref={panelRef} className="absolute top-3 right-3 z-20">
+    <div
+      className={
+        embedded ? 'relative flex min-h-0 min-w-0 flex-1 flex-col' : 'relative h-full min-h-0 w-full'
+      }
+    >
+      <div ref={panelRef} className="absolute right-2 top-2 z-30 sm:right-3 sm:top-3">
         <button
           type="button"
           aria-expanded={open}
@@ -96,7 +107,7 @@ export default function HealthScoreRing({
           aria-label="How portfolio health score is built"
           onMouseEnter={() => setOpen(true)}
           onFocus={() => setOpen(true)}
-          className="flex h-5 w-5 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] text-[10px] font-semibold text-[var(--text-secondary)] transition hover:border-[var(--accent-gold)] hover:text-[var(--accent-gold)] cursor-help select-none"
+          className="flex h-5 w-5 cursor-help select-none items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-primary)] text-[10px] font-semibold text-[var(--text-secondary)] transition hover:border-[var(--accent)] hover:text-[var(--accent)]"
         >
           ⓘ
         </button>
@@ -105,7 +116,7 @@ export default function HealthScoreRing({
           <div
             role="dialog"
             aria-label="Score breakdown"
-            className="absolute right-0 top-7 z-50 w-72 rounded-xl border border-[var(--border)] bg-[var(--bg-card)] p-4 shadow-xl"
+            className="absolute right-0 top-7 z-50 w-72 rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-xl"
             style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.45)' }}
           >
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
@@ -147,44 +158,29 @@ export default function HealthScoreRing({
         )}
       </div>
 
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] sm:text-xs">
-        Portfolio health
-      </p>
-      <div className={`relative ${compact ? 'h-[7.5rem] w-[7.5rem]' : 'h-36 w-36'}`}>
-        <svg className="-rotate-90 transform" width={svg} height={svg}>
-          <circle cx={cx} cy={cy} r={r} stroke="rgba(255,255,255,0.08)" strokeWidth={sw} fill="none" />
-          <motion.circle
-            cx={cx}
-            cy={cy}
-            r={r}
-            stroke={color}
-            strokeWidth={sw}
-            fill="none"
-            strokeLinecap="round"
-            strokeDasharray={c}
-            initial={{ strokeDashoffset: c }}
-            animate={{ strokeDashoffset: offset }}
-            transition={{ duration: 1.2, ease: 'easeOut' }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className={`font-mono font-semibold text-[var(--text-primary)] ${compact ? 'text-2xl' : 'text-3xl'}`}>
-            {pct}
-          </span>
-          <span className="text-[10px] uppercase text-[var(--text-secondary)]">/ 100</span>
-        </div>
-      </div>
-      <p
-        className={`text-center text-[var(--text-secondary)] ${
-          compact
-            ? embedded
-              ? 'line-clamp-2 max-w-[11rem] text-xs leading-snug'
-              : 'line-clamp-3 max-w-[11rem] text-xs leading-snug'
-            : 'max-w-xs text-sm'
-        }`}
-      >
-        {explanation}
-      </p>
+      <MiniDonutCard
+        variant={embedded ? 'embedded' : 'card'}
+        compact={compact}
+        title="Portfolio health"
+        titleIcon={<ShieldCheckIcon aria-hidden />}
+        pieData={pieData}
+        centerPrimary={pct}
+        centerSecondary="/ 100"
+        tooltipFormatter={(v, name) => [`${Number(v).toFixed(0)}`, name]}
+        footer={
+          <p
+            className={`text-center text-[var(--text-secondary)] ${
+              compact
+                ? embedded
+                  ? 'line-clamp-2 max-w-[11rem] text-xs leading-snug'
+                  : 'line-clamp-3 max-w-[11rem] text-xs leading-snug'
+                : 'max-w-xs text-sm'
+            }`}
+          >
+            {explanation}
+          </p>
+        }
+      />
     </div>
   );
 }

@@ -1,20 +1,23 @@
 /**
- * Recharts default tooltip text inherits poorly on dark contentStyle; set explicit light colors.
+ * Tooltip content aligned with design system: surface, border, no shadow.
  */
 export const rechartsTooltipProps = {
   contentStyle: {
-    background: '#111827',
-    border: '1px solid rgba(255, 255, 255, 0.12)',
-    borderRadius: 12,
-    color: '#f0f4ff',
-    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.35)',
+    background: '#111111',
+    border: '1px solid #222222',
+    borderRadius: 8,
+    color: '#f0f0f0',
+    boxShadow: 'none',
+    fontSize: 12,
   },
   labelStyle: {
-    color: '#f0f4ff',
-    fontWeight: 600,
+    color: '#888888',
+    fontWeight: 500,
+    fontSize: 11,
   },
   itemStyle: {
-    color: '#e2e8f0',
+    color: '#f0f0f0',
+    fontSize: 12,
   },
   wrapperStyle: { outline: 'none' },
 };

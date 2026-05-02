@@ -77,7 +77,7 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
     };
   }, []);
 
-  const displayName = user?.name ?? 'Demo Investor';
+  const displayName = user?.name ?? 'Jordan Belfort';
   const displayEmail = user?.email ?? 'demo@velox.app';
   const initials = initialsFromName(displayName);
 
@@ -92,41 +92,36 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
     onOpenProfile?.();
   }
 
-  const iconIdle = 'text-white/50 group-hover:text-white/90';
-  const iconActive = 'text-[#F0B429]';
-
   return (
     <aside
       className={clsx(
-        'relative hidden h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-[rgba(255,255,255,0.06)] bg-[#0d1117] transition-[width] duration-200 ease-out lg:flex',
-        collapsed ? 'w-14' : 'w-[200px]'
+        'relative hidden h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-[var(--border)] bg-[var(--bg-elevated)] transition-[width] duration-200 ease-out lg:flex',
+        collapsed ? 'w-14' : 'w-[220px]'
       )}
     >
-      {/* Collapsed: expand toggle only */}
       {collapsed && (
         <div className="flex shrink-0 justify-center px-2 pt-3">
           <button
             type="button"
             onClick={() => setCollapsed(false)}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white/50 transition-colors hover:bg-white/[0.06] hover:text-white/90"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-secondary)]"
             aria-label="Expand sidebar"
           >
-            <ChevronRightIcon className="h-5 w-5" />
+            <ChevronRightIcon className="h-4 w-4 opacity-60" />
           </button>
         </div>
       )}
 
-      {/* Expanded: wordmark row + collapse */}
       {!collapsed && (
-        <div className="flex shrink-0 items-start justify-between gap-2 px-3 pb-3 pt-4">
-          <span className="font-display text-lg font-semibold tracking-tight text-[#F0B429]">VELOX</span>
+        <div className="flex shrink-0 items-start justify-between gap-2 px-3 pb-2 pt-4">
+          <span className="text-lg font-semibold tracking-tight text-[var(--accent)]">Velox</span>
           <button
             type="button"
             onClick={() => setCollapsed(true)}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/50 transition-colors hover:bg-white/[0.06] hover:text-white/90"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--text-muted)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-secondary)]"
             aria-label="Collapse sidebar"
           >
-            <ChevronLeftIcon className="h-5 w-5" />
+            <ChevronLeftIcon className="h-4 w-4 opacity-60" />
           </button>
         </div>
       )}
@@ -146,23 +141,32 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
               type="button"
               onClick={() => onSelect(id)}
               className={clsx(
-                'group flex items-center rounded-lg py-2.5 text-sm transition-opacity duration-150 ease-out',
-                collapsed ? 'justify-center px-0' : 'gap-3 px-3 text-left',
-                isActive ? 'bg-[rgba(240,180,41,0.08)]' : 'bg-transparent hover:bg-white/[0.04]'
+                'group flex items-center rounded-md text-sm font-semibold leading-snug tracking-tight transition-colors duration-150 ease-out',
+                collapsed ? 'justify-center' : 'text-left',
+                isActive
+                  ? clsx(
+                      'bg-white text-[#0a0a0a]',
+                      collapsed
+                        ? 'mx-auto my-0.5 h-9 w-9 shrink-0 rounded-md px-0 py-0'
+                        : 'mx-1.5 my-0.5 gap-2 px-2 py-1'
+                    )
+                  : clsx(
+                      'bg-transparent py-1.5 text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]',
+                      collapsed ? 'px-0' : 'gap-2.5 px-2.5'
+                    )
               )}
             >
               <Icon
                 className={clsx(
-                  'h-5 w-5 shrink-0 transition-colors duration-150',
-                  isActive ? iconActive : iconIdle
+                  'h-4 w-4 shrink-0 transition-colors duration-150',
+                  isActive ? 'text-[#0a0a0a] opacity-100' : 'opacity-60 group-hover:opacity-90'
                 )}
                 aria-hidden
               />
               <span
                 className={clsx(
-                  'truncate font-medium transition-opacity duration-150 ease-out',
-                  collapsed ? 'max-w-0 overflow-hidden opacity-0' : 'max-w-[148px] opacity-100',
-                  isActive ? 'text-[#F0B429]' : 'text-white/50 group-hover:text-white/90'
+                  'truncate transition-opacity duration-150 ease-out',
+                  collapsed ? 'max-w-0 overflow-hidden opacity-0' : 'max-w-[148px] opacity-100'
                 )}
               >
                 {label}
@@ -182,29 +186,29 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
         {menuOpen && (
           <div
             className={clsx(
-              'absolute bottom-full z-50 mb-2 w-[220px] rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#0d1117] py-1 shadow-xl',
+              'panel-elevated absolute bottom-full z-50 mb-2 w-[220px] py-1',
               collapsed ? 'left-1/2 -translate-x-1/2' : 'left-0'
             )}
             role="menu"
           >
-            <p className="px-3 pt-2 text-[11px] leading-snug text-white/45">{displayEmail}</p>
-            <div className="my-2 h-px bg-[rgba(255,255,255,0.08)]" />
+            <p className="ds-body px-3 pt-2 leading-snug">{displayEmail}</p>
+            <div className="my-2 h-px bg-[var(--border-subtle)]" />
             <button
               type="button"
               role="menuitem"
               onClick={handleProfile}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/[0.06] hover:text-white"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
             >
-              <UserCircleIcon className="h-4 w-4 text-white/50" />
+              <UserCircleIcon className="h-4 w-4 opacity-60" />
               Profile
             </button>
             <button
               type="button"
               role="menuitem"
               onClick={handleSignOut}
-              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/[0.06] hover:text-white"
+              className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)]"
             >
-              <ArrowRightOnRectangleIcon className="h-4 w-4 text-white/50" />
+              <ArrowRightOnRectangleIcon className="h-4 w-4 opacity-60" />
               Sign out
             </button>
           </div>
@@ -215,8 +219,8 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
             className={clsx(
-              'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F0B429] text-[13px] font-semibold text-[#0a0f1e] transition-opacity hover:opacity-90',
-              menuOpen && 'ring-2 ring-[#F0B429]/40'
+              'flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-[13px] font-semibold text-[var(--text-primary)] hover:bg-[var(--bg-surface-hover)]',
+              menuOpen && 'border-[var(--border)] ring-1 ring-[var(--border)]'
             )}
             aria-expanded={menuOpen}
             aria-haspopup="menu"
@@ -228,15 +232,15 @@ export default function Sidebar({ active, onSelect, onOpenProfile }) {
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}
-            className="flex min-w-0 flex-1 items-center gap-2 rounded-lg py-1.5 pl-1 pr-2 text-left transition-colors hover:bg-white/[0.04]"
+            className="flex min-w-0 flex-1 items-center gap-2 rounded-md py-1.5 pl-1 pr-2 text-left hover:bg-[var(--bg-surface-hover)]"
             aria-expanded={menuOpen}
             aria-haspopup="menu"
           >
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F0B429] text-[13px] font-semibold text-[#0a0f1e]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--bg-surface)] text-[13px] font-semibold text-[var(--text-primary)]">
               {initials}
             </span>
-            <span className="min-w-0 flex-1 truncate text-sm font-medium text-white/90">{displayName}</span>
-            <EllipsisVerticalIcon className="h-5 w-5 shrink-0 text-white/40" aria-hidden />
+            <span className="min-w-0 flex-1 truncate text-sm font-medium text-[var(--text-primary)]">{displayName}</span>
+            <EllipsisVerticalIcon className="h-4 w-4 shrink-0 text-[var(--text-muted)] opacity-60" aria-hidden />
           </button>
         )}
       </div>

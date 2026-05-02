@@ -2,76 +2,226 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html,
+  body,
+  #root {
+    @apply font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+  }
+
+  button,
+  a,
+  [role='button'],
+  input,
+  select,
+  textarea {
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease,
+      opacity 150ms ease;
+  }
+}
+
+/* Design system — do not introduce tokens outside this block */
 :root {
-  --bg-primary: #0a0f1e;
-  --bg-secondary: #111827;
-  --bg-card: #1a2235;
-  --accent-gold: #d4af37;
-  --accent-gold-light: #f0d060;
-  --text-primary: #f0f4ff;
-  /* Slightly brighter than before for small labels / captions on navy */
-  --text-secondary: #9fb0d4;
-  --green: #22c55e;
-  --red: #ef4444;
-  --amber: #f59e0b;
-  --regime-risk-on: rgba(34, 197, 94, 0.08);
-  --regime-moderate: rgba(245, 158, 11, 0.08);
-  --regime-risk-off: rgba(239, 68, 68, 0.08);
-  --border: rgba(255, 255, 255, 0.08);
+  --bg-primary: #0a0a0a;
+  --bg-surface: #111111;
+  --bg-surface-hover: #1a1a1a;
+  --bg-elevated: #161616;
+  --border: #222222;
+  --border-subtle: #1c1c1c;
 
-  /* Shared chart tokens (defaults; Velox backtest overrides below) */
-  --chart-background: var(--bg-primary);
-  --chart-label: #8a9bc0;
-  --chart-line-primary: var(--accent-gold);
-  --chart-line-secondary: #64748b;
-  --chart-crosshair: rgba(212, 175, 55, 0.65);
-  --chart-grid: rgba(138, 155, 192, 0.18);
+  --text-primary: #f0f0f0;
+  --text-secondary: #888888;
+  --text-muted: #555555;
+
+  --accent: #fe6507;
+  --accent-green: #4ade80;
+  --accent-red: #f87171;
+  --accent-neutral: #a3a3a3;
+
+  /* Primary series: line charts & area fill tint */
+  --chart-fill: rgba(254, 101, 7, 0.12);
+  --chart-stroke: var(--accent);
+  --chart-stroke-secondary: #0083ff;
+  --chart-line-primary: var(--accent);
+  --chart-line-secondary: var(--chart-stroke-secondary);
+  --chart-crosshair: rgba(254, 101, 7, 0.35);
+
+  --btn-primary-bg: #1f1f1f;
+  --btn-primary-hover: #2a2a2a;
+
+  /* Chart defaults for legacy references */
+  --chart-background: transparent;
+  --chart-label: var(--text-muted);
+  --chart-grid: var(--border);
+
+  /* Deprecated aliases — prefer tokens above */
+  --green: var(--accent-green);
+  --red: var(--accent-red);
 }
 
-/* Velox vs SPY backtest: blue series + matching crosshair */
-.velox-backtest-area-chart {
-  --chart-line-primary: #60a5fa;
-  --chart-crosshair: rgba(96, 165, 250, 0.75);
-}
-
-.mesh-bg {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at 20% 30%, rgba(212, 175, 55, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 70%, rgba(59, 130, 246, 0.12) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 50%, rgba(138, 155, 192, 0.08) 0%, transparent 60%);
-}
-
-.mesh-bg::before {
-  content: '';
-  position: absolute;
-  inset: -50%;
-  background-image:
-    linear-gradient(90deg, rgba(212, 175, 55, 0.04) 1px, transparent 1px),
-    linear-gradient(rgba(212, 175, 55, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  animation: mesh-drift 28s linear infinite;
-  opacity: 0.6;
-}
-
-@keyframes mesh-drift {
-  0% {
-    transform: rotate(0deg) translate3d(0, 0, 0);
+@layer components {
+  /* Panels & cards: 12px radius, hairline border, no shadow */
+  .card-surface {
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-surface);
+    box-shadow: none;
   }
-  100% {
-    transform: rotate(360deg) translate3d(0, 0, 0);
+
+  .panel-elevated {
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-surface);
+    box-shadow: none;
+  }
+
+  /* Typography scale */
+  .ds-label {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+  }
+
+  .ds-section-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .ds-body {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+
+  /* Primary action button */
+  .ds-btn-primary {
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: var(--btn-primary-bg);
+    color: var(--text-primary);
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: none;
+  }
+
+  .ds-btn-primary:hover {
+    background-color: var(--btn-primary-hover);
+  }
+
+  /* Tab / segment (inactive + active) */
+  .ds-segment-wrap {
+    display: inline-flex;
+    gap: 0;
+    padding: 2px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+  }
+
+  .ds-segment {
+    border-radius: 6px;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ds-segment[data-active='true'],
+  .ds-segment--active {
+    background: #222222;
+    color: var(--text-primary);
+  }
+
+  .ds-segment:hover:not([data-active='true']):not(.ds-segment--active) {
+    color: var(--text-secondary);
+    background: var(--bg-surface-hover);
+  }
+
+  /* Table shell */
+  .ds-table-wrap {
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-surface);
+    overflow: hidden;
+    box-shadow: none;
+  }
+
+  .ds-table-head {
+    background-color: var(--bg-elevated);
+    font-size: 0.72rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .ds-table-row {
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 14px 16px;
+    transition: background-color 150ms ease;
+  }
+
+  .ds-table-row:hover {
+    background-color: var(--bg-surface-hover);
+  }
+
+  /* Trend badge */
+  .ds-badge-trend-up {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent-green);
+    background: rgba(74, 222, 128, 0.08);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+
+  .ds-badge-trend-down {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--accent-red);
+    background: rgba(248, 113, 113, 0.08);
+    border-radius: 999px;
+    padding: 2px 8px;
+  }
+
+  /* Status pills */
+  .ds-status-done {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--accent-green);
+    background: rgba(74, 222, 128, 0.08);
+  }
+
+  .ds-status-neutral {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--accent-neutral);
+    background: rgba(163, 163, 163, 0.08);
   }
 }
 
-.card-surface {
-  @apply rounded-2xl border bg-[var(--bg-card)] shadow-xl;
-  border-color: var(--border);
-}
-
-/* Webkit browsers (Chrome, Edge, Safari) */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -82,23 +232,21 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--border);
   border-radius: 999px;
-  transition: background 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--border-subtle);
 }
 
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
 
-/* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+  scrollbar-color: var(--border) transparent;
 }
 
 @keyframes risk-alert-dot-pulse {
@@ -116,13 +264,13 @@
   transform-origin: center;
 }
 
-/* Hide native browser number spinners (custom steppers in NumberStepperInput) */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   appearance: none;
   margin: 0;
 }
+
 input[type='number'] {
   -moz-appearance: textfield;
 }

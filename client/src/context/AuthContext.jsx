@@ -4,14 +4,7 @@ import api from '../utils/api';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    try {
-      const raw = localStorage.getItem('velox_user');
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  });
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -20,7 +13,35 @@ export function AuthProvider({ children }) {
       setLoading(false);
       return;
     }
-    setLoading(false);
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data } = await api.get('/auth/me');
+        if (!cancelled && data?.user) {
+          localStorage.setItem('velox_user', JSON.stringify(data.user));
+          setUser(data.user);
+        }
+      } catch (e) {
+        if (cancelled) return;
+        if (e.response?.status === 401) {
+          localStorage.removeItem('velox_token');
+          localStorage.removeItem('velox_user');
+          setUser(null);
+        } else {
+          try {
+            const raw = localStorage.getItem('velox_user');
+            if (raw) setUser(JSON.parse(raw));
+          } catch {
+            /* ignore */
+          }
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const login = async (email, password) => {

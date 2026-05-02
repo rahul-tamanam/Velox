@@ -83,16 +83,16 @@ export default function ChartInsightPanel({ ticker, period, candles }) {
 
   const trendDisplay =
     stats.trend === 'uptrend'
-      ? { label: 'Bullish', dot: 'bg-[#22c55e]' }
+      ? { label: 'Bullish', dot: 'bg-[var(--accent-green)]' }
       : stats.trend === 'downtrend'
-        ? { label: 'Bearish', dot: 'bg-[#ef4444]' }
-        : { label: 'Neutral', dot: 'bg-white/40' };
+        ? { label: 'Bearish', dot: 'bg-[var(--accent-red)]' }
+        : { label: 'Neutral', dot: 'bg-[var(--accent-neutral)]' };
 
   const pills = [
     {
       label: 'Period return',
       value: `${ret >= 0 ? '+' : ''}${ret.toFixed(1)}%`,
-      valueClass: retPositive ? 'text-[#22c55e]' : 'text-[#ef4444]',
+      valueClass: retPositive ? 'text-[var(--accent-green)]' : 'text-[var(--accent-red)]',
     },
     {
       label: 'Volatility',
@@ -116,18 +116,16 @@ export default function ChartInsightPanel({ ticker, period, candles }) {
   ];
 
   return (
-    <div className="card-surface mt-6 px-6 py-5">
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-stretch lg:gap-10">
+    <div className="card-surface mt-3 px-4 py-4">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-stretch lg:gap-8">
         <div className="relative lg:w-[60%] lg:min-w-0">
           <div className="flex items-start justify-between gap-3">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#F0B429]">
-              AI analysis
-            </p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-muted)]">AI analysis</p>
             <button
               type="button"
               onClick={() => setRegen((k) => k + 1)}
               disabled={loading}
-              className="rounded-lg p-1.5 text-white/50 transition-colors hover:bg-white/[0.06] hover:text-[rgba(240,180,41,0.9)] disabled:opacity-40"
+              className="rounded-lg p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] disabled:opacity-40"
               aria-label="Regenerate analysis"
               title="Regenerate"
             >
@@ -138,7 +136,7 @@ export default function ChartInsightPanel({ ticker, period, candles }) {
           <div className="mt-3 min-h-[4.5rem] text-sm leading-relaxed">
             {loading && <InsightSkeleton />}
             {!loading && error && (
-              <p className="text-sm text-red-300/90">
+              <p className="text-sm text-[var(--accent-red)]">
                 Unable to load analysis. Please try again.
               </p>
             )}

@@ -47,9 +47,9 @@ export default function NewsSentimentFeed({ tickers }) {
   }, [items, filter, tickerFilter]);
 
   function badge(s) {
-    if (s === 'bullish') return '🟢 Bullish';
-    if (s === 'bearish') return '🔴 Bearish';
-    return '🟡 Neutral';
+    if (s === 'bullish') return <span className="text-[var(--accent-green)]">Bullish</span>;
+    if (s === 'bearish') return <span className="text-[var(--accent-red)]">Bearish</span>;
+    return <span className="text-[var(--accent-neutral)]">Neutral</span>;
   }
 
   return (
@@ -60,17 +60,17 @@ export default function NewsSentimentFeed({ tickers }) {
             key={f}
             type="button"
             onClick={() => setFilter(f)}
-            className={`rounded-full px-3 py-1 text-xs capitalize ${
+            className={`rounded-lg border px-3 py-1 text-[0.8rem] capitalize transition-colors ${
               filter === f
-                ? 'bg-[var(--accent-gold)] text-[var(--bg-primary)]'
-                : 'border border-[var(--border)] text-[var(--text-secondary)]'
+                ? 'border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)]'
+                : 'border-[var(--border)] bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]'
             }`}
           >
             {f}
           </button>
         ))}
         <select
-          className="ml-auto rounded-full border border-[var(--border)] bg-[var(--bg-secondary)] px-3 py-1 text-xs font-mono"
+          className="ml-auto rounded-full border border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-1 text-xs font-mono"
           value={tickerFilter}
           onChange={(e) => setTickerFilter(e.target.value)}
         >
@@ -95,10 +95,10 @@ export default function NewsSentimentFeed({ tickers }) {
         {filtered.map((n, i) => (
           <div
             key={`${n.title}-${i}`}
-            className="rounded-xl border border-[var(--border)] bg-[var(--bg-secondary)]/50 p-4"
+            className="rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]/50 p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="rounded-full bg-white/5 px-2 py-0.5 font-mono text-[10px] text-[var(--accent-gold)]">
+              <span className="rounded-full border border-[var(--border-subtle)] bg-[var(--bg-surface)] px-2 py-0.5 font-mono text-[10px] text-[var(--text-secondary)]">
                 {n.ticker}
               </span>
               <span className="text-xs text-[var(--text-secondary)]">{badge(n.sentiment)}</span>
@@ -109,7 +109,7 @@ export default function NewsSentimentFeed({ tickers }) {
                   href={n.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="font-medium text-[var(--text-primary)] underline decoration-[var(--accent-gold)]/60 underline-offset-2 transition hover:text-[var(--accent-gold)]"
+                  className="font-medium text-[var(--text-primary)] underline decoration-[var(--border)] underline-offset-2 transition hover:text-[var(--text-secondary)]"
                 >
                   {n.title}
                 </a>
