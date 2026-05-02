@@ -52,6 +52,35 @@ export default function HealthScoreRing({
 }) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
+  const triggerRef = useRef(null);
+  const [popoverPos, setPopoverPos] = useState({ top: 0, left: 8 });
+
+  useEffect(() => {
+    if (!open || !triggerRef.current) return;
+
+    const updatePosition = () => {
+      const rect = triggerRef.current.getBoundingClientRect();
+      const popoverWidth = 256;
+      const gap = 8;
+      const viewportPadding = 8;
+      const maxLeft = window.innerWidth - popoverWidth - viewportPadding;
+      const desiredLeft = rect.right - popoverWidth;
+      const left = Math.max(viewportPadding, Math.min(desiredLeft, maxLeft));
+
+      setPopoverPos({
+        top: rect.bottom + gap,
+        left,
+      });
+    };
+
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
+    return () => {
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -94,6 +123,7 @@ export default function HealthScoreRing({
     >
       <div ref={panelRef} className="absolute right-2 top-2 z-30 sm:right-3 sm:top-3">
         <button
+          ref={triggerRef}
           type="button"
           aria-expanded={open}
           aria-haspopup="dialog"
@@ -111,8 +141,12 @@ export default function HealthScoreRing({
           <div
             role="dialog"
             aria-label="Score breakdown"
-            className="absolute right-0 top-8 z-50 w-64 max-w-[calc(100vw-1rem)] rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-xl"
-            style={{ boxShadow: '0 8px 24px rgba(0,0,0,0.45)' }}
+            className="fixed z-[120] w-64 max-w-[calc(100vw-1rem)] rounded-xl border border-[var(--border)] bg-[var(--bg-surface)] p-4 shadow-xl"
+            style={{
+              top: `${popoverPos.top}px`,
+              left: `${popoverPos.left}px`,
+              boxShadow: '0 8px 24px rgba(0,0,0,0.45)',
+            }}
           >
             <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
               How this score is built
