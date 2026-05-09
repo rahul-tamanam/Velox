@@ -1,6 +1,5 @@
 # Velox
 
-> **Tagline:** Portfolio management built for humans, not hedge funds.
 
 Velox is a localhost-only portfolio workspace designed for beginner and intermediate investors. It blends plain-English KPIs, macro-aware signals powered by the FRED economic data API, a 1,000-path Monte Carlo simulation engine, and a fully implemented **Velox Macro-Aware Momentum** monthly backtest (2020 to present) with regime-shaded charts. The project ships with a polished React + Vite client, an Express + SQLite API, and an optional Groq-powered AI assistant.
 
