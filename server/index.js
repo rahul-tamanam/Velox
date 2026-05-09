@@ -11,6 +11,7 @@ require('./db');
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const authRoutes = require('./routes/auth');
 const portfolioRoutes = require('./routes/portfolio');
@@ -21,6 +22,7 @@ const macroRoutes = require('./routes/macro');
 const newsRoutes = require('./routes/news');
 const toolsRoutes = require('./routes/tools');
 const aiRoutes = require('./routes/ai');
+const { isDemoMode } = require('./demo/demoMode');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,9 +41,20 @@ app.use('/api/tools', toolsRoutes);
 app.use('/api/ai', aiRoutes);
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'velox-api' });
+  res.json({ ok: true, service: 'velox-api', demoMode: isDemoMode() });
+});
+
+// Optional: serve the built client in production deployments.
+// This keeps demo hosting simple (one Node service) and does not affect dev.
+const clientDist = path.join(__dirname, '..', 'client', 'dist');
+app.use(express.static(clientDist));
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  res.sendFile(path.join(clientDist, 'index.html'), (err) => {
+    if (err) next();
+  });
 });
 
 app.listen(PORT, () => {
-  console.log(`Velox API listening on http://localhost:${PORT}`);
+  console.log(`Velox API listening on http://localhost:${PORT} (demoMode=${isDemoMode()})`);
 });

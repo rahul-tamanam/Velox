@@ -4,6 +4,7 @@ const { authMiddleware } = require('../middleware/auth');
 const db = require('../db');
 const { fetchHoldingsNews } = require('../services/newsFeed');
 const { getQuoteRow } = require('../services/yahooMarket');
+const { isDemoMode } = require('../demo/demoMode');
 
 /** Longer phrases first so "bank of america" beats "america". */
 const COMPANY_TO_TICKER = Object.fromEntries(
@@ -165,6 +166,19 @@ function portfolioSummaryForUser(userId) {
 
 router.post('/message', async (req, res) => {
   try {
+    if (isDemoMode()) {
+      const { messages } = req.body || {};
+      const last = [...(messages || [])].reverse().find((m) => m.role === 'user');
+      const q = String(last?.content || '').trim();
+      const base =
+        'Demo mode: the assistant is running locally with no external API calls. I can still explain what the dashboard is showing, how the Health Score works, and how the macro-aware momentum backtest switches regimes.';
+      const followup =
+        q.length > 0
+          ? `\n\nYou asked: "${q}". If you want, paste a ticker list or a portfolio goal and I will walk through what Velox would do.`
+          : '\n\nAsk me about the portfolio, macro regime, or the backtest.';
+      return res.json({ reply: `${base}${followup}` });
+    }
+
     const key = process.env.GROQ_API_KEY;
     if (!key || key === 'your_groq_api_key_here') {
       return res.json({

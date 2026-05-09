@@ -1,5 +1,7 @@
 const axios = require('axios');
 const NodeCache = require('node-cache');
+const { isDemoMode } = require('../demo/demoMode');
+const { getDemoMacroRegimePayload } = require('../demo/fixtures');
 
 const macroCache = new NodeCache({ stdTTL: 86400, checkperiod: 600 });
 
@@ -60,6 +62,10 @@ function twoLatestValid(observations) {
 }
 
 async function getMacroRegimePayload() {
+  if (isDemoMode()) {
+    return getDemoMacroRegimePayload();
+  }
+
   const apiKey = process.env.FRED_API_KEY;
   const fallback = {
     regime: 'MODERATE',

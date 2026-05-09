@@ -1,4 +1,6 @@
 const axios = require('axios');
+const { isDemoMode } = require('../demo/demoMode');
+const { getDemoNewsItems } = require('../demo/fixtures');
 
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
@@ -38,6 +40,7 @@ function sentimentFor(title) {
 }
 
 async function yahooFinanceSearchNews(ticker) {
+  if (isDemoMode()) return getDemoNewsItems([ticker]);
   const { data, status } = await axios.get('https://query2.finance.yahoo.com/v1/finance/search', {
     headers: { 'User-Agent': UA, Accept: 'application/json' },
     timeout: 20000,
@@ -66,6 +69,7 @@ async function yahooFinanceSearchNews(ticker) {
 }
 
 async function newsApiForTickers(tickers) {
+  if (isDemoMode()) return [];
   const key = process.env.NEWS_API_KEY;
   if (!key || key === 'your_news_api_key_here') return [];
 
@@ -120,6 +124,11 @@ function dedupe(items) {
 }
 
 async function fetchHoldingsNews(tickers) {
+  if (isDemoMode()) {
+    const upper = [...new Set(tickers.map((t) => String(t).trim().toUpperCase()).filter(Boolean))];
+    const items = getDemoNewsItems(upper);
+    return filterNewsDateRange(dedupe(items));
+  }
   const upper = [...new Set(tickers.map((t) => String(t).trim().toUpperCase()).filter(Boolean))];
   const chunks = [];
   await Promise.all(

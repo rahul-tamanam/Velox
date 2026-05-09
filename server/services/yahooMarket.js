@@ -2,6 +2,8 @@
  * Market data from Yahoo Finance (public HTTP) with optional RapidAPI quote proxy.
  */
 const axios = require('axios');
+const { isDemoMode } = require('../demo/demoMode');
+const { demoQuoteRow, demoBeta, demoChartHistory } = require('../demo/demoMarket');
 
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
@@ -29,6 +31,7 @@ function rapidHeaders() {
 }
 
 async function rapidQuote(ticker) {
+  if (isDemoMode()) return null;
   const headers = rapidHeaders();
   if (!headers) return null;
   const host = headers['X-RapidAPI-Host'];
@@ -71,6 +74,7 @@ async function rapidQuote(ticker) {
 }
 
 async function publicQuote(ticker) {
+  if (isDemoMode()) return demoQuoteRow(ticker);
   const { data, status } = await axios.get(
     'https://query1.finance.yahoo.com/v7/finance/quote',
     {
@@ -85,6 +89,7 @@ async function publicQuote(ticker) {
 }
 
 async function publicQuoteSummaryBeta(ticker) {
+  if (isDemoMode()) return demoBeta(ticker);
   const { data, status } = await axios.get(
     `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${encodeURIComponent(ticker)}`,
     {
@@ -103,6 +108,7 @@ async function publicQuoteSummaryBeta(ticker) {
  * @returns {Array<{ date: Date, open, high, low, close, adjClose }>}
  */
 async function chartHistory(ticker, period1, period2, interval) {
+  if (isDemoMode()) return await demoChartHistory(ticker, period1, period2, interval);
   const p1 = Math.floor(new Date(period1).getTime() / 1000);
   const p2 = Math.floor(new Date(period2).getTime() / 1000);
   const { data, status } = await axios.get(
@@ -144,6 +150,7 @@ async function chartHistory(ticker, period1, period2, interval) {
  * Returns a minimal quote-shaped row using the last daily bar (adj close).
  */
 async function quoteFromChartLastClose(ticker) {
+  if (isDemoMode()) return demoQuoteRow(ticker);
   const sym = String(ticker).toUpperCase();
   const period2 = new Date();
   const period1 = new Date(Date.now() - 21 * 86400000);
