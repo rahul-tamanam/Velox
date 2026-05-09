@@ -7,3 +7,4 @@ dist/
 client/dist/
 server/vestiq.db
 server/velox.db
+venv
