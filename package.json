@@ -2,7 +2,7 @@
   "name": "velox",
   "version": "1.0.0",
   "engines": {
-    "node": ">=22.5.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
