@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import api from '../utils/api';
+import { formatApiError } from '../utils/apiError.js';
 
 const PortfolioContext = createContext(null);
 
@@ -21,7 +22,7 @@ export function PortfolioProvider({ children }) {
       setHoldings(h.data);
       setSummary(s.data);
     } catch (e) {
-      setError(e.response?.data?.error || e.message);
+      setError(formatApiError(e, 'Failed to load portfolio'));
     } finally {
       setLoading(false);
     }

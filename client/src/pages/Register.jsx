@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import { formatApiError } from '../utils/apiError.js';
 
 export default function Register() {
   const { register } = useAuth();
@@ -30,7 +31,7 @@ export default function Register() {
       });
       navigate('/onboarding');
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed');
+      setError(formatApiError(err, 'Registration failed'));
     }
   }
 

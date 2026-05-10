@@ -28,7 +28,8 @@ function getApiRoute(req) {
   const q = req.query || {};
   if (q.slug != null && q.slug !== '') {
     const s = q.slug;
-    const joined = Array.isArray(s) ? s.filter(Boolean).join('/') : String(s);
+    let joined = Array.isArray(s) ? s.filter(Boolean).join('/') : String(s);
+    joined = joined.split('?')[0];
     return joined.replace(/^\/+|\/+$/g, '');
   }
   try {

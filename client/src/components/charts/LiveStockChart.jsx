@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createChart } from 'lightweight-charts';
 import api from '../../utils/api';
+import { formatApiError } from '../../utils/apiError.js';
 import ChartInsightPanel from './ChartInsightPanel.jsx';
 
 const PERIODS = [
@@ -83,7 +84,7 @@ export default function LiveStockChart({ tickers }) {
         chartRef.current?.timeScale().fitContent();
       } catch (e) {
         setCandles([]);
-        setError(e.response?.data?.error || e.message);
+        setError(formatApiError(e, 'Chart failed'));
       }
     })();
     return () => {

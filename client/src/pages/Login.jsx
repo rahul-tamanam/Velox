@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import { formatApiError } from '../utils/apiError.js';
 
 export default function Login() {
   const { login } = useAuth();
@@ -18,12 +19,11 @@ export default function Login() {
       await login(email, password);
       navigate('/dashboard');
     } catch (err) {
-      const apiErr = err.response?.data?.error;
       const hint =
         err.code === 'ERR_NETWORK' || err.message === 'Network Error'
           ? ' Cannot reach API - make sure `npm run dev` is running and the server shows port 5000.'
           : '';
-      setError(apiErr || `${err.message || 'Login failed'}.${hint}`);
+      setError(`${formatApiError(err, 'Login failed')}${hint}`);
     }
   }
 
