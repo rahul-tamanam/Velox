@@ -42,6 +42,21 @@ function getApiRoute(req) {
   }
 }
 
+/** Vercel often strips ?query from `req.url` and puts params on `req.query` instead. */
+function getSearchParam(req, key) {
+  const rq = req.query || {};
+  if (Object.prototype.hasOwnProperty.call(rq, key) && rq[key] != null && rq[key] !== '') {
+    const v = rq[key];
+    return Array.isArray(v) ? String(v[0]) : String(v);
+  }
+  try {
+    const u = new URL(req.url || '/', 'http://localhost');
+    return u.searchParams.get(key) || '';
+  } catch {
+    return '';
+  }
+}
+
 function periodConfig(period) {
   const end = new Date();
   const start = new Date(end);
@@ -157,8 +172,7 @@ async function handleApi(req, res) {
     // --- stocks ---
     if (route === 'stocks/price' && method === 'GET') {
       if (!authOk(req)) return json(res, 401, { error: 'Unauthorized' });
-      const u = new URL(req.url, 'http://localhost');
-      const ticker = String(u.searchParams.get('ticker') || '').toUpperCase();
+      const ticker = String(getSearchParam(req, 'ticker') || '').toUpperCase();
       if (!ticker) return json(res, 400, { error: 'ticker required' });
       const q = demoQuoteRow(ticker);
       return json(res, 200, {
@@ -170,9 +184,8 @@ async function handleApi(req, res) {
     }
     if (route === 'stocks/history' && method === 'GET') {
       if (!authOk(req)) return json(res, 401, { error: 'Unauthorized' });
-      const u = new URL(req.url, 'http://localhost');
-      const ticker = String(u.searchParams.get('ticker') || '').toUpperCase();
-      const period = String(u.searchParams.get('period') || '1mo');
+      const ticker = String(getSearchParam(req, 'ticker') || '').toUpperCase();
+      const period = String(getSearchParam(req, 'period') || '1mo');
       if (!ticker) return json(res, 400, { error: 'ticker required' });
       const { start, end, interval } = periodConfig(period);
       const quotes = await demoChartHistory(ticker, start, end, interval);
@@ -197,8 +210,7 @@ async function handleApi(req, res) {
     // --- news ---
     if (route === 'news' && method === 'GET') {
       if (!authOk(req)) return json(res, 401, { error: 'Unauthorized' });
-      const u = new URL(req.url, 'http://localhost');
-      const raw = String(u.searchParams.get('tickers') || '');
+      const raw = String(getSearchParam(req, 'tickers') || '');
       const tickers = raw
         .split(',')
         .map((t) => t.trim().toUpperCase())
@@ -304,8 +316,7 @@ async function handleApi(req, res) {
     }
     if (route === 'simulate/backtest' && method === 'GET') {
       if (!authOk(req)) return json(res, 401, { error: 'Unauthorized' });
-      const u = new URL(req.url, 'http://localhost');
-      let corpus = Number(u.searchParams.get('corpus'));
+      let corpus = Number(getSearchParam(req, 'corpus'));
       if (!Number.isFinite(corpus)) corpus = 100_000;
       corpus = Math.round(Math.min(Math.max(corpus, 1_000), 100_000_000));
       const result = await runMacroAwareBacktest(corpus);
