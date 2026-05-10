@@ -5,11 +5,14 @@ import Navbar from '../components/layout/Navbar.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { formatApiError } from '../utils/apiError.js';
 
+const DEMO_EMAIL = 'demo@velox.com';
+const DEMO_PASSWORD = 'demo1234';
+
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState(DEMO_EMAIL);
+  const [password, setPassword] = useState(DEMO_PASSWORD);
   const [error, setError] = useState('');
 
   async function submit(e) {
@@ -33,7 +36,9 @@ export default function Login() {
       <div className="mx-auto flex max-w-md flex-col gap-8 px-6 py-16">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
           <h1 className="font-display text-3xl text-[var(--text-primary)]">Welcome back</h1>
-          <p className="mt-2 text-sm text-[var(--text-secondary)]">Demo · demo@velox.com / demo1234</p>
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+            Demo · {DEMO_EMAIL} / {DEMO_PASSWORD}
+          </p>
         </motion.div>
         <form onSubmit={submit} className="card-surface space-y-4 p-6">
           <label className="block text-xs text-[var(--text-secondary)]">
