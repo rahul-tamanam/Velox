@@ -20,12 +20,26 @@ const { computeHealthScore } = require('./engines/healthScore');
 const { runMonteCarloEngine } = require('./engines/monteCarlo');
 const { runMacroAwareBacktest } = require('./engines/macroAwareMomentum');
 
-function normalizeApiPath(req) {
-  const u = new URL(req.url || '/', 'http://localhost');
-  let p = u.pathname || '';
-  if (p.startsWith('/api/')) p = p.slice(5);
-  else if (p === '/api') p = '';
-  return p.replace(/^\/+|\/+$/g, '');
+/**
+ * Vercel catch-all `api/[...slug].js` puts path segments in `req.query.slug`
+ * (string or string[]). Some local mocks only set `req.url` — support both.
+ */
+function getApiRoute(req) {
+  const q = req.query || {};
+  if (q.slug != null && q.slug !== '') {
+    const s = q.slug;
+    const joined = Array.isArray(s) ? s.filter(Boolean).join('/') : String(s);
+    return joined.replace(/^\/+|\/+$/g, '');
+  }
+  try {
+    const u = new URL(req.url || '/', 'http://localhost');
+    let p = u.pathname || '';
+    if (p.startsWith('/api/')) p = p.slice(5);
+    else if (p === '/api') p = '';
+    return p.replace(/^\/+|\/+$/g, '');
+  } catch {
+    return '';
+  }
 }
 
 function periodConfig(period) {
@@ -67,7 +81,7 @@ function fmtUsd(n) {
 }
 
 async function handleApi(req, res) {
-  const route = normalizeApiPath(req);
+  const route = getApiRoute(req);
   const method = req.method || 'GET';
 
   try {
