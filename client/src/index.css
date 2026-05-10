@@ -296,3 +296,43 @@ input[type='number']::-webkit-outer-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 }
+
+/* Dashboard data loader (orange-tinted orbit) */
+@keyframes dashboard-loader-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dashboard-loader-label-shimmer {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.dashboard-loader-orbit {
+  background: conic-gradient(
+    from 210deg,
+    rgba(254, 101, 7, 0.06),
+    rgba(254, 101, 7, 0.35) 25%,
+    rgba(254, 101, 7, 0.95) 42%,
+    rgba(254, 101, 7, 0.45) 58%,
+    rgba(254, 101, 7, 0.08) 78%,
+    rgba(254, 101, 7, 0.06)
+  );
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2.5px));
+  animation: dashboard-loader-orbit 1.15s cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+  filter: drop-shadow(0 0 10px rgba(254, 101, 7, 0.25));
+}
+
+.dashboard-loader-label {
+  animation: dashboard-loader-label-shimmer 2.2s ease-in-out infinite;
+}

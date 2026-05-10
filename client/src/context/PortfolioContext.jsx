@@ -6,7 +6,8 @@ const PortfolioContext = createContext(null);
 export function PortfolioProvider({ children }) {
   const [holdings, setHoldings] = useState([]);
   const [summary, setSummary] = useState(null);
-  const [loading, setLoading] = useState(false);
+  /** Start true so dashboard can show a loader before the first fetch effect runs. */
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const refresh = useCallback(async () => {

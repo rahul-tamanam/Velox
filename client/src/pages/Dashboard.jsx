@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 import Sidebar from '../components/layout/Sidebar.jsx';
 import ProfileModal from '../components/profile/ProfileModal.jsx';
@@ -19,6 +20,7 @@ import NewsSentimentFeed from '../components/tools/NewsSentimentFeed.jsx';
 import ChatbotButton from '../components/chatbot/ChatbotButton.jsx';
 import ChatbotDrawer from '../components/chatbot/ChatbotDrawer.jsx';
 import RiskAlertCapsule from '../components/dashboard/RiskAlertCapsule.jsx';
+import DashboardLoadingOverlay from '../components/dashboard/DashboardLoadingOverlay.jsx';
 import BuySellHoldingModal from '../components/portfolio/BuySellHoldingModal.jsx';
 import {
   ArrowTrendingUpIcon,
@@ -36,8 +38,10 @@ function typeLabel(type) {
 
 export default function Dashboard() {
   const { user, setUser } = useAuth();
-  const { holdings, summary, refresh } = usePortfolio();
+  const { holdings, summary, refresh, loading, error } = usePortfolio();
   const [tab, setTab] = useState('dashboard');
+  const showDashboardLoader =
+    tab === 'dashboard' && (loading || (summary === null && !error));
   const [chatOpen, setChatOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [macro, setMacro] = useState(null);
@@ -159,7 +163,10 @@ export default function Dashboard() {
           )}
         >
           {tab === 'dashboard' && (
-            <div className="grid h-full min-h-0 grid-rows-[auto_1fr] gap-3 overflow-hidden">
+            <div className="relative grid h-full min-h-0 grid-rows-[auto_1fr] gap-3 overflow-hidden">
+              <AnimatePresence>
+                {showDashboardLoader && <DashboardLoadingOverlay key="dashboard-loader" />}
+              </AnimatePresence>
       <div className="grid h-[120px] min-h-0 grid-cols-4 gap-3 2xl:grid-cols-4">
                 <div className="min-h-0">
                   <KPICard

@@ -40,7 +40,7 @@ export default function Landing() {
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <Link
                 to="/login"
-                className="inline-flex rounded-lg border border-[var(--border)] bg-transparent px-8 py-3 text-[0.8rem] font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)]"
+                className="inline-flex rounded-lg border-2 border-[var(--accent)] bg-transparent px-8 py-3 text-[0.8rem] font-medium text-[var(--accent)] transition-colors duration-200 hover:bg-[var(--accent)] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
               >
                 See Demo
               </Link>
