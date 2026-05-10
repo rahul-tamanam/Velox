@@ -1,10 +1,9 @@
-// Shared demo helpers for Vercel serverless functions.
-// Vercel functions are stateless, so we return deterministic demo snapshots.
+// Demo helpers for Vercel (single serverless function). Not placed under /api so Hobby limit stays at 1 function.
 
 process.env.DEMO_MODE = '1';
 
-const { DEMO_QUOTES, getDemoMacroRegimePayload, getDemoNewsItems } = require('../server/demo/fixtures');
-const { demoQuoteRow, demoBeta, demoChartHistory } = require('../server/demo/demoMarket');
+const { getDemoMacroRegimePayload, getDemoNewsItems } = require('./demo/fixtures');
+const { demoQuoteRow, demoBeta, demoChartHistory } = require('./demo/demoMarket');
 
 function json(res, code, body) {
   res.statusCode = code;
@@ -43,8 +42,7 @@ function demoUser(overrides = {}) {
   };
 }
 
-function authOk(_req) {
-  // Demo-only: accept any token (or none) so the portfolio loads smoothly.
+function authOk() {
   return true;
 }
 
@@ -79,7 +77,7 @@ function demoHoldings() {
     holdingRow(2, 'MSFT', 'stock', 4, 312.4, '2023-10-02'),
     holdingRow(3, 'NVDA', 'stock', 6, 78.15, '2024-05-18'),
     holdingRow(4, 'SPY', 'etf', 5, 470.1, '2023-06-12'),
-    holdingRow(5, 'TLT', 'etf', 10, 96.2, '2024-01-08')
+    holdingRow(5, 'TLT', 'etf', 10, 96.2, '2024-01-08'),
   ];
 }
 
@@ -89,7 +87,6 @@ function demoPortfolioSummary() {
   const costBasis = holdings.reduce((s, h) => s + h.cost_basis, 0);
   const totalReturnPct = costBasis > 0 ? (totalValue - costBasis) / costBasis : 0;
 
-  // Approximate today's change using prev close.
   let todayChangePct = 0;
   for (const h of holdings) {
     const q = demoQuoteRow(h.ticker);
@@ -99,17 +96,10 @@ function demoPortfolioSummary() {
     if (prev && cur && prev > 0) todayChangePct += w * ((cur - prev) / prev);
   }
 
-  const portfolioBeta =
-    holdings.reduce((s, h) => {
-      const w = totalValue > 0 ? h.market_value / totalValue : 0;
-      return s + w * (h.beta || 1);
-    }, 0) || 1;
-
   const stocksShare = holdings.filter((h) => h.type === 'stock').reduce((s, h) => s + h.market_value, 0);
   const fundsShare = holdings.filter((h) => h.type === 'etf' || h.type === 'fund').reduce((s, h) => s + h.market_value, 0);
 
-  // Keep the exact health score logic consistent with your server code.
-  const { computeHealthScore } = require('../server/engines/healthScore');
+  const { computeHealthScore } = require('./engines/healthScore');
   const macro = getDemoMacroRegimePayload();
   const goalAmt = demoUser().goal_target_amount || 1;
   const goalProgress = Math.min(1, totalValue / goalAmt);
@@ -135,7 +125,11 @@ function demoPortfolioSummary() {
     costBasis,
     totalReturnPct,
     todayChangePct,
-    portfolioBeta,
+    portfolioBeta:
+      holdings.reduce((s, h) => {
+        const w = totalValue > 0 ? h.market_value / totalValue : 0;
+        return s + w * (h.beta || 1);
+      }, 0) || 1,
     health,
     stocksVsFunds: {
       stocksPct: totalValue > 0 ? stocksShare / totalValue : 0,
@@ -145,7 +139,6 @@ function demoPortfolioSummary() {
 }
 
 module.exports = {
-  DEMO_QUOTES,
   getDemoMacroRegimePayload,
   getDemoNewsItems,
   demoQuoteRow,
@@ -158,4 +151,3 @@ module.exports = {
   json,
   readBody,
 };
-
